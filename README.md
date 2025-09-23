@@ -2,6 +2,8 @@
 
 A professional, reusable React chat widget that allows developers to easily integrate Ordify AI agents into their applications with minimal setup.
 
+> **🚀 Try it now!** Clone the repo and run `open examples/live-test.html` to see all chat modes in action.
+
 ## ✨ Features
 
 - 🚀 **Easy Integration**: Simple configuration file approach
@@ -16,31 +18,42 @@ A professional, reusable React chat widget that allows developers to easily inte
 
 ## 🚀 Quick Start
 
-### 1. Installation
+### Option 1: Try It Out (No Setup Required)
+
+Want to see the chat widget in action immediately? Open our live demo:
+
+```bash
+# Clone the repository
+git clone https://github.com/ordify-ai/chat-widget.git
+cd chat-widget
+
+# Open the test page in your browser
+open examples/live-test.html
+```
+
+This will open a test page showing all chat modes (floating, embedded, inline, modal) with real functionality.
+
+### Option 2: Development Setup
+
+For development and customization:
+
+```bash
+# Clone and install
+git clone https://github.com/ordify-ai/chat-widget.git
+cd chat-widget
+npm install
+
+# Start development server
+npm run dev
+
+# Open http://localhost:3000 in your browser
+```
+
+### Option 3: Use in Your Project
 
 ```bash
 npm install @ordify/chat-widget
 ```
-
-### 2. Basic Usage
-
-```tsx
-import { OrdifyChat } from '@ordify/chat-widget'
-
-function App() {
-  return (
-    <OrdifyChat
-      agentId="your-agent-id"
-      apiKey="your-api-key"
-      apiBaseUrl="https://api.ordify.ai"
-      mode="floating"
-      position="bottom-right"
-    />
-  )
-}
-```
-
-### 3. Configuration File (Recommended)
 
 Create `chat-widget.config.ts` for easy customization:
 
@@ -141,9 +154,32 @@ When no `primaryColor` is specified, the header automatically adapts:
 
 Complete working examples are available in the `/examples` directory:
 
-- **[React Example](./examples/react-basic/)** - Basic React implementation
-- **[Next.js Example](./examples/nextjs/)** - Next.js integration  
-- **[Vanilla JS Example](./examples/vanilla-js/)** - Plain JavaScript usage
+### Live Test Page
+```bash
+# Quick demo of all chat modes
+open examples/live-test.html
+```
+
+### React Example
+```bash
+cd examples/react-basic
+npm install
+npm run dev
+# Open http://localhost:3001
+```
+
+### Next.js Example
+```bash
+cd examples/nextjs
+npm install
+npm run dev
+# Open http://localhost:3000
+```
+
+### Vanilla JS Example
+```bash
+# Open examples/vanilla-js/index.html in your browser
+```
 
 ## 🔧 Development
 
