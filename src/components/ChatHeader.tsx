@@ -1,5 +1,5 @@
-import { cn } from '@/utils'
 import { X } from 'lucide-react'
+import styled from 'styled-components'
 
 interface ChatHeaderProps {
   chatName?: string
@@ -10,6 +10,85 @@ interface ChatHeaderProps {
   className?: string
 }
 
+const HeaderContainer = styled.div<{ $primaryColor?: string }>`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-radius: 8px 8px 0 0;
+  background: ${props => props.$primaryColor || '#ffffff'};
+  color: ${props => props.$primaryColor ? 'white' : '#111827'};
+  border-bottom: ${props => props.$primaryColor ? 'none' : '1px solid #e5e7eb'};
+
+  @media (prefers-color-scheme: dark) {
+    background: ${props => props.$primaryColor || '#1f2937'};
+    color: ${props => props.$primaryColor ? 'white' : '#f9fafb'};
+    border-bottom-color: ${props => props.$primaryColor ? 'none' : '#374151'};
+  }
+`
+
+const HeaderContent = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+`
+
+const StatusIndicator = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`
+
+const StatusDot = styled.div`
+  width: 8px;
+  height: 8px;
+  background: #10b981;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+`
+
+const ChatName = styled.span`
+  font-weight: 500;
+  font-size: 14px;
+`
+
+const HeaderActions = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+`
+
+const CloseButton = styled.button`
+  padding: 4px;
+  background: transparent;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+`
+
 export function ChatHeader({
   chatName = "Chat Assistant",
   showCloseButton = true,
@@ -17,42 +96,28 @@ export function ChatHeader({
   primaryColor,
   className
 }: ChatHeaderProps) {
-  const headerClasses = cn(
-    'flex items-center justify-between px-4 py-3 rounded-t-lg',
-    primaryColor 
-      ? 'text-white' // Use primaryColor background
-      : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white border-b', // Theme-aware default
-    className
-  )
-
-  const headerStyle = primaryColor ? { 
-    backgroundColor: primaryColor,
-    color: 'white'
-  } : {}
-
   return (
-    <div 
-      className={headerClasses}
-      style={headerStyle}
+    <HeaderContainer 
+      $primaryColor={primaryColor}
+      className={className}
     >
-      <div className="flex items-center space-x-3">
-        <div className="flex items-center space-x-2">
-          <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-          <span className="font-medium text-sm">{chatName}</span>
-        </div>
-      </div>
+      <HeaderContent>
+        <StatusIndicator>
+          <StatusDot />
+          <ChatName>{chatName}</ChatName>
+        </StatusIndicator>
+      </HeaderContent>
       
-      <div className="flex items-center space-x-1">
+      <HeaderActions>
         {showCloseButton && (
-          <button
+          <CloseButton
             onClick={onClose}
-            className="p-1 hover:bg-white/20 rounded transition-colors"
             aria-label="Close"
           >
-            <X className="w-4 h-4" />
-          </button>
+            <X />
+          </CloseButton>
         )}
-      </div>
-    </div>
+      </HeaderActions>
+    </HeaderContainer>
   )
 }

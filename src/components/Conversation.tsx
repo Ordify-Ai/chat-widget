@@ -1,7 +1,6 @@
-import { Button } from '@/components/ui/button'
-import { cn } from '@/utils'
 import { ArrowDown } from 'lucide-react'
 import React from 'react'
+import styled from 'styled-components'
 import { StickToBottom, useStickToBottomContext } from 'use-stick-to-bottom'
 
 interface ConversationProps {
@@ -18,24 +17,77 @@ interface ConversationScrollButtonProps {
   className?: string
 }
 
+const StyledStickToBottom = styled(StickToBottom)`
+  position: relative;
+  flex: 1;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+`
+
+const StyledStickToBottomContent = styled(StickToBottom.Content)`
+  padding: 16px;
+`
+
+const ScrollButton = styled.button`
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid #d1d5db;
+  background: white;
+  color: #6b7280;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  &:hover {
+    background: #f9fafb;
+    border-color: #9ca3af;
+    color: #374151;
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    background: #1f2937;
+    border-color: #374151;
+    color: #9ca3af;
+
+    &:hover {
+      background: #374151;
+      border-color: #4b5563;
+      color: #d1d5db;
+    }
+  }
+`
+
 export function Conversation({ className, children }: ConversationProps) {
   return (
-    <StickToBottom
-      className={cn('relative flex-1 overflow-y-auto ordify-smooth-scroll', className)}
+    <StyledStickToBottom
+      className={className}
       initial="smooth"
       resize="smooth"
       role="log"
     >
       {children}
-    </StickToBottom>
+    </StyledStickToBottom>
   )
 }
 
 export function ConversationContent({ className, children }: ConversationContentProps) {
   return (
-    <StickToBottom.Content className={cn('p-4', className)}>
+    <StyledStickToBottomContent className={className}>
       {children}
-    </StickToBottom.Content>
+    </StyledStickToBottomContent>
   )
 }
 
@@ -48,18 +100,13 @@ export function ConversationScrollButton({ className }: ConversationScrollButton
 
   return (
     !isAtBottom && (
-      <Button
-        className={cn(
-          'absolute bottom-4 left-[50%] translate-x-[-50%] rounded-full',
-          className
-        )}
+      <ScrollButton
+        className={className}
         onClick={handleScrollToBottom}
-        size="icon"
         type="button"
-        variant="outline"
       >
-        <ArrowDown className="size-4" />
-      </Button>
+        <ArrowDown />
+      </ScrollButton>
     )
   )
 }

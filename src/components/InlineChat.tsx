@@ -1,10 +1,19 @@
 import { MarkdownRenderer } from '@/components/MarkdownRenderer'
 import { ProfessionalInput } from '@/components/ProfessionalInput'
-import { Button } from '@/components/ui/button'
 import { OrdifyConfig, UseOrdifyChatReturn } from '@/types'
-import { cn, formatTime } from '@/utils'
+import { formatTime } from '@/utils'
 import { Send } from 'lucide-react'
 import React from 'react'
+import {
+    ChatInput,
+    ChatMessage,
+    ChatWidget,
+    ErrorMessage,
+    LoadingDots,
+    SendButton,
+    Conversation as StyledConversation,
+    Timestamp
+} from './styled/ChatComponents'
 
 interface InlineChatProps {
   config: OrdifyConfig
@@ -18,10 +27,10 @@ export function InlineChat({ config, chat }: InlineChatProps) {
 
   const handleSendMessage = async () => {
     if (!inputValue.trim() || isLoading) return
-    
+
     await sendMessage(inputValue.trim())
     setInputValue('')
-    
+
     // Auto-focus input after sending
     setTimeout(() => {
       inputRef.current?.focus()
@@ -36,91 +45,76 @@ export function InlineChat({ config, chat }: InlineChatProps) {
   }
 
   return (
-    <div 
-      className={cn(
-        'ordify-chat-widget flex flex-col bg-background border rounded-lg',
-        config.className
-      )}
-      style={{ height: config.height }}
+    <ChatWidget
+      style={{ 
+        height: config.height,
+        display: 'flex',
+        flexDirection: 'column',
+        backgroundColor: 'white',
+        border: '1px solid #e5e7eb',
+        borderRadius: '8px'
+      }}
     >
       {/* Chat messages */}
-      <div className="flex-1 overflow-y-auto p-3 space-y-3 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+      <StyledConversation style={{ flex: 1, padding: '12px' }}>
         {messages.map(message => (
-          <div 
+          <div
             key={message.id}
-            className={cn(
-              'flex',
-              message.role === 'user' ? 'justify-end' : 'justify-start'
-            )}
+            style={{
+              display: 'flex',
+              marginBottom: '12px',
+              justifyContent: message.role === 'user' ? 'flex-end' : 'flex-start'
+            }}
           >
-            <div 
-              className={cn(
-                'ordify-chat-message max-w-[85%]',
-                message.role === 'user' 
-                  ? 'ordify-chat-message-user' 
-                  : 'ordify-chat-message-assistant'
-              )}
-            >
+            <ChatMessage isUser={message.role === 'user'}>
               {message.role === 'assistant' ? (
                 <MarkdownRenderer content={message.content} />
               ) : (
                 message.content
               )}
-              <div className={cn(
-                'text-xs mt-1',
-                message.role === 'user' 
-                  ? 'text-primary-foreground/70' 
-                  : 'text-muted-foreground'
-              )}>
+              <Timestamp isUser={message.role === 'user'}>
                 {formatTime(message.timestamp)}
-              </div>
-            </div>
+              </Timestamp>
+            </ChatMessage>
           </div>
         ))}
-        
+
         {isLoading && (
-          <div className="flex justify-start">
-            <div className="ordify-chat-message ordify-chat-message-assistant">
-              <div className="ordify-chat-loading">
-                <div className="ordify-chat-loading-dot"></div>
-                <div className="ordify-chat-loading-dot" style={{ animationDelay: '150ms' }}></div>
-                <div className="ordify-chat-loading-dot" style={{ animationDelay: '300ms' }}></div>
-              </div>
-            </div>
+          <div style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: '12px' }}>
+            <ChatMessage isUser={false}>
+              <LoadingDots>
+                <div className="dot"></div>
+                <div className="dot"></div>
+                <div className="dot"></div>
+              </LoadingDots>
+            </ChatMessage>
           </div>
         )}
-        
+
         {error && (
-          <div className="text-sm text-destructive text-center p-2">
+          <ErrorMessage>
             {error}
-          </div>
+          </ErrorMessage>
         )}
-      </div>
-      
+      </StyledConversation>
+
       {/* Chat input */}
-      <div className="border-t bg-background p-3">
-        <div className="flex items-end space-x-2 w-full">
-          <div className="flex-1 w-full">
-            <ProfessionalInput
-              ref={inputRef}
-              value={inputValue}
-              onChange={setInputValue}
-              onKeyDown={handleKeyPress}
-              placeholder={config.placeholder}
-              disabled={isLoading}
-              className="w-full"
-            />
-          </div>
-          <Button 
-            size="icon" 
-            onClick={handleSendMessage}
-            disabled={isLoading || !inputValue.trim()}
-            className="ordify-send-button h-8 w-8 shrink-0"
-          >
-            <Send className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
-    </div>
+      <ChatInput>
+        <ProfessionalInput
+          ref={inputRef}
+          value={inputValue}
+          onChange={setInputValue}
+          onKeyDown={handleKeyPress}
+          placeholder={config.placeholder}
+          disabled={isLoading}
+        />
+        <SendButton
+          onClick={handleSendMessage}
+          disabled={isLoading || !inputValue.trim()}
+        >
+          <Send size={16} />
+        </SendButton>
+      </ChatInput>
+    </ChatWidget>
   )
 }

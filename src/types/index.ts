@@ -46,7 +46,7 @@ export interface OrdifyConfig {
   agentId: string
   apiKey: string
   apiBaseUrl?: string
-  mode?: 'floating' | 'embedded' | 'inline' | 'modal'
+  mode?: 'floating' | 'embedded'
   position?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left'
   theme?: 'light' | 'dark' | 'auto'
   placeholder?: string
