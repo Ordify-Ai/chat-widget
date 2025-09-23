@@ -5,7 +5,6 @@ export { OrdifyChat } from './components/OrdifyChat'
 export { EmbeddedChat } from './components/EmbeddedChat'
 export { FloatingChat } from './components/FloatingChat'
 export { InlineChat } from './components/InlineChat'
-export { ModalChat } from './components/ModalChat'
 
 // UI Components
 export { MarkdownRenderer } from './components/MarkdownRenderer'
@@ -20,6 +19,6 @@ export type {
 } from './types'
 
 // Utils
-export { cn, debounce, formatTime, generateId, throttle } from './utils'
+export { debounce, formatTime, generateId, throttle } from './utils'
 export { OrdifyApiClient, parseStreamingResponse } from './utils/api'
 

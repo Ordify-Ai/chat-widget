@@ -1,13 +1,30 @@
 # Ordify Chat Widget
 
-A professional, reusable React chat widget that allows developers to easily integrate Ordify AI agents into their applications with **zero configuration**.
+A professional, production-ready React chat widget that enables seamless integration of Ordify AI agents into any web application. Deploy intelligent conversational interfaces with minimal setup and maximum customization.
+
+## 🎯 What You Get
+
+- **Zero Configuration**: Drop-in chat widget with no CSS imports or complex setup
+- **Professional UI**: Polished, responsive chat interface that matches your brand
+- **Real-time AI**: Direct integration with your Ordify AI agents for instant responses
+- **Multiple Modes**: Floating chat buttons, embedded interfaces, and custom layouts
+- **Enterprise Ready**: TypeScript support, theme-aware styling, and production-grade performance
+
+## 📋 Prerequisites
+
+Before integrating the chat widget, ensure you have:
+
+- **API Key**: Available in your Ordify dashboard (Account → Settings → API)
+- **Agent ID**: Found in your agent configuration panel within the Ordify application
+- **React Application**: Compatible with React 18+ and modern build tools
+
 
 > **🚀 Try it live!** Visit [app.ordify.ai/widget-demo](https://app.ordify.ai/widget-demo) to see all chat modes in action.
 
 ## ✨ Features
 
 - 🚀 **Zero Configuration**: No CSS imports or additional setup required
-- 🎨 **Multiple Modes**: Floating, embedded, inline, and modal chat interfaces
+- 🎨 **Multiple Modes**: Floating and embedded chat interfaces
 - 🎯 **TypeScript Support**: Full type safety and IntelliSense
 - 🎨 **Customizable**: Colors, themes, and styling options
 - 📱 **Responsive**: Works perfectly on desktop and mobile devices
@@ -21,20 +38,20 @@ A professional, reusable React chat widget that allows developers to easily inte
 ### 1. Install the Library
 
 ```bash
-npm install @ordify/chat-widget
+npm install @ordify-ai/chat-widget
 ```
 
 ### 2. Add to Your React App
 
 ```tsx
-import { OrdifyChat } from '@ordify/chat-widget'
+import { OrdifyChat } from '@ordify-ai/chat-widget'
 
 function App() {
   return (
     <OrdifyChat
       agentId="your-agent-id"
       apiKey="your-api-key"
-      apiBaseUrl="https://api.ordify.ai"
+      apiBaseUrl="https://r.ordify.ai"
       chatName="AI Assistant"
       buttonText="Chat with us"
     />
@@ -68,26 +85,8 @@ function App() {
 />
 ```
 
-### Inline Chat (For content pages)
-```tsx
-<OrdifyChat
-  agentId="your-agent-id"
-  apiKey="your-api-key"
-  mode="inline"
-  height="400px"
-  primaryColor="#8b5cf6"
-/>
-```
+**Note**: `embedded` and `inline` modes are identical - both render a full chat interface within your page layout. Use `embedded` for consistency.
 
-### Modal Chat (For focused conversations)
-```tsx
-<OrdifyChat
-  agentId="your-agent-id"
-  apiKey="your-api-key"
-  mode="modal"
-  chatName="Consultation Assistant"
-/>
-```
 
 ## ⚙️ Configuration Options
 
@@ -100,7 +99,7 @@ function App() {
 | `buttonText` | string | "AI Chat" | Text on floating button |
 | `placeholder` | string | "Type a message..." | Input placeholder text |
 | `primaryColor` | string | - | Custom header color (optional) |
-| `mode` | string | "floating" | Chat display mode |
+| `mode` | string | "floating" | Chat display mode: "floating" or "embedded" |
 | `position` | string | "bottom-right" | Floating button position |
 | `resizable` | boolean | true | Allow user to resize chat |
 | `showHeader` | boolean | true | Show/hide chat header |
@@ -118,20 +117,73 @@ When no `primaryColor` is specified, the header automatically adapts:
 ### Live Demo
 Visit [app.ordify.ai/widget-demo](https://app.ordify.ai/widget-demo) to see all chat modes in action with real functionality.
 
-### Basic Usage Example
-```bash
-cd examples/basic-usage
-npm install
-npm run dev
-# Open http://localhost:3001
+### Integration Examples
+
+#### Next.js App Router
+```tsx
+// app/chat/page.tsx
+'use client'
+
+import { OrdifyChat } from '@ordify-ai/chat-widget'
+
+export default function ChatPage() {
+  return (
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-4">Chat with AI</h1>
+      <OrdifyChat 
+        agentId={process.env.NEXT_PUBLIC_ORDIFY_AGENT_ID!}
+        apiKey={process.env.NEXT_PUBLIC_ORDIFY_API_KEY!}
+        apiBaseUrl="https://r.ordify.ai"
+        mode="embedded"
+        height="500px"
+      />
+    </div>
+  )
+}
 ```
 
-### Advanced Usage Example
-```bash
-cd examples/advanced-usage
-npm install
-npm run dev
-# Open http://localhost:3001
+#### React Component
+```tsx
+// components/ChatWidget.tsx
+import { OrdifyChat } from '@ordify-ai/chat-widget'
+
+export function ChatWidget() {
+  return (
+    <OrdifyChat
+      agentId="your-agent-id"
+      apiKey="your-api-key"
+      apiBaseUrl="https://r.ordify.ai"
+      mode="floating"
+      position="bottom-right"
+      buttonText="AI Chat"
+    />
+  )
+}
+```
+
+#### Landing Page Integration
+```tsx
+// pages/index.tsx
+import { OrdifyChat } from '@ordify-ai/chat-widget'
+
+export default function HomePage() {
+  return (
+    <div>
+      {/* Your existing page content */}
+      <h1>Welcome to Our Site</h1>
+      <p>Content here...</p>
+      
+      {/* Add chat widget */}
+      <OrdifyChat
+        agentId="your-agent-id"
+        apiKey="your-api-key"
+        apiBaseUrl="https://r.ordify.ai"
+        mode="floating"
+        buttonText="Need Help?"
+      />
+    </div>
+  )
+}
 ```
 
 ## 🔧 Development
@@ -149,15 +201,17 @@ npm run dev
 npm run build
 ```
 
+### Integration Examples
+See the [`examples/integration/`](./examples/integration/) directory for ready-to-copy code snippets for different frameworks and use cases.
+
 ## 📖 Documentation
 
-- **[Quick Start Guide](./docs/QUICK_START.md)** - Detailed setup instructions
-- **[Configuration Guide](./docs/CONFIGURATION.md)** - Complete configuration options
+- **[Integration Examples](./examples/integration/)** - Ready-to-copy code snippets for different frameworks
 
 ## 🤝 Support
 
 - **Live Demo**: [app.ordify.ai/widget-demo](https://app.ordify.ai/widget-demo)
-- **Documentation**: [Quick Start Guide](./docs/QUICK_START.md)
+- **Documentation**: [Integration Examples](./examples/integration/)
 - **Issues**: [GitHub Issues](https://github.com/ordify-ai/chat-widget/issues)
 - **Email**: support@ordify.ai
 
