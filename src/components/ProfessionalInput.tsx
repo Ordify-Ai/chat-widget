@@ -1,5 +1,5 @@
-import { cn } from '@/utils'
 import React from 'react'
+import { ProfessionalInput as StyledProfessionalInput } from './styled/ChatComponents'
 
 interface ProfessionalInputProps {
   value: string
@@ -11,7 +11,7 @@ interface ProfessionalInputProps {
   maxLength?: number
 }
 
-export const ProfessionalInput = React.forwardRef<HTMLTextAreaElement, ProfessionalInputProps>(({
+export const ProfessionalInput = React.forwardRef<HTMLTextAreaElement, ProfessionalInputProps>(function ProfessionalInput({
   value,
   onChange,
   onKeyDown,
@@ -19,7 +19,7 @@ export const ProfessionalInput = React.forwardRef<HTMLTextAreaElement, Professio
   disabled = false,
   className,
   maxLength = 2000
-}, ref) => {
+}, ref) {
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     onChange(e.target.value)
   }
@@ -35,7 +35,7 @@ export const ProfessionalInput = React.forwardRef<HTMLTextAreaElement, Professio
   }
 
   return (
-    <textarea
+    <StyledProfessionalInput
       ref={ref}
       value={value}
       onChange={handleChange}
@@ -43,22 +43,7 @@ export const ProfessionalInput = React.forwardRef<HTMLTextAreaElement, Professio
       placeholder={placeholder}
       disabled={disabled}
       maxLength={maxLength}
-      className={cn(
-        'w-full resize-none border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50 rounded-md',
-        '!bg-white !text-gray-900 !border-gray-300 !w-full', // Force override any theme conflicts
-        className
-      )}
-      rows={1}
-      style={{
-        minHeight: '40px',
-        maxHeight: '120px',
-        overflow: 'hidden',
-        backgroundColor: '#ffffff',
-        color: '#1f2937',
-        borderColor: '#d1d5db',
-        border: '1px solid #d1d5db',
-        width: '100%'
-      }}
+      className={className}
       onInput={(e) => {
         const target = e.target as HTMLTextAreaElement
         target.style.height = 'auto'

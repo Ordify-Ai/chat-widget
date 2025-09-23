@@ -7,6 +7,11 @@
 npm install @ordify/chat-widget
 ```
 
+**That's it!** No CSS imports or additional setup required. The library includes all necessary styles automatically.
+
+### Try It Live First
+Before integrating, visit [app.ordify.ai/widget-demo](https://app.ordify.ai/widget-demo) to see all chat modes in action with real functionality.
+
 ### From GitHub (Development)
 ```bash
 npm install ordify-ai/chat-widget
@@ -371,6 +376,25 @@ npm test
 ```
 
 ## 📚 Examples
+
+### Live Demo
+Visit [app.ordify.ai/widget-demo](https://app.ordify.ai/widget-demo) to see all chat modes in action with real functionality.
+
+### Basic Usage Example
+```bash
+cd examples/basic-usage
+npm install
+npm run dev
+# Open http://localhost:3001
+```
+
+### Advanced Usage Example
+```bash
+cd examples/advanced-usage
+npm install
+npm run dev
+# Open http://localhost:3001
+```
 
 ### Next.js App Router
 ```tsx

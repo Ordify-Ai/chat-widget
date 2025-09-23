@@ -23,5 +23,3 @@ export type {
 export { cn, debounce, formatTime, generateId, throttle } from './utils'
 export { OrdifyApiClient, parseStreamingResponse } from './utils/api'
 
-// Styles
-import './styles/index.css'
