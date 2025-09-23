@@ -29,7 +29,7 @@ export function ChatHeader({
       ? darkMode 
         ? 'ordify-glass-effect-dark text-white' 
         : 'ordify-glass-effect text-gray-900'
-      : 'bg-white text-gray-900',
+      : 'bg-white text-gray-900 border-b',
     className
   )
 

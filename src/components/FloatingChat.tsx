@@ -102,7 +102,7 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
           showCloseButton={true}
           onClose={() => setIsOpen(false)}
           primaryColor={config.primaryColor}
-          headerIcon={config.headerIcon || '/src/assets/Ordify-circle.png'}
+          headerIcon={config.headerIcon || 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAABx0RVh0U29mdHdhcmUAQWRvYmUgRmlyZXdvcmtzIENTNui8sowAAAAWdEVYdENyZWF0aW9uIFRpbWUAMDEvMDEvMjTvvJwAAAAmdEVYdERpc2NyaXB0aW9uAABIYXMgYSBzcGlyYWwgcGF0dGVybiBvZiB3aGl0ZSBzaGFwZXMgb24gYSBibGFjayBiYWNrZ3JvdW5kLCB3aXRoIGEgd2hpdGUgc3F1YXJlIGluIHRoZSBjZW50ZXIuIFRoZXJlIGlzIGEgbGlnaHQgZ3JheSBib3JkZXIgYXJvdW5kIHRoZSBvdXRzaWRlLgAAABJ0RVh0VGl0bGUAT3JkaWZ5IExvZ28AAAAldEVYdExpY2Vuc2UAQ3JlYXRpdmUgQ29tbW9ucyBBdHRyaWJ1dGlvbiAyLjAgSW50ZXJuYXRpb25hbA=='}
           glassEffect={config.glassEffect}
           darkMode={config.darkMode}
         />
