@@ -32,6 +32,7 @@ Before integrating the chat widget, ensure you have:
 - 🎭 **Theme-aware**: Automatic light/dark mode support
 - 🔧 **Resizable**: User-adjustable chat window height
 - 📝 **Markdown Support**: Rich text rendering for AI responses
+<img width="1919" height="1321" alt="image" src="https://github.com/user-attachments/assets/41f20eb9-7b37-48ef-89bc-e406b73db4bd" />
 
 ## 🚀 Quick Start
 
