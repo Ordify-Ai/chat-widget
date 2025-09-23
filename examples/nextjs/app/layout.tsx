@@ -1,14 +1,12 @@
 import type { Metadata } from 'next'
-import React from 'react'
 import { Inter } from 'next/font/google'
+import React from 'react'
 import './globals.css'
+import { metadata } from './metadata'
 
 const inter = Inter({ subsets: ['latin'] })
 
-export const metadata: Metadata = {
-  title: 'Ordify Chat Widget - Next.js Example',
-  description: 'Example of using Ordify Chat Widget in a Next.js application',
-}
+export { metadata }
 
 export default function RootLayout({
   children,

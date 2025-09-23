@@ -1,7 +1,7 @@
+import { MarkdownRenderer } from '@/components/MarkdownRenderer'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { MarkdownRenderer } from '@/components/MarkdownRenderer'
 import { OrdifyConfig, UseOrdifyChatReturn } from '@/types'
 import { cn, formatTime } from '@/utils'
 import { MessageSquare, Send, X } from 'lucide-react'

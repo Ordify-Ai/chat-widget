@@ -1,6 +1,6 @@
+import { MarkdownRenderer } from '@/components/MarkdownRenderer'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { MarkdownRenderer } from '@/components/MarkdownRenderer'
 import { OrdifyConfig, UseOrdifyChatReturn } from '@/types'
 import { cn, formatTime } from '@/utils'
 import { Send, X } from 'lucide-react'
