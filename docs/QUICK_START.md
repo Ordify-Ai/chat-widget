@@ -19,7 +19,7 @@ npm install ordify-ai/chat-widget
 
 ## ⚡ Basic Usage
 
-### React Component
+### 1. Floating Button Chat (Recommended for websites)
 ```tsx
 import { OrdifyChat } from '@ordify/chat-widget'
 
@@ -29,7 +29,28 @@ function App() {
       agentId="3b947bd2-a24b-4e0f-8f1a-d65054b9ff49"
       apiKey="your-api-key-here"
       apiBaseUrl="https://api.ordify.ai"
+      mode="floating"  // Default: floating button with popup chat
     />
+  )
+}
+```
+
+### 2. Integrated Chat Interface (For dedicated chat pages)
+```tsx
+import { OrdifyChat } from '@ordify/chat-widget'
+
+function ChatPage() {
+  return (
+    <div className="h-screen flex flex-col">
+      <h1>Chat with AI</h1>
+      <OrdifyChat 
+        agentId="3b947bd2-a24b-4e0f-8f1a-d65054b9ff49"
+        apiKey="your-api-key-here"
+        apiBaseUrl="https://api.ordify.ai"
+        mode="embedded"  // Full-page embedded chat
+        className="flex-1"
+      />
+    </div>
   )
 }
 ```
@@ -107,6 +128,94 @@ The widget automatically adapts to different screen sizes:
 <OrdifyChat 
   className="w-full h-full min-h-[400px] max-h-[800px]"
 />
+```
+
+## 🎨 Integration Patterns
+
+### Floating Button Chat (Perfect for Landing Pages)
+```tsx
+// Automatically creates a floating button in bottom-right corner
+<OrdifyChat 
+  agentId="your-agent-id"
+  apiKey="your-api-key"
+  mode="floating"  // Default mode
+  position="bottom-right"  // bottom-right, bottom-left, top-right, top-left
+  buttonStyle={{
+    backgroundColor: 'hsl(var(--primary))',
+    borderRadius: '50%',
+    width: '60px',
+    height: '60px'
+  }}
+  chatWindowStyle={{
+    width: '380px',
+    height: '500px',
+    borderRadius: '12px',
+    boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)'
+  }}
+/>
+```
+
+### Embedded Chat Interface (For Dedicated Chat Pages)
+```tsx
+// Full-page chat interface
+<div className="h-screen flex flex-col">
+  <header className="p-4 border-b">
+    <h1>Chat with AI Assistant</h1>
+  </header>
+  <OrdifyChat 
+    agentId="your-agent-id"
+    apiKey="your-api-key"
+    mode="embedded"
+    className="flex-1"
+    showHeader={false}  // Hide default header since we have our own
+  />
+</div>
+```
+
+### Inline Chat Widget (For Sidebars)
+```tsx
+// Chat widget that fits in a sidebar or content area
+<div className="grid grid-cols-3 gap-4">
+  <div className="col-span-2">
+    {/* Your main content */}
+  </div>
+  <div className="col-span-1">
+    <OrdifyChat 
+      agentId="your-agent-id"
+      apiKey="your-api-key"
+      mode="inline"
+      className="h-[600px]"
+    />
+  </div>
+</div>
+```
+
+### Modal Chat (Triggered by Button)
+```tsx
+import { useState } from 'react'
+import { OrdifyChat } from '@ordify/chat-widget'
+
+function App() {
+  const [isChatOpen, setIsChatOpen] = useState(false)
+  
+  return (
+    <>
+      <button onClick={() => setIsChatOpen(true)}>
+        Open Chat
+      </button>
+      
+      {isChatOpen && (
+        <OrdifyChat 
+          agentId="your-agent-id"
+          apiKey="your-api-key"
+          mode="modal"
+          onClose={() => setIsChatOpen(false)}
+          className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center"
+        />
+      )}
+    </>
+  )
+}
 ```
 
 ## 🔄 Advanced Usage
@@ -246,8 +355,58 @@ export default function ChatPage() {
         agentId={process.env.NEXT_PUBLIC_ORDIFY_AGENT_ID!}
         apiKey={process.env.NEXT_PUBLIC_ORDIFY_API_KEY!}
         apiBaseUrl={process.env.NEXT_PUBLIC_ORDIFY_API_URL}
+        mode="embedded"  // Full-page chat
       />
     </div>
+  )
+}
+```
+
+### Ordify-Web Integration Example
+```tsx
+// components/LiveChat.tsx - Replace your existing LiveChat component
+'use client'
+
+import { OrdifyChat } from '@ordify/chat-widget'
+
+export default function LiveChat() {
+  return (
+    <OrdifyChat 
+      agentId={process.env.NEXT_PUBLIC_ORDIFY_AGENT_ID!}
+      apiKey={process.env.NEXT_PUBLIC_ORDIFY_API_KEY!}
+      apiBaseUrl="https://api.ordify.ai"
+      mode="floating"
+      position="bottom-right"
+      buttonStyle={{
+        backgroundColor: 'hsl(var(--primary))',
+        borderRadius: '50%',
+        width: '60px',
+        height: '60px',
+        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+      }}
+      chatWindowStyle={{
+        width: '380px',
+        height: '500px',
+        borderRadius: '12px',
+        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)'
+      }}
+      theme="light"
+      placeholder="Ask about our AI automation solutions..."
+    />
+  )
+}
+
+// app/layout.tsx - Add to your root layout
+import LiveChat from '@/components/LiveChat'
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <body>
+        {children}
+        <LiveChat />  {/* Floating chat on every page */}
+      </body>
+    </html>
   )
 }
 ```
@@ -304,12 +463,18 @@ function App() {
 | `agentId` | `string` | ✅ | - | Ordify agent ID |
 | `apiKey` | `string` | ✅ | - | API authentication key |
 | `apiBaseUrl` | `string` | ❌ | `https://api.ordify.ai` | API base URL |
+| `mode` | `'floating' \| 'embedded' \| 'inline' \| 'modal'` | ❌ | `'floating'` | Chat display mode |
+| `position` | `'bottom-right' \| 'bottom-left' \| 'top-right' \| 'top-left'` | ❌ | `'bottom-right'` | Floating button position |
 | `theme` | `'light' \| 'dark'` | ❌ | `'light'` | Color theme |
 | `placeholder` | `string` | ❌ | `'Type a message...'` | Input placeholder |
 | `height` | `string \| number` | ❌ | `'500px'` | Chat height |
 | `className` | `string` | ❌ | - | Custom CSS class |
+| `buttonStyle` | `CSSProperties` | ❌ | - | Custom floating button styles |
+| `chatWindowStyle` | `CSSProperties` | ❌ | - | Custom chat window styles |
+| `showHeader` | `boolean` | ❌ | `true` | Show/hide chat header |
 | `onMessage` | `(message: Message) => void` | ❌ | - | Message callback |
 | `onError` | `(error: Error) => void` | ❌ | - | Error callback |
+| `onClose` | `() => void` | ❌ | - | Close callback (modal mode) |
 
 ### useOrdifyChat Hook
 ```typescript

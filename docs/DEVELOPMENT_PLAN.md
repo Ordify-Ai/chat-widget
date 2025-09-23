@@ -73,12 +73,18 @@ interface OrdifyChatProps {
   agentId: string
   apiKey: string
   apiBaseUrl?: string
+  mode?: 'floating' | 'embedded' | 'inline' | 'modal'
+  position?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left'
   theme?: 'light' | 'dark'
   placeholder?: string
+  height?: string | number
+  className?: string
+  buttonStyle?: CSSProperties
+  chatWindowStyle?: CSSProperties
+  showHeader?: boolean
   onMessage?: (message: Message) => void
   onError?: (error: Error) => void
-  className?: string
-  height?: string | number
+  onClose?: () => void
 }
 ```
 
@@ -102,6 +108,39 @@ class OrdifyApiClient {
   async getAgents(): Promise<Agent[]>
 }
 ```
+
+## 🎯 Integration Patterns & Use Cases
+
+### **Floating Button Chat** (Most Popular)
+- **Perfect for:** Landing pages, marketing sites, e-commerce
+- **Features:** Floating button in corner, popup chat window
+- **Example:** Customer support on your main website
+- **Implementation:** `<OrdifyChat mode="floating" position="bottom-right" />`
+
+### **Embedded Chat Interface**
+- **Perfect for:** Dedicated chat pages, support portals
+- **Features:** Full-page chat interface
+- **Example:** `/support/chat` page with full chat experience
+- **Implementation:** `<OrdifyChat mode="embedded" className="flex-1" />`
+
+### **Inline Chat Widget**
+- **Perfect for:** Sidebars, dashboards, documentation
+- **Features:** Chat widget that fits in content areas
+- **Example:** Help widget in documentation sidebar
+- **Implementation:** `<OrdifyChat mode="inline" className="h-[600px]" />`
+
+### **Modal Chat**
+- **Perfect for:** Triggered interactions, forms
+- **Features:** Modal overlay chat
+- **Example:** "Need help?" button that opens chat modal
+- **Implementation:** `<OrdifyChat mode="modal" onClose={handleClose} />`
+
+### **Real-World Examples**
+- **Customer Support** - Floating button on landing page
+- **Documentation** - Inline widget in help sidebar
+- **E-commerce** - Product recommendation chat
+- **Education** - Interactive learning experiences
+- **Internal Tools** - AI assistants for your team
 
 ## 🚀 Implementation Phases
 
