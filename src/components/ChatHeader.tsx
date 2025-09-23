@@ -7,9 +7,6 @@ interface ChatHeaderProps {
   showCloseButton?: boolean
   onClose?: () => void
   primaryColor?: string
-  headerIcon?: string
-  glassEffect?: boolean
-  darkMode?: boolean
   className?: string
 }
 
@@ -17,23 +14,18 @@ export function ChatHeader({
   chatName = "Chat Assistant",
   showCloseButton = true,
   onClose,
-  primaryColor = "#3b82f6",
-  headerIcon,
-  glassEffect = false,
-  darkMode = false,
+  primaryColor,
   className
 }: ChatHeaderProps) {
   const headerClasses = cn(
     'flex items-center justify-between px-4 py-3 rounded-t-lg',
-    glassEffect 
-      ? darkMode 
-        ? 'ordify-glass-effect-dark text-white' 
-        : 'ordify-glass-effect text-gray-900'
-      : 'bg-white text-gray-900 border-b',
+    primaryColor 
+      ? 'text-white' // Use primaryColor background
+      : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white border-b', // Theme-aware default
     className
   )
 
-  const headerStyle = !glassEffect && primaryColor ? { 
+  const headerStyle = primaryColor ? { 
     backgroundColor: primaryColor,
     color: 'white'
   } : {}
@@ -44,13 +36,6 @@ export function ChatHeader({
       style={headerStyle}
     >
       <div className="flex items-center space-x-3">
-        {headerIcon && (
-          <img 
-            src={headerIcon} 
-            alt="Chat Icon" 
-            className="w-6 h-6 rounded-full"
-          />
-        )}
         <div className="flex items-center space-x-2">
           <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
           <span className="font-medium text-sm">{chatName}</span>

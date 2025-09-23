@@ -3,10 +3,11 @@ import React from 'react'
 
 interface ResizeHandleProps {
   onResize: (deltaY: number) => void
+  position?: 'top' | 'bottom'
   className?: string
 }
 
-export function ResizeHandle({ onResize, className }: ResizeHandleProps) {
+export function ResizeHandle({ onResize, position = 'bottom', className }: ResizeHandleProps) {
   const [isResizing, setIsResizing] = React.useState(false)
 
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -37,13 +38,17 @@ export function ResizeHandle({ onResize, className }: ResizeHandleProps) {
   return (
     <div
       className={cn(
-        'absolute bottom-0 left-0 right-0 h-2 cursor-ns-resize bg-transparent hover:bg-gray-200 transition-colors',
+        'absolute left-0 right-0 h-2 cursor-ns-resize bg-transparent hover:bg-gray-200 transition-colors',
+        position === 'top' ? 'top-0' : 'bottom-0',
         isResizing && 'bg-gray-300',
         className
       )}
       onMouseDown={handleMouseDown}
     >
-      <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-8 h-1 bg-gray-400 rounded-full" />
+      <div className={cn(
+        'absolute left-1/2 transform -translate-x-1/2 w-8 h-1 bg-gray-400 rounded-full',
+        position === 'top' ? 'top-0' : 'bottom-0'
+      )} />
     </div>
   )
 }

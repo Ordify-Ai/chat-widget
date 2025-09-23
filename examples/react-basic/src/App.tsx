@@ -1,4 +1,6 @@
-import { OrdifyChat } from '../../dist/index.esm.js'
+import { OrdifyChat } from '../../../dist/index.esm.js'
+import '../../../dist/style.css'
+import { chatConfig } from './chat-widget.config'
 
 function App() {
   return (
@@ -9,7 +11,7 @@ function App() {
             Ordify Chat Widget Demo
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Experience our professional AI chat components with multiple integration modes, 
+            Experience our professional AI chat components with multiple integration modes,
             real-time streaming, and customizable themes.
           </p>
         </div>
@@ -22,24 +24,12 @@ function App() {
               <h2 className="text-2xl font-semibold text-gray-900">Floating Chat</h2>
             </div>
             <p className="text-gray-600 mb-6 leading-relaxed">
-              A professional floating chat button that opens a resizable chat window in the corner. 
+              A professional floating chat button that opens a resizable chat window in the corner.
               Perfect for customer support and sales inquiries.
             </p>
             <div className="bg-gray-50 p-4 rounded-lg border-2 border-dashed border-gray-300">
               <p className="text-sm text-gray-500 text-center mb-4">Click the chat button to test</p>
-              <OrdifyChat
-                agentId="3b947bd2-a24b-4e0f-8f1a-d65054b9ff49"
-                apiKey="CiQAw4W/13FiyduPEbLPo/mq+FTbrv2HGUZIF0cTHxH9tMn3/xwSVABz4cb0CCn3qJ8FJLR5fO6U1qeTf+2105u8bhSJHhTe0HnzfersLyHjPJHhEirogMp6HToFGGuSqqK5RCcFNewo6WUllKStliVNJUlBQUPoAvz0gg=="
-                apiBaseUrl="http://localhost:5001"
-                mode="floating"
-                position="bottom-right"
-                chatName="Ordify Assistant"
-                buttonText="AI Chat"
-                glassEffect={true}
-                darkMode={false}
-                resizable={true}
-                placeholder="Ask about our AI automation solutions..."
-              />
+              <OrdifyChat {...chatConfig} />
             </div>
           </div>
 
@@ -50,14 +40,12 @@ function App() {
               <h2 className="text-2xl font-semibold text-gray-900">Embedded Chat</h2>
             </div>
             <p className="text-gray-600 mb-6 leading-relaxed">
-              A full-page chat interface embedded directly in your content. 
+              A full-page chat interface embedded directly in your content.
               Ideal for dedicated support pages and documentation.
             </p>
             <div className="h-96 border border-gray-200 rounded-lg overflow-hidden">
-              <OrdifyChat
-                agentId="3b947bd2-a24b-4e0f-8f1a-d65054b9ff49"
-                apiKey="CiQAw4W/13FiyduPEbLPo/mq+FTbrv2HGUZIF0cTHxH9tMn3/xwSVABz4cb0CCn3qJ8FJLR5fO6U1qeTf+2105u8bhSJHhTe0HnzfersLyHjPJHhEirogMp6HToFGGuSqqK5RCcFNewo6WUllKStliVNJUlBQUPoAvz0gg=="
-                apiBaseUrl="http://localhost:5001"
+              <OrdifyChat 
+                {...chatConfig}
                 mode="embedded"
                 height="100%"
                 chatName="Support Assistant"
@@ -74,14 +62,12 @@ function App() {
               <h2 className="text-2xl font-semibold text-gray-900">Inline Chat</h2>
             </div>
             <p className="text-gray-600 mb-6 leading-relaxed">
-              A compact chat widget that fits seamlessly inline with your content. 
+              A compact chat widget that fits seamlessly inline with your content.
               Great for product pages and FAQ sections.
             </p>
             <div className="h-64 border border-gray-200 rounded-lg overflow-hidden">
               <OrdifyChat
-                agentId="3b947bd2-a24b-4e0f-8f1a-d65054b9ff49"
-                apiKey="CiQAw4W/13FiyduPEbLPo/mq+FTbrv2HGUZIF0cTHxH9tMn3/xwSVABz4cb0CCn3qJ8FJLR5fO6U1qeTf+2105u8bhSJHhTe0HnzfersLyHjPJHhEirogMp6HToFGGuSqqK5RCcFNewo6WUllKStliVNJUlBQUPoAvz0gg=="
-                apiBaseUrl="http://localhost:5001"
+                {...chatConfig}
                 mode="inline"
                 height="100%"
                 chatName="Product Assistant"
@@ -98,15 +84,13 @@ function App() {
               <h2 className="text-2xl font-semibold text-gray-900">Modal Chat</h2>
             </div>
             <p className="text-gray-600 mb-6 leading-relaxed">
-              A chat interface that opens in a modal overlay. 
+              A chat interface that opens in a modal overlay.
               Perfect for focused conversations without leaving the current page.
             </p>
             <div className="bg-gray-50 p-4 rounded-lg border-2 border-dashed border-gray-300">
               <p className="text-sm text-gray-500 text-center mb-4">Click to open modal chat</p>
               <OrdifyChat
-                agentId="3b947bd2-a24b-4e0f-8f1a-d65054b9ff49"
-                apiKey="CiQAw4W/13FiyduPEbLPo/mq+FTbrv2HGUZIF0cTHxH9tMn3/xwSVABz4cb0CCn3qJ8FJLR5fO6U1qeTf+2105u8bhSJHhTe0HnzfersLyHjPJHhEirogMp6HToFGGuSqqK5RCcFNewo6WUllKStliVNJUlBQUPoAvz0gg=="
-                apiBaseUrl="http://localhost:5001"
+                {...chatConfig}
                 mode="modal"
                 chatName="Consultation Assistant"
                 primaryColor="#f59e0b"

@@ -17,6 +17,38 @@ npm install ordify-ai/chat-widget
 <script src="https://unpkg.com/@ordify/chat-widget@latest/dist/global.js"></script>
 ```
 
+## 🎨 Configuration Options
+
+### Title Bar Customization
+```typescript
+<OrdifyChat
+  agentId="your-agent-id"
+  apiKey="your-api-key"
+  apiBaseUrl="http://localhost:5001"
+  mode="floating"
+  position="bottom-right"
+  chatName="Your Assistant"           // Title text in header
+  headerIcon="/path/to/icon.png"      // Custom icon in header
+  primaryColor="#3b82f6"              // Custom header color (overrides theme)
+  glassEffect={true}                  // Enable glassmorphism effect
+  darkMode={false}                    // Force dark/light mode
+  buttonText="Chat with us"           // Text on floating button
+  placeholder="How can I help you?"   // Input placeholder
+/>
+```
+
+### Theme-Aware Defaults
+When no `primaryColor` is specified, the header automatically adapts to:
+- **Light mode**: White background with dark text
+- **Dark mode**: Dark background with light text  
+- **Glass effect**: Semi-transparent with blur effect
+
+### Resize Handle
+The resize handle is now positioned at the **top** of the chat window for better UX:
+- Drag down to increase height
+- Drag up to decrease height
+- Set `resizable={false}` to disable
+
 ## ⚡ Basic Usage
 
 ### 1. Floating Button Chat (Recommended for websites)

@@ -18,6 +18,7 @@ interface FloatingChatProps {
 export function FloatingChat({ config, chat }: FloatingChatProps) {
   const { messages, sendMessage, isLoading, error, isOpen, setIsOpen } = chat
   const [inputValue, setInputValue] = React.useState('')
+  const [chatHeight, setChatHeight] = React.useState(config.height || 400)
   const inputRef = React.useRef<HTMLTextAreaElement>(null)
 
   const handleSendMessage = async () => {
@@ -37,6 +38,14 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
       e.preventDefault()
       handleSendMessage()
     }
+  }
+
+  const handleResize = (deltaY: number) => {
+    setChatHeight(prev => {
+      const currentHeight = typeof prev === 'number' ? prev : 400
+      const newHeight = currentHeight - deltaY // Invert deltaY for intuitive resizing
+      return Math.max(200, Math.min(600, newHeight)) // Min 200px, Max 600px
+    })
   }
 
   const getPositionClasses = () => {
@@ -82,18 +91,22 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
         'ordify-chat-window',
         getPositionClasses(),
         'w-80 sm:w-96 flex flex-col z-50',
-        config.glassEffect 
-          ? config.darkMode 
-            ? 'ordify-glass-effect-dark' 
-            : 'ordify-glass-effect'
-          : 'bg-white border',
+        'bg-white border',
         config.className
       )}
       style={{
-        height: config.height,
+        height: chatHeight,
         ...config.chatWindowStyle
       }}
     >
+      {/* Resize handle at top */}
+      {config.resizable !== false && (
+        <ResizeHandle 
+          position="top"
+          onResize={handleResize}
+        />
+      )}
+      
       {/* Chat header */}
       {config.showHeader !== false && (
         <ChatHeader
@@ -102,9 +115,6 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
           showCloseButton={true}
           onClose={() => setIsOpen(false)}
           primaryColor={config.primaryColor}
-          headerIcon={config.headerIcon || 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAABx0RVh0U29mdHdhcmUAQWRvYmUgRmlyZXdvcmtzIENTNui8sowAAAAWdEVYdENyZWF0aW9uIFRpbWUAMDEvMDEvMjTvvJwAAAAmdEVYdERpc2NyaXB0aW9uAABIYXMgYSBzcGlyYWwgcGF0dGVybiBvZiB3aGl0ZSBzaGFwZXMgb24gYSBibGFjayBiYWNrZ3JvdW5kLCB3aXRoIGEgd2hpdGUgc3F1YXJlIGluIHRoZSBjZW50ZXIuIFRoZXJlIGlzIGEgbGlnaHQgZ3JheSBib3JkZXIgYXJvdW5kIHRoZSBvdXRzaWRlLgAAABJ0RVh0VGl0bGUAT3JkaWZ5IExvZ28AAAAldEVYdExpY2Vuc2UAQ3JlYXRpdmUgQ29tbW9ucyBBdHRyaWJ1dGlvbiAyLjAgSW50ZXJuYXRpb25hbA=='}
-          glassEffect={config.glassEffect}
-          darkMode={config.darkMode}
         />
       )}
       
@@ -187,12 +197,6 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
           </Button>
         </div>
       </div>
-      
-      {config.resizable !== false && (
-        <ResizeHandle onResize={(deltaY) => {
-          console.log('Resize:', deltaY)
-        }} />
-      )}
     </Card>
   )
 }
