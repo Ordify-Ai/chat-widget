@@ -20,18 +20,22 @@ A professional, reusable React chat widget that allows developers to easily inte
 
 ### Option 1: Try It Out (No Setup Required)
 
-Want to see the chat widget in action immediately? Open our live demo:
+Want to see the chat widget in action immediately? Run our Next.js demo:
 
 ```bash
 # Clone the repository
 git clone https://github.com/ordify-ai/chat-widget.git
 cd chat-widget
 
-# Open the test page in your browser
-open examples/live-test.html
+# Start the Next.js demo
+cd examples/nextjs
+npm install
+npm run dev
+
+# Open http://localhost:3000 in your browser
 ```
 
-This will open a test page showing all chat modes (floating, embedded, inline, modal) with real functionality.
+This will open a professional demo page showing all chat modes (floating, embedded, inline, modal) with real functionality.
 
 ### Option 2: Development Setup
 
@@ -154,6 +158,14 @@ When no `primaryColor` is specified, the header automatically adapts:
 
 Complete working examples are available in the `/examples` directory:
 
+### Next.js Demo (Recommended)
+```bash
+cd examples/nextjs
+npm install
+npm run dev
+# Open http://localhost:3000
+```
+
 ### Live Test Page
 ```bash
 # Quick demo of all chat modes
@@ -166,14 +178,6 @@ cd examples/react-basic
 npm install
 npm run dev
 # Open http://localhost:3001
-```
-
-### Next.js Example
-```bash
-cd examples/nextjs
-npm install
-npm run dev
-# Open http://localhost:3000
 ```
 
 ### Vanilla JS Example

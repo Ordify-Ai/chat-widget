@@ -36,7 +36,23 @@ export function ModalChat({ config, chat }: ModalChatProps) {
     }
   }
 
-  if (!isOpen) return null
+  const handleOpen = () => {
+    setIsOpen(true)
+  }
+
+  // Show trigger button when modal is closed
+  if (!isOpen) {
+    return (
+      <div className="w-full">
+        <Button
+          onClick={handleOpen}
+          className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white hover:from-orange-600 hover:to-orange-700 transition-all duration-200 font-medium py-3 px-6 rounded-lg"
+        >
+          Click to open modal chat
+        </Button>
+      </div>
+    )
+  }
 
   return (
     <div className="ordify-chat-modal-overlay fixed inset-0 z-50 flex items-center justify-center bg-black/50">
