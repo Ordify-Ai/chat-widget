@@ -1,13 +1,23 @@
 {
   "name": "@ordify/chat-widget",
   "version": "1.0.0",
-  "description": "A simple, reusable React chat widget that allows developers to easily integrate Ordify AI agents into their applications.",
-  "main": "dist/index.js",
+  "description": "A professional React chat widget for integrating Ordify AI agents into applications with minimal setup.",
+  "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.esm.js",
+      "require": "./dist/index.cjs.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./style.css": "./dist/style.css"
+  },
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
   ],
   "scripts": {
     "dev": "vite",
@@ -15,7 +25,8 @@
     "preview": "vite preview",
     "test": "vitest",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
     "react",
@@ -24,19 +35,26 @@
     "ordify",
     "widget",
     "typescript",
-    "shadcn-ui"
+    "shadcn-ui",
+    "chatbot",
+    "assistant",
+    "conversation"
   ],
-  "author": "Ordify AI",
+  "author": {
+    "name": "Ordify AI",
+    "email": "support@ordify.ai",
+    "url": "https://ordify.ai"
+  },
   "license": "MIT",
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Ordify-Ai/chat-widget.git"
+    "url": "git+https://github.com/ordify-ai/chat-widget.git"
   },
   "bugs": {
-    "url": "https://github.com/Ordify-Ai/chat-widget/issues"
+    "url": "https://github.com/ordify-ai/chat-widget/issues"
   },
-  "homepage": "https://github.com/Ordify-Ai/chat-widget#readme",
+  "homepage": "https://github.com/ordify-ai/chat-widget#readme",
   "peerDependencies": {
     "react": "^18.0.0",
     "react-dom": "^18.0.0"
