@@ -15,13 +15,18 @@ function App() {
             <p className="text-gray-600 mb-4">
               A floating chat button that opens a chat window in the corner.
             </p>
-            <OrdifyChat
-              agentId="3b947bd2-a24b-4e0f-8f1a-d65054b9ff49"
-              apiKey="CiQAw4W/13FiyduPEbLPo/mq+FTbrv2HGUZIF0cTHxH9tMn3/xwSVABz4cb0CCn3qJ8FJLR5fO6U1qeTf+2105u8bhSJHhTe0HnzfersLyHjPJHhEirogMp6HToFGGuSqqK5RCcFNewo6WUllKStliVNJUlBQUPoAvz0gg=="
-              apiBaseUrl="http://localhost:5001"
-              mode="floating"
-              position="bottom-right"
-            />
+                     <OrdifyChat
+                       agentId="3b947bd2-a24b-4e0f-8f1a-d65054b9ff49"
+                       apiKey="CiQAw4W/13FiyduPEbLPo/mq+FTbrv2HGUZIF0cTHxH9tMn3/xwSVABz4cb0CCn3qJ8FJLR5fO6U1qeTf+2105u8bhSJHhTe0HnzfersLyHjPJHhEirogMp6HToFGGuSqqK5RCcFNewo6WUllKStliVNJUlBQUPoAvz0gg=="
+                       apiBaseUrl="http://localhost:5001"
+                       mode="floating"
+                       position="bottom-right"
+                       chatName="Ordify Assistant"
+                       primaryColor="#3b82f6"
+                       showMinimizeButton={true}
+                       resizable={true}
+                       placeholder="Ask about our AI automation solutions..."
+                     />
           </div>
 
           {/* Embedded Chat Example */}
@@ -31,13 +36,16 @@ function App() {
               A full-page chat interface embedded in your content.
             </p>
             <div className="h-96">
-              <OrdifyChat
-                agentId="3b947bd2-a24b-4e0f-8f1a-d65054b9ff49"
-                apiKey="CiQAw4W/13FiyduPEbLPo/mq+FTbrv2HGUZIF0cTHxH9tMn3/xwSVABz4cb0CCn3qJ8FJLR5fO6U1qeTf+2105u8bhSJHhTe0HnzfersLyHjPJHhEirogMp6HToFGGuSqqK5RCcFNewo6WUllKStliVNJUlBQUPoAvz0gg=="
-                apiBaseUrl="http://localhost:5001"
-                mode="embedded"
-                height="100%"
-              />
+                       <OrdifyChat
+                         agentId="3b947bd2-a24b-4e0f-8f1a-d65054b9ff49"
+                         apiKey="CiQAw4W/13FiyduPEbLPo/mq+FTbrv2HGUZIF0cTHxH9tMn3/xwSVABz4cb0CCn3qJ8FJLR5fO6U1qeTf+2105u8bhSJHhTe0HnzfersLyHjPJHhEirogMp6HToFGGuSqqK5RCcFNewo6WUllKStliVNJUlBQUPoAvz0gg=="
+                         apiBaseUrl="http://localhost:5001"
+                         mode="embedded"
+                         height="100%"
+                         chatName="Support Assistant"
+                         primaryColor="#10b981"
+                         placeholder="How can I help you today?"
+                       />
             </div>
           </div>
 

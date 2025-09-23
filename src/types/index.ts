@@ -48,16 +48,31 @@ export interface OrdifyConfig {
   apiBaseUrl?: string
   mode?: 'floating' | 'embedded' | 'inline' | 'modal'
   position?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left'
-  theme?: 'light' | 'dark'
+  theme?: 'light' | 'dark' | 'auto'
   placeholder?: string
   height?: string | number
+  width?: string | number
   className?: string
+  // Customization options
+  chatName?: string
+  primaryColor?: string
+  backgroundColor?: string
+  textColor?: string
+  borderRadius?: string | number
+  showMinimizeButton?: boolean
+  showHeader?: boolean
+  resizable?: boolean
+  minHeight?: string | number
+  maxHeight?: string | number
+  // Button styling
   buttonStyle?: CSSProperties
   chatWindowStyle?: CSSProperties
-  showHeader?: boolean
+  // Callbacks
   onMessage?: (message: Message) => void
   onError?: (error: Error) => void
   onClose?: () => void
+  onMinimize?: () => void
+  onMaximize?: () => void
 }
 
 export interface UseOrdifyChatReturn {

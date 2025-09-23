@@ -1,10 +1,12 @@
 import { MarkdownRenderer } from '@/components/MarkdownRenderer'
+import { ProfessionalInput } from '@/components/ProfessionalInput'
+import { ChatHeader } from '@/components/ChatHeader'
+import { ResizeHandle } from '@/components/ResizeHandle'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
 import { OrdifyConfig, UseOrdifyChatReturn } from '@/types'
 import { cn, formatTime } from '@/utils'
-import { MessageSquare, Send, X } from 'lucide-react'
+import { MessageSquare, Send } from 'lucide-react'
 import React from 'react'
 
 interface FloatingChatProps {
@@ -75,18 +77,15 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
       }}
     >
       {/* Chat header */}
-      {config.showHeader && (
-        <div className="px-4 py-3 border-b flex justify-between items-center bg-primary text-primary-foreground">
-          <div className="font-medium">Chat with AI</div>
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={() => setIsOpen(false)}
-            className="hover:bg-primary-foreground/10"
-          >
-            <X className="h-4 w-4" />
-          </Button>
-        </div>
+      {config.showHeader !== false && (
+        <ChatHeader
+          chatName={config.chatName || "Chat Assistant"}
+          showMinimizeButton={config.showMinimizeButton !== false}
+          showCloseButton={true}
+          onMinimize={() => setIsOpen(false)}
+          onClose={() => setIsOpen(false)}
+          primaryColor={config.primaryColor}
+        />
       )}
       
       {/* Chat messages */}
@@ -145,14 +144,14 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
       
       {/* Chat input */}
       <div className="ordify-chat-input">
-        <Input
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          onKeyDown={handleKeyPress}
-          placeholder={config.placeholder}
-          className="flex-1"
-          disabled={isLoading}
-        />
+            <ProfessionalInput
+              value={inputValue}
+              onChange={setInputValue}
+              onKeyDown={handleKeyPress}
+              placeholder={config.placeholder}
+              disabled={isLoading}
+              className="flex-1"
+            />
         <Button 
           size="icon" 
           onClick={handleSendMessage}
@@ -161,6 +160,13 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
           <Send className="h-4 w-4" />
         </Button>
       </div>
+      
+      {config.resizable !== false && (
+        <ResizeHandle onResize={(deltaY) => {
+          // Simple resize logic - could be enhanced
+          console.log('Resize:', deltaY)
+        }} />
+      )}
     </Card>
   )
 }
