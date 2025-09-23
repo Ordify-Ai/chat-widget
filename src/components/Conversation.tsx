@@ -1,8 +1,8 @@
-import React from 'react'
-import { StickToBottom, useStickToBottomContext } from 'use-stick-to-bottom'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/utils'
 import { ArrowDown } from 'lucide-react'
+import React from 'react'
+import { StickToBottom, useStickToBottomContext } from 'use-stick-to-bottom'
 
 interface ConversationProps {
   className?: string

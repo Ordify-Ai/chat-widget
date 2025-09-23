@@ -66,6 +66,7 @@ export interface OrdifyConfig {
   maxHeight?: string | number
   // Button styling
   buttonStyle?: CSSProperties
+  buttonText?: string // Added for customizable button text
   chatWindowStyle?: CSSProperties
   // Callbacks
   onMessage?: (message: Message) => void

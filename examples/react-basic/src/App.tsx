@@ -34,6 +34,7 @@ function App() {
                 mode="floating"
                 position="bottom-right"
                 chatName="Ordify Assistant"
+                buttonText="AI Chat"
                 primaryColor="#3b82f6"
                 showMinimizeButton={true}
                 resizable={true}

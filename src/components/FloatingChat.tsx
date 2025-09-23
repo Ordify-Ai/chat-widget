@@ -2,6 +2,7 @@ import { ChatHeader } from '@/components/ChatHeader'
 import { MarkdownRenderer } from '@/components/MarkdownRenderer'
 import { ProfessionalInput } from '@/components/ProfessionalInput'
 import { ResizeHandle } from '@/components/ResizeHandle'
+import { Conversation, ConversationContent, ConversationScrollButton } from '@/components/Conversation'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { OrdifyConfig, UseOrdifyChatReturn } from '@/types'
@@ -53,13 +54,16 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
         className={cn(
           'ordify-chat-floating-button',
           getPositionClasses(),
-          'p-4 bg-primary text-primary-foreground hover:bg-primary/90'
+          'px-6 py-4 bg-primary text-primary-foreground hover:bg-primary/90',
+          'flex items-center space-x-2 rounded-full shadow-lg hover:shadow-xl transition-all duration-200'
         )}
         style={config.buttonStyle}
-        size="icon"
         aria-label="Open chat"
       >
-        <MessageSquare className="h-6 w-6" />
+        <MessageSquare className="h-5 w-5" />
+        <span className="text-sm font-medium">
+          {config.buttonText || config.chatName || "AI Chat"}
+        </span>
       </Button>
     )
   }
@@ -92,59 +96,62 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
       
         {!isMinimized && (
           <>
-            {/* Chat messages */}
-            <div className="flex-1 overflow-y-auto p-3 space-y-3 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-        {messages.map(message => (
-          <div 
-            key={message.id}
-            className={cn(
-              'flex',
-              message.role === 'user' ? 'justify-end' : 'justify-start'
-            )}
-          >
-            <div 
-              className={cn(
-                'ordify-chat-message',
-                message.role === 'user' 
-                  ? 'ordify-chat-message-user' 
-                  : 'ordify-chat-message-assistant'
-              )}
-            >
-              {message.role === 'assistant' ? (
-                <MarkdownRenderer content={message.content} />
-              ) : (
-                message.content
-              )}
-              <div className={cn(
-                'text-xs mt-1',
-                message.role === 'user' 
-                  ? 'text-primary-foreground/70' 
-                  : 'text-muted-foreground'
-              )}>
-                {formatTime(message.timestamp)}
-              </div>
-            </div>
-          </div>
-        ))}
-        
-        {isLoading && (
-          <div className="flex justify-start">
-            <div className="ordify-chat-message ordify-chat-message-assistant">
-              <div className="ordify-chat-loading">
-                <div className="ordify-chat-loading-dot"></div>
-                <div className="ordify-chat-loading-dot" style={{ animationDelay: '150ms' }}></div>
-                <div className="ordify-chat-loading-dot" style={{ animationDelay: '300ms' }}></div>
-              </div>
-            </div>
-          </div>
-        )}
-        
-        {error && (
-          <div className="text-sm text-destructive text-center p-2">
-            {error}
-          </div>
-        )}
-      </div>
+            {/* Chat messages with auto-scroll */}
+            <Conversation className="flex-1">
+              <ConversationContent>
+                {messages.map(message => (
+                  <div 
+                    key={message.id}
+                    className={cn(
+                      'flex mb-4',
+                      message.role === 'user' ? 'justify-end' : 'justify-start'
+                    )}
+                  >
+                    <div 
+                      className={cn(
+                        'max-w-[80%] rounded-lg px-3 py-2',
+                        message.role === 'user' 
+                          ? 'bg-primary text-primary-foreground' 
+                          : 'bg-muted text-muted-foreground'
+                      )}
+                    >
+                      {message.role === 'assistant' ? (
+                        <MarkdownRenderer content={message.content} />
+                      ) : (
+                        message.content
+                      )}
+                      <div className={cn(
+                        'text-xs mt-1',
+                        message.role === 'user' 
+                          ? 'text-primary-foreground/70' 
+                          : 'text-muted-foreground'
+                      )}>
+                        {formatTime(message.timestamp)}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                
+                {isLoading && (
+                  <div className="flex justify-start mb-4">
+                    <div className="bg-muted text-muted-foreground rounded-lg px-3 py-2">
+                      <div className="flex space-x-1">
+                        <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce"></div>
+                        <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                        <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
+                {error && (
+                  <div className="text-sm text-destructive text-center p-2 mb-4">
+                    {error}
+                  </div>
+                )}
+              </ConversationContent>
+              <ConversationScrollButton />
+            </Conversation>
       
       {/* Chat input */}
       <div className="ordify-chat-input">
