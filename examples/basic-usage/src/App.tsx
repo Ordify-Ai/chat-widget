@@ -1,3 +1,4 @@
+import React from 'react'
 import { OrdifyChat } from '@ordify/chat-widget'
 
 // Basic configuration - replace with your actual values
