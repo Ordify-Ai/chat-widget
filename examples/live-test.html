@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ordify Chat Widget - Live Test</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/tailwindcss@3.3.6/lib/tailwind.min.js"></script>
+    
+    <!-- Include the built chat widget CSS -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Include the built chat widget -->
+    <script type="module">
+        // Import the chat widget from the built files
+        import { OrdifyChat } from './dist/index.esm.js';
+        
+        // Make it available globally
+        window.OrdifyChat = OrdifyChat;
+    </script>
+    
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .config-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .config-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin: 5px 0;
+        }
+        .config-button {
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px 5px 10px 0;
+        }
+        .config-button:hover {
+            background: #0056b3;
+        }
+        .example-section {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .chat-demo {
+            border: 2px solid #007bff;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            min-height: 200px;
+        }
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        function LiveTestPage() {
+            const [config, setConfig] = useState({
+                agentId: '',
+                apiKey: '',
+                apiBaseUrl: 'http://localhost:5001'
+            });
+            const [isConfigured, setIsConfigured] = useState(false);
+            const [error, setError] = useState('');
+
+            useEffect(() => {
+                // Load saved config from localStorage
+                const saved = localStorage.getItem('ordify-test-config');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    setConfig(parsed);
+                    setIsConfigured(true);
+                }
+            }, []);
+
+            const handleConfigChange = (field, value) => {
+                const newConfig = { ...config, [field]: value };
+                setConfig(newConfig);
+                setError('');
+            };
+
+            const saveConfig = () => {
+                if (!config.agentId || !config.apiKey) {
+                    setError('Please enter both Agent ID and API Key');
+                    return;
+                }
+                localStorage.setItem('ordify-test-config', JSON.stringify(config));
+                setIsConfigured(true);
+                setError('');
+            };
+
+            const clearConfig = () => {
+                localStorage.removeItem('ordify-test-config');
+                setConfig({ agentId: '', apiKey: '', apiBaseUrl: 'http://localhost:5001' });
+                setIsConfigured(false);
+                setError('');
+            };
+
+            return (
+                <div className="test-container">
+                    <h1 className="text-3xl font-bold text-gray-900 mb-8">
+                        Ordify Chat Widget - Live Test
+                    </h1>
+                    
+                    {/* Configuration Section */}
+                    <div className="config-section">
+                        <h2 className="text-xl font-semibold mb-4">Configuration</h2>
+                        <p className="text-gray-600 mb-4">
+                            Enter your Ordify credentials to test the chat widget. Your configuration will be saved locally.
+                        </p>
+                        
+                        {error && (
+                            <div className="error-message">
+                                {error}
+                            </div>
+                        )}
+                        
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Agent ID:
+                            </label>
+                            <input
+                                type="text"
+                                className="config-input"
+                                value={config.agentId}
+                                onChange={(e) => handleConfigChange('agentId', e.target.value)}
+                                placeholder="Enter your agent ID"
+                            />
+                        </div>
+                        
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                API Key:
+                            </label>
+                            <input
+                                type="password"
+                                className="config-input"
+                                value={config.apiKey}
+                                onChange={(e) => handleConfigChange('apiKey', e.target.value)}
+                                placeholder="Enter your API key"
+                            />
+                        </div>
+                        
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                API Base URL:
+                            </label>
+                            <input
+                                type="text"
+                                className="config-input"
+                                value={config.apiBaseUrl}
+                                onChange={(e) => handleConfigChange('apiBaseUrl', e.target.value)}
+                                placeholder="http://localhost:5001"
+                            />
+                        </div>
+                        
+                        <div>
+                            <button className="config-button" onClick={saveConfig}>
+                                Save Configuration
+                            </button>
+                            <button className="config-button" onClick={clearConfig} style={{background: '#dc3545'}}>
+                                Clear Configuration
+                            </button>
+                        </div>
+                        
+                        {isConfigured && (
+                            <div className="mt-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded">
+                                ✅ Configuration saved! The chat widgets below are now live and functional.
+                            </div>
+                        )}
+                    </div>
+
+                    {!isConfigured ? (
+                        <div className="text-center text-gray-500 py-8">
+                            Please configure your credentials above to test the live chat widgets.
+                        </div>
+                    ) : (
+                        <div>
+                            {/* Floating Chat Example */}
+                            <div className="example-section">
+                                <h2 className="text-xl font-semibold mb-4">Floating Chat (Live)</h2>
+                                <p className="text-gray-600 mb-4">
+                                    A floating chat button that appears in the bottom-right corner. Click it to start chatting!
+                                </p>
+                                <div className="chat-demo">
+                                    <p className="text-gray-500 mb-2">Look for the floating chat button in the bottom-right corner of this page!</p>
+                                    {window.OrdifyChat ? (
+                                        <window.OrdifyChat
+                                            agentId={config.agentId}
+                                            apiKey={config.apiKey}
+                                            apiBaseUrl={config.apiBaseUrl}
+                                            mode="floating"
+                                            position="bottom-right"
+                                        />
+                                    ) : (
+                                        <p className="text-red-500">Chat widget not loaded. Please refresh the page.</p>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Embedded Chat Example */}
+                            <div className="example-section">
+                                <h2 className="text-xl font-semibold mb-4">Embedded Chat (Live)</h2>
+                                <p className="text-gray-600 mb-4">
+                                    A full-page chat interface embedded in your content.
+                                </p>
+                                <div className="chat-demo">
+                                    {window.OrdifyChat ? (
+                                        <window.OrdifyChat
+                                            agentId={config.agentId}
+                                            apiKey={config.apiKey}
+                                            apiBaseUrl={config.apiBaseUrl}
+                                            mode="embedded"
+                                            height="400px"
+                                        />
+                                    ) : (
+                                        <p className="text-red-500">Chat widget not loaded. Please refresh the page.</p>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Inline Chat Example */}
+                            <div className="example-section">
+                                <h2 className="text-xl font-semibold mb-4">Inline Chat (Live)</h2>
+                                <p className="text-gray-600 mb-4">
+                                    A chat widget that fits inline with your content.
+                                </p>
+                                <div className="chat-demo">
+                                    {window.OrdifyChat ? (
+                                        <window.OrdifyChat
+                                            agentId={config.agentId}
+                                            apiKey={config.apiKey}
+                                            apiBaseUrl={config.apiBaseUrl}
+                                            mode="inline"
+                                            height="300px"
+                                        />
+                                    ) : (
+                                        <p className="text-red-500">Chat widget not loaded. Please refresh the page.</p>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Usage Instructions */}
+                            <div className="example-section">
+                                <h2 className="text-xl font-semibold mb-4">How to Use in Your App</h2>
+                                <div className="text-gray-600 space-y-3">
+                                    <p><strong>1. Install the package:</strong></p>
+                                    <code className="block bg-gray-100 p-2 rounded text-sm">npm install @ordify/chat-widget</code>
+                                    
+                                    <p><strong>2. Import and use:</strong></p>
+                                    <code className="block bg-gray-100 p-2 rounded text-sm">
+                                        {`import { OrdifyChat } from '@ordify/chat-widget'
+
+<OrdifyChat
+  agentId="${config.agentId}"
+  apiKey="${config.apiKey}"
+  apiBaseUrl="${config.apiBaseUrl}"
+  mode="floating"
+  position="bottom-right"
+/>`}
+                                    </code>
+                                    
+                                    <p><strong>3. Available modes:</strong></p>
+                                    <ul className="list-disc list-inside ml-4">
+                                        <li><code>mode="floating"</code> - Floating button with popup</li>
+                                        <li><code>mode="embedded"</code> - Full-page embedded chat</li>
+                                        <li><code>mode="inline"</code> - Inline chat widget</li>
+                                        <li><code>mode="modal"</code> - Modal overlay chat</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        ReactDOM.render(<LiveTestPage />, document.getElementById('root'));
+    </script>
+</body>
+</html>
