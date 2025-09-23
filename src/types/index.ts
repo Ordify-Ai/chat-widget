@@ -59,7 +59,6 @@ export interface OrdifyConfig {
   backgroundColor?: string
   textColor?: string
   borderRadius?: string | number
-  showMinimizeButton?: boolean
   showHeader?: boolean
   resizable?: boolean
   minHeight?: string | number
@@ -72,8 +71,6 @@ export interface OrdifyConfig {
   onMessage?: (message: Message) => void
   onError?: (error: Error) => void
   onClose?: () => void
-  onMinimize?: () => void
-  onMaximize?: () => void
 }
 
 export interface UseOrdifyChatReturn {

@@ -52,9 +52,10 @@ export function ProfessionalInput({
         minHeight: '40px',
         maxHeight: '120px',
         overflow: 'hidden',
-        backgroundColor: '#ffffff !important',
-        color: '#1f2937 !important',
-        borderColor: '#d1d5db !important'
+        backgroundColor: '#ffffff',
+        color: '#1f2937',
+        borderColor: '#d1d5db',
+        border: '1px solid #d1d5db'
       }}
       onInput={(e) => {
         const target = e.target as HTMLTextAreaElement
