@@ -1,6 +1,6 @@
+import { ChatHeader } from '@/components/ChatHeader'
 import { MarkdownRenderer } from '@/components/MarkdownRenderer'
 import { ProfessionalInput } from '@/components/ProfessionalInput'
-import { ChatHeader } from '@/components/ChatHeader'
 import { ResizeHandle } from '@/components/ResizeHandle'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -17,6 +17,7 @@ interface FloatingChatProps {
 export function FloatingChat({ config, chat }: FloatingChatProps) {
   const { messages, sendMessage, isLoading, error, isOpen, setIsOpen } = chat
   const [inputValue, setInputValue] = React.useState('')
+  const [isMinimized, setIsMinimized] = React.useState(false)
 
   const handleSendMessage = async () => {
     if (!inputValue.trim() || isLoading) return
@@ -82,14 +83,17 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
           chatName={config.chatName || "Chat Assistant"}
           showMinimizeButton={config.showMinimizeButton !== false}
           showCloseButton={true}
-          onMinimize={() => setIsOpen(false)}
+          onMinimize={() => setIsMinimized(true)}
+          onMaximize={() => setIsMinimized(false)}
           onClose={() => setIsOpen(false)}
           primaryColor={config.primaryColor}
         />
       )}
       
-      {/* Chat messages */}
-      <div className="flex-1 overflow-y-auto p-3 space-y-3 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+        {!isMinimized && (
+          <>
+            {/* Chat messages */}
+            <div className="flex-1 overflow-y-auto p-3 space-y-3 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
         {messages.map(message => (
           <div 
             key={message.id}
@@ -167,6 +171,8 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
           console.log('Resize:', deltaY)
         }} />
       )}
+          </>
+        )}
     </Card>
   )
 }

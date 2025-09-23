@@ -1,5 +1,5 @@
-import React from 'react'
 import { cn } from '@/utils'
+import React from 'react'
 
 interface ProfessionalInputProps {
   value: string
@@ -43,7 +43,8 @@ export function ProfessionalInput({
       disabled={disabled}
       maxLength={maxLength}
       className={cn(
-        'w-full resize-none border-0 bg-transparent px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50',
+        'w-full resize-none border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50 rounded-md',
+        '!bg-white !text-gray-900 !border-gray-300', // Force override any theme conflicts
         className
       )}
       rows={1}
