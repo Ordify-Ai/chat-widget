@@ -1,6 +1,6 @@
 import { MarkdownRenderer } from '@/components/MarkdownRenderer'
+import { ProfessionalInput } from '@/components/ProfessionalInput'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { OrdifyConfig, UseOrdifyChatReturn } from '@/types'
 import { cn, formatTime } from '@/utils'
 import { Send } from 'lucide-react'
@@ -14,12 +14,18 @@ interface InlineChatProps {
 export function InlineChat({ config, chat }: InlineChatProps) {
   const { messages, sendMessage, isLoading, error } = chat
   const [inputValue, setInputValue] = React.useState('')
+  const inputRef = React.useRef<HTMLTextAreaElement>(null)
 
   const handleSendMessage = async () => {
     if (!inputValue.trim() || isLoading) return
     
     await sendMessage(inputValue.trim())
     setInputValue('')
+    
+    // Auto-focus input after sending
+    setTimeout(() => {
+      inputRef.current?.focus()
+    }, 100)
   }
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -92,20 +98,24 @@ export function InlineChat({ config, chat }: InlineChatProps) {
       </div>
       
       {/* Chat input */}
-      <div className="ordify-chat-input border-t bg-background">
-        <div className="flex items-center space-x-2 p-3">
-          <Input
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            onKeyDown={handleKeyPress}
-            placeholder={config.placeholder}
-            className="flex-1"
-            disabled={isLoading}
-          />
+      <div className="border-t bg-background p-3">
+        <div className="flex items-end space-x-2 w-full">
+          <div className="flex-1 w-full">
+            <ProfessionalInput
+              ref={inputRef}
+              value={inputValue}
+              onChange={setInputValue}
+              onKeyDown={handleKeyPress}
+              placeholder={config.placeholder}
+              disabled={isLoading}
+              className="w-full"
+            />
+          </div>
           <Button 
             size="icon" 
             onClick={handleSendMessage}
             disabled={isLoading || !inputValue.trim()}
+            className="ordify-send-button h-8 w-8 shrink-0"
           >
             <Send className="h-4 w-4" />
           </Button>

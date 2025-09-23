@@ -45,7 +45,7 @@ export const ProfessionalInput = React.forwardRef<HTMLTextAreaElement, Professio
       maxLength={maxLength}
       className={cn(
         'w-full resize-none border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50 rounded-md',
-        '!bg-white !text-gray-900 !border-gray-300', // Force override any theme conflicts
+        '!bg-white !text-gray-900 !border-gray-300 !w-full', // Force override any theme conflicts
         className
       )}
       rows={1}
@@ -56,7 +56,8 @@ export const ProfessionalInput = React.forwardRef<HTMLTextAreaElement, Professio
         backgroundColor: '#ffffff',
         color: '#1f2937',
         borderColor: '#d1d5db',
-        border: '1px solid #d1d5db'
+        border: '1px solid #d1d5db',
+        width: '100%'
       }}
       onInput={(e) => {
         const target = e.target as HTMLTextAreaElement

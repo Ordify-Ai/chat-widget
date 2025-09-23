@@ -123,6 +123,10 @@
   border-radius: 50% !important;
   transition: all 0.2s ease !important;
   color: #3b82f6 !important;
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
+  min-height: 32px !important;
 }
 
 .ordify-send-button:hover {
@@ -135,6 +139,11 @@
   cursor: not-allowed !important;
   border-color: #9ca3af !important;
   color: #9ca3af !important;
+}
+
+.ordify-send-button svg {
+  width: 16px !important;
+  height: 16px !important;
 }
 
 .ordify-chat-floating-button {
