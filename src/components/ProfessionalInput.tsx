@@ -11,7 +11,7 @@ interface ProfessionalInputProps {
   maxLength?: number
 }
 
-export function ProfessionalInput({
+export const ProfessionalInput = React.forwardRef<HTMLTextAreaElement, ProfessionalInputProps>(({
   value,
   onChange,
   onKeyDown,
@@ -19,7 +19,7 @@ export function ProfessionalInput({
   disabled = false,
   className,
   maxLength = 2000
-}: ProfessionalInputProps) {
+}, ref) => {
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     onChange(e.target.value)
   }
@@ -36,6 +36,7 @@ export function ProfessionalInput({
 
   return (
     <textarea
+      ref={ref}
       value={value}
       onChange={handleChange}
       onKeyDown={handleKeyDown}
@@ -64,4 +65,4 @@ export function ProfessionalInput({
       }}
     />
   )
-}
+})

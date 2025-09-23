@@ -35,7 +35,8 @@ function App() {
                 position="bottom-right"
                 chatName="Ordify Assistant"
                 buttonText="AI Chat"
-                primaryColor="#3b82f6"
+                glassEffect={true}
+                darkMode={false}
                 resizable={true}
                 placeholder="Ask about our AI automation solutions..."
               />

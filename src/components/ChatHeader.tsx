@@ -1,60 +1,63 @@
 import { cn } from '@/utils'
-import { Maximize2, Minimize2, X } from 'lucide-react'
+import { X } from 'lucide-react'
 
 interface ChatHeaderProps {
   chatName?: string
-  isMinimized?: boolean
   showMinimizeButton?: boolean
   showCloseButton?: boolean
-  onMinimize?: () => void
-  onMaximize?: () => void
   onClose?: () => void
   primaryColor?: string
+  headerIcon?: string
+  glassEffect?: boolean
+  darkMode?: boolean
   className?: string
 }
 
 export function ChatHeader({
   chatName = "Chat Assistant",
-  isMinimized = false,
-  showMinimizeButton = true,
   showCloseButton = true,
-  onMinimize,
-  onMaximize,
   onClose,
   primaryColor = "#3b82f6",
+  headerIcon,
+  glassEffect = false,
+  darkMode = false,
   className
 }: ChatHeaderProps) {
+  const headerClasses = cn(
+    'flex items-center justify-between px-4 py-3 rounded-t-lg',
+    glassEffect 
+      ? darkMode 
+        ? 'ordify-glass-effect-dark text-white' 
+        : 'ordify-glass-effect text-gray-900'
+      : 'bg-white text-gray-900',
+    className
+  )
+
+  const headerStyle = !glassEffect && primaryColor ? { 
+    backgroundColor: primaryColor,
+    color: 'white'
+  } : {}
+
   return (
     <div 
-      className={cn(
-        'flex items-center justify-between px-4 py-3 border-b bg-white rounded-t-lg',
-        className
-      )}
-      style={{ 
-        backgroundColor: primaryColor,
-        color: 'white'
-      }}
+      className={headerClasses}
+      style={headerStyle}
     >
-      <div className="flex items-center space-x-2">
-        <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-        <span className="font-medium text-sm">{chatName}</span>
+      <div className="flex items-center space-x-3">
+        {headerIcon && (
+          <img 
+            src={headerIcon} 
+            alt="Chat Icon" 
+            className="w-6 h-6 rounded-full"
+          />
+        )}
+        <div className="flex items-center space-x-2">
+          <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+          <span className="font-medium text-sm">{chatName}</span>
+        </div>
       </div>
       
       <div className="flex items-center space-x-1">
-        {showMinimizeButton && (
-          <button
-            onClick={isMinimized ? onMaximize : onMinimize}
-            className="p-1 hover:bg-white/20 rounded transition-colors"
-            aria-label={isMinimized ? "Maximize" : "Minimize"}
-          >
-            {isMinimized ? (
-              <Maximize2 className="w-4 h-4" />
-            ) : (
-              <Minimize2 className="w-4 h-4" />
-            )}
-          </button>
-        )}
-        
         {showCloseButton && (
           <button
             onClick={onClose}

@@ -110,6 +110,47 @@
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
+/* Glass Effect Styles */
+.ordify-glass-effect {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+}
+
+.ordify-glass-effect-dark {
+  background: rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+/* Smooth scroll behavior */
+.ordify-smooth-scroll {
+  scroll-behavior: smooth;
+  scroll-padding-bottom: 20px;
+}
+
+/* Wireframe send button */
+.ordify-send-button {
+  background: transparent;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.ordify-send-button:hover {
+  background: currentColor;
+  color: white;
+}
+
+.ordify-send-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .ordify-chat-floating-button {
   @apply fixed z-50 rounded-full shadow-lg transition-all duration-300 hover:shadow-xl;
 }

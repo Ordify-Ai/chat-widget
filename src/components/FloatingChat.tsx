@@ -18,12 +18,18 @@ interface FloatingChatProps {
 export function FloatingChat({ config, chat }: FloatingChatProps) {
   const { messages, sendMessage, isLoading, error, isOpen, setIsOpen } = chat
   const [inputValue, setInputValue] = React.useState('')
+  const inputRef = React.useRef<HTMLTextAreaElement>(null)
 
   const handleSendMessage = async () => {
     if (!inputValue.trim() || isLoading) return
     
     await sendMessage(inputValue.trim())
     setInputValue('')
+    
+    // Auto-focus input after sending
+    setTimeout(() => {
+      inputRef.current?.focus()
+    }, 100)
   }
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -76,6 +82,11 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
         'ordify-chat-window',
         getPositionClasses(),
         'w-80 sm:w-96 flex flex-col z-50',
+        config.glassEffect 
+          ? config.darkMode 
+            ? 'ordify-glass-effect-dark' 
+            : 'ordify-glass-effect'
+          : 'bg-white border',
         config.className
       )}
       style={{
@@ -91,6 +102,9 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
           showCloseButton={true}
           onClose={() => setIsOpen(false)}
           primaryColor={config.primaryColor}
+          headerIcon={config.headerIcon || '/src/assets/Ordify-circle.png'}
+          glassEffect={config.glassEffect}
+          darkMode={config.darkMode}
         />
       )}
       
@@ -155,6 +169,7 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
       <div className="border-t bg-background p-3">
         <div className="flex items-end space-x-2 w-full">
           <ProfessionalInput
+            ref={inputRef}
             value={inputValue}
             onChange={setInputValue}
             onKeyDown={handleKeyPress}
@@ -166,7 +181,7 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
             size="icon" 
             onClick={handleSendMessage}
             disabled={isLoading || !inputValue.trim()}
-            className="h-8 w-8 shrink-0"
+            className="ordify-send-button h-8 w-8 shrink-0"
           >
             <Send className="h-4 w-4" />
           </Button>

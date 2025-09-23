@@ -63,6 +63,10 @@ export interface OrdifyConfig {
   resizable?: boolean
   minHeight?: string | number
   maxHeight?: string | number
+  // Header customization
+  headerIcon?: string // Path to custom icon
+  glassEffect?: boolean // Enable glass morphism effect
+  darkMode?: boolean // Force dark/light mode
   // Button styling
   buttonStyle?: CSSProperties
   buttonText?: string // Added for customizable button text

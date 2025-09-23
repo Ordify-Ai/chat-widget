@@ -21,7 +21,7 @@ interface ConversationScrollButtonProps {
 export function Conversation({ className, children }: ConversationProps) {
   return (
     <StickToBottom
-      className={cn('relative flex-1 overflow-y-auto', className)}
+      className={cn('relative flex-1 overflow-y-auto ordify-smooth-scroll', className)}
       initial="smooth"
       resize="smooth"
       role="log"
