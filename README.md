@@ -39,13 +39,13 @@ Before integrating the chat widget, ensure you have:
 ### 1. Install the Library
 
 ```bash
-npm install @ordify-ai/chat-widget
+npm install ordify-chat-widget
 ```
 
 ### 2. Add to Your React App
 
 ```tsx
-import { OrdifyChat } from '@ordify-ai/chat-widget'
+import { OrdifyChat } from 'ordify-chat-widget'
 
 function App() {
   return (
@@ -125,7 +125,7 @@ Visit [app.ordify.ai/widget-demo](https://app.ordify.ai/widget-demo) to see all 
 // app/chat/page.tsx
 'use client'
 
-import { OrdifyChat } from '@ordify-ai/chat-widget'
+import { OrdifyChat } from 'ordify-chat-widget'
 
 export default function ChatPage() {
   return (
@@ -146,7 +146,7 @@ export default function ChatPage() {
 #### React Component
 ```tsx
 // components/ChatWidget.tsx
-import { OrdifyChat } from '@ordify-ai/chat-widget'
+import { OrdifyChat } from 'ordify-chat-widget'
 
 export function ChatWidget() {
   return (
@@ -165,7 +165,7 @@ export function ChatWidget() {
 #### Landing Page Integration
 ```tsx
 // pages/index.tsx
-import { OrdifyChat } from '@ordify-ai/chat-widget'
+import { OrdifyChat } from 'ordify-chat-widget'
 
 export default function HomePage() {
   return (
