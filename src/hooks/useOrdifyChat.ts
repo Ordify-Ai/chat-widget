@@ -1,7 +1,7 @@
 import { Message, OrdifyConfig, UseOrdifyChatReturn } from '@/types'
 import { generateId } from '@/utils'
 import { OrdifyApiClient, parseStreamingResponse } from '@/utils/api'
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
   const [messages, setMessages] = useState<Message[]>([])
@@ -9,6 +9,7 @@ export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
   const [error, setError] = useState<string | null>(null)
   const [sessionId, setSessionId] = useState<string | null>(null)
   const [isOpen, setIsOpen] = useState(false)
+  const [hasInjectedContext, setHasInjectedContext] = useState(false)
   
   const apiClientRef = useRef<OrdifyApiClient | null>(null)
 
@@ -24,6 +25,101 @@ export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
   const clearError = useCallback(() => {
     setError(null)
   }, [])
+
+  // Inject initial context when chat opens for the first time
+  const injectInitialContext = useCallback(async () => {
+    if (!config.initialContext || hasInjectedContext || isLoading) return
+
+    setIsLoading(true)
+    setError(null)
+
+    try {
+      // Create session if needed
+      let currentSessionId = sessionId
+      if (!currentSessionId) {
+        const session = await apiClientRef.current!.createSession()
+        currentSessionId = session.id
+        setSessionId(currentSessionId)
+      }
+
+      // Send initial context message
+      const stream = await apiClientRef.current!.sendMessage(config.initialContext, currentSessionId)
+      const reader = stream.getReader()
+      const decoder = new TextDecoder()
+
+      let assistantMessage: Message = {
+        id: generateId(),
+        content: '',
+        role: 'assistant',
+        timestamp: new Date(),
+        sessionId: currentSessionId
+      }
+
+      setMessages(prev => [...prev, assistantMessage])
+
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+
+        const chunk = decoder.decode(value, { stream: true })
+        const lines = chunk.split('\n')
+
+        for (const line of lines) {
+          const response = parseStreamingResponse(line)
+          if (response) {
+            if (response.type === 'stream' && response.text) {
+              setMessages(prev => 
+                prev.map(msg => 
+                  msg.id === assistantMessage.id 
+                    ? { ...msg, content: msg.content + response.text }
+                    : msg
+                )
+              )
+            } else if (response.type === 'done') {
+              break
+            }
+          }
+        }
+      }
+
+      setHasInjectedContext(true)
+
+      // Call onMessage callback if provided
+      if (config.onMessage) {
+        config.onMessage(assistantMessage)
+      }
+
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to inject initial context'
+      setError(errorMessage)
+      
+      if (config.onError) {
+        config.onError(err instanceof Error ? err : new Error(errorMessage))
+      }
+    } finally {
+      setIsLoading(false)
+    }
+  }, [config, hasInjectedContext, isLoading, sessionId])
+
+  // Auto-inject initial context when component mounts (for embedded chats)
+  useEffect(() => {
+    if (config.initialContext && !hasInjectedContext && !isLoading) {
+      // Small delay to ensure component is fully mounted
+      const timer = setTimeout(() => {
+        injectInitialContext()
+      }, 500)
+      return () => clearTimeout(timer)
+    }
+  }, [config.initialContext, hasInjectedContext, isLoading, injectInitialContext])
+
+  // Enhanced setIsOpen to inject context when opening
+  const handleSetIsOpen = useCallback((open: boolean) => {
+    setIsOpen(open)
+    if (open && !hasInjectedContext) {
+      // Inject context when opening for the first time
+      setTimeout(() => injectInitialContext(), 100)
+    }
+  }, [hasInjectedContext, injectInitialContext])
 
   const sendMessage = useCallback(async (content: string) => {
     if (!content.trim() || isLoading) return
@@ -117,6 +213,6 @@ export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
     clearError,
     sessionId,
     isOpen,
-    setIsOpen
+    setIsOpen: handleSetIsOpen
   }
 }

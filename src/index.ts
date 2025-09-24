@@ -6,6 +6,9 @@ export { EmbeddedChat } from './components/EmbeddedChat'
 export { FloatingChat } from './components/FloatingChat'
 export { InlineChat } from './components/InlineChat'
 
+// Conversation components (for auto-scroll functionality)
+export { Conversation, ConversationContent, ConversationScrollButton } from './components/Conversation'
+
 // UI Components
 export { MarkdownRenderer } from './components/MarkdownRenderer'
 

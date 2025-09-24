@@ -5,6 +5,7 @@ import { StickToBottom, useStickToBottomContext } from 'use-stick-to-bottom'
 
 interface ConversationProps {
   className?: string
+  style?: React.CSSProperties
   children: React.ReactNode
 }
 
@@ -70,10 +71,11 @@ const ScrollButton = styled.button`
   }
 `
 
-export function Conversation({ className, children }: ConversationProps) {
+export function Conversation({ className, style, children }: ConversationProps) {
   return (
     <StyledStickToBottom
       className={className}
+      style={style}
       initial="smooth"
       resize="smooth"
       role="log"

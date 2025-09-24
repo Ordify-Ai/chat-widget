@@ -70,6 +70,8 @@ export interface OrdifyConfig {
   buttonStyle?: CSSProperties
   buttonText?: string // Added for customizable button text
   chatWindowStyle?: CSSProperties
+  // Initial context injection
+  initialContext?: string // Optional context to inject when chat starts (e.g., customer info)
   // Callbacks
   onMessage?: (message: Message) => void
   onError?: (error: Error) => void
