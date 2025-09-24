@@ -3,6 +3,13 @@ import styled from 'styled-components'
 // Base chat widget container
 export const ChatWidget = styled.div`
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  
+  @media (prefers-color-scheme: dark) {
+    background-color: #1f2937;
+    border-color: #374151;
+  }
 `
 
 // Chat message base styles
@@ -14,15 +21,27 @@ export const ChatMessage = styled.div<{ isUser: boolean }>`
   word-break: break-word;
   margin-left: ${props => props.isUser ? 'auto' : '0'};
   margin-right: ${props => props.isUser ? '0' : 'auto'};
+  line-height: 1.5;
   
   /* User message styles */
   background-color: ${props => props.isUser ? '#e5e7eb' : 'transparent'};
   color: ${props => props.isUser ? '#111827' : '#111827'};
   
+  /* Ensure bold text has proper contrast */
+  strong, b {
+    font-weight: 600;
+    color: inherit;
+  }
+  
   /* Dark mode support */
   @media (prefers-color-scheme: dark) {
     background-color: ${props => props.isUser ? '#374151' : 'transparent'};
     color: ${props => props.isUser ? '#f9fafb' : '#f9fafb'};
+    
+    strong, b {
+      color: #ffffff;
+      font-weight: 700;
+    }
   }
 `
 
@@ -348,20 +367,23 @@ export const ResizeHandle = styled.div<{ position: string }>`
   ${props => props.position === 'top' ? 'top: 0;' : 'bottom: 0;'}
   left: 0;
   right: 0;
-  height: 4px;
-  background: #e5e7eb;
+  height: 6px;
+  background: linear-gradient(90deg, #e5e7eb 0%, #3b82f6 50%, #e5e7eb 100%);
   cursor: ${props => props.position === 'top' ? 'ns-resize' : 'ns-resize'};
   border-radius: ${props => props.position === 'top' ? '8px 8px 0 0' : '0 0 8px 8px'};
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
   
   &:hover {
-    background: #3b82f6;
+    opacity: 1;
+    background: linear-gradient(90deg, #3b82f6 0%, #1d4ed8 50%, #3b82f6 100%);
   }
   
   @media (prefers-color-scheme: dark) {
-    background: #374151;
+    background: linear-gradient(90deg, #374151 0%, #3b82f6 50%, #374151 100%);
     
     &:hover {
-      background: #3b82f6;
+      background: linear-gradient(90deg, #3b82f6 0%, #1d4ed8 50%, #3b82f6 100%);
     }
   }
 `

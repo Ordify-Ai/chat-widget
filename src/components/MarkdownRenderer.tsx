@@ -31,7 +31,8 @@ const StyledStrong = styled.strong`
   color: #111827;
 
   @media (prefers-color-scheme: dark) {
-    color: #f9fafb;
+    color: #ffffff;
+    font-weight: 700;
   }
 `
 

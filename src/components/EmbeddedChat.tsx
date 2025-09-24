@@ -50,8 +50,6 @@ export function EmbeddedChat({ config, chat }: EmbeddedChatProps) {
         height: config.height,
         display: 'flex',
         flexDirection: 'column',
-        backgroundColor: 'white',
-        border: '1px solid #e5e7eb',
         borderRadius: '8px'
       }}
     >
