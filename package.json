@@ -1,6 +1,6 @@
 {
   "name": "@ordify-ai/chat-widget",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A professional React chat widget for integrating Ordify AI agents into applications with minimal setup.",
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
