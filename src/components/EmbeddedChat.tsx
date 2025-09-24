@@ -23,7 +23,21 @@ interface EmbeddedChatProps {
 export function EmbeddedChat({ config, chat }: EmbeddedChatProps) {
   const { messages, sendMessage, isLoading, error } = chat
   const [inputValue, setInputValue] = React.useState('')
+  const [isDarkMode, setIsDarkMode] = React.useState(false)
   const inputRef = React.useRef<HTMLTextAreaElement>(null)
+
+  // Detect dark mode
+  React.useEffect(() => {
+    const checkDarkMode = () => {
+      setIsDarkMode(window.matchMedia('(prefers-color-scheme: dark)').matches)
+    }
+    
+    checkDarkMode()
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+    mediaQuery.addEventListener('change', checkDarkMode)
+    
+    return () => mediaQuery.removeEventListener('change', checkDarkMode)
+  }, [])
 
   const handleSendMessage = async () => {
     if (!inputValue.trim() || isLoading) return
@@ -46,6 +60,7 @@ export function EmbeddedChat({ config, chat }: EmbeddedChatProps) {
 
   return (
     <ChatWidget
+      data-theme={isDarkMode ? 'dark' : 'light'}
       style={{ 
         height: config.height,
         display: 'flex',

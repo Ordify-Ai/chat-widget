@@ -6,7 +6,14 @@ export const ChatWidget = styled.div`
   background-color: white;
   border: 1px solid #e5e7eb;
   
+  /* Try both media query approaches */
   @media (prefers-color-scheme: dark) {
+    background-color: #1f2937;
+    border-color: #374151;
+  }
+  
+  /* Alternative approach using data attribute */
+  &[data-theme="dark"] {
     background-color: #1f2937;
     border-color: #374151;
   }
