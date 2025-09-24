@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import styled from 'styled-components'
@@ -5,6 +6,61 @@ import styled from 'styled-components'
 interface MarkdownRendererProps {
   content: string
   className?: string
+}
+
+// SSR-safe wrapper to prevent document access during server-side rendering
+const SSRMarkdownRenderer = ({ content, className }: MarkdownRendererProps) => {
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+
+  // During SSR, render plain text to avoid document access
+  if (!isClient) {
+    return (
+      <MarkdownContainer className={className}>
+        {content}
+      </MarkdownContainer>
+    )
+  }
+
+  // Client-side rendering with full markdown support
+  return (
+    <MarkdownContainer className={className}>
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
+        components={{
+          p: ({ children }) => <StyledP>{children}</StyledP>,
+          strong: ({ children }) => <StyledStrong>{children}</StyledStrong>,
+          em: ({ children }) => <StyledEm>{children}</StyledEm>,
+          code: ({ children, className }) => {
+            const isInline = !className
+            return <StyledCode $isInline={isInline}>{children}</StyledCode>
+          },
+          pre: ({ children }) => <StyledPre>{children}</StyledPre>,
+          ul: ({ children }) => <StyledUl>{children}</StyledUl>,
+          ol: ({ children }) => <StyledOl>{children}</StyledOl>,
+          li: ({ children }) => <StyledLi>{children}</StyledLi>,
+          blockquote: ({ children }) => <StyledBlockquote>{children}</StyledBlockquote>,
+          h1: ({ children }) => <StyledH1>{children}</StyledH1>,
+          h2: ({ children }) => <StyledH2>{children}</StyledH2>,
+          h3: ({ children }) => <StyledH3>{children}</StyledH3>,
+          h4: ({ children }) => <StyledH4>{children}</StyledH4>,
+          h5: ({ children }) => <StyledH5>{children}</StyledH5>,
+          h6: ({ children }) => <StyledH6>{children}</StyledH6>,
+          hr: () => <StyledHr />,
+          a: ({ children, href }) => (
+            <StyledA href={href} target="_blank" rel="noopener noreferrer">
+              {children}
+            </StyledA>
+          ),
+        }}
+      >
+        {content}
+      </ReactMarkdown>
+    </MarkdownContainer>
+  )
 }
 
 const MarkdownContainer = styled.div`
@@ -31,7 +87,8 @@ const StyledStrong = styled.strong`
   color: #111827;
 
   @media (prefers-color-scheme: dark) {
-    color: #f9fafb;
+    color: #ffffff;
+    font-weight: 700;
   }
 `
 
@@ -214,39 +271,5 @@ const StyledA = styled.a`
 `
 
 export function MarkdownRenderer({ content, className }: MarkdownRendererProps) {
-  return (
-    <MarkdownContainer className={className}>
-      <ReactMarkdown
-        remarkPlugins={[remarkGfm]}
-        components={{
-          p: ({ children }) => <StyledP>{children}</StyledP>,
-          strong: ({ children }) => <StyledStrong>{children}</StyledStrong>,
-          em: ({ children }) => <StyledEm>{children}</StyledEm>,
-          code: ({ children, className }) => {
-            const isInline = !className
-            return <StyledCode $isInline={isInline}>{children}</StyledCode>
-          },
-          pre: ({ children }) => <StyledPre>{children}</StyledPre>,
-          ul: ({ children }) => <StyledUl>{children}</StyledUl>,
-          ol: ({ children }) => <StyledOl>{children}</StyledOl>,
-          li: ({ children }) => <StyledLi>{children}</StyledLi>,
-          blockquote: ({ children }) => <StyledBlockquote>{children}</StyledBlockquote>,
-          h1: ({ children }) => <StyledH1>{children}</StyledH1>,
-          h2: ({ children }) => <StyledH2>{children}</StyledH2>,
-          h3: ({ children }) => <StyledH3>{children}</StyledH3>,
-          h4: ({ children }) => <StyledH4>{children}</StyledH4>,
-          h5: ({ children }) => <StyledH5>{children}</StyledH5>,
-          h6: ({ children }) => <StyledH6>{children}</StyledH6>,
-          hr: () => <StyledHr />,
-          a: ({ children, href }) => (
-            <StyledA href={href} target="_blank" rel="noopener noreferrer">
-              {children}
-            </StyledA>
-          ),
-        }}
-      >
-        {content}
-      </ReactMarkdown>
-    </MarkdownContainer>
-  )
+  return <SSRMarkdownRenderer content={content} className={className} />
 }
