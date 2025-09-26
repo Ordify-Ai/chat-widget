@@ -1,5 +1,5 @@
 <template>
-  <ChatHeader :primaryColor="primaryColor">
+  <StyledChatHeader :primaryColor="primaryColor">
     <div class="header-content">
       <div class="font-medium">{{ chatName || 'Chat Assistant' }}</div>
     </div>
@@ -22,16 +22,16 @@
         </svg>
       </button>
     </div>
-  </ChatHeader>
+  </StyledChatHeader>
 </template>
 
 <script>
-import { ChatHeader } from './styled/ChatComponents'
+import { ChatHeader as StyledChatHeader } from './styled/ChatComponents'
 
 export default {
   name: 'ChatHeader',
   components: {
-    ChatHeader,
+    StyledChatHeader,
   },
   props: {
     chatName: {

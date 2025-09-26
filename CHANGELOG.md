@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.20] - 2025-01-27
+
+### Fixed
+- **BREAKING**: Moved `styled-components` from dependencies to peerDependencies to prevent React context conflicts
+- Fixed `ReactCurrentOwner` error that occurred when multiple styled-components instances were present
+- Added `@types/styled-components` and `babel-plugin-styled-components` to devDependencies for development
+
+### Changed
+- Applications using this widget must now install `styled-components` as a direct dependency
+- This ensures only one styled-components instance exists, preventing React context conflicts
+
 ## [1.0.0] - 2024-01-16
 
 ### Added

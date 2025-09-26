@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue 2 Chat Widget Demo</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+        .header p {
+            color: #4a5568;
+            margin-bottom: 20px;
+        }
+        .config-section {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #2d3748;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #3182ce;
+            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-right: 10px;
+        }
+        .btn-primary {
+            background: #3182ce;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #2c5aa0;
+        }
+        .btn-secondary {
+            background: #718096;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background: #4a5568;
+        }
+        .demo-section {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .demo-section h2 {
+            color: #2d3748;
+            margin-bottom: 15px;
+        }
+        .chat-container {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            height: 400px;
+            overflow: hidden;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+        .status.success {
+            background: #f0fff4;
+            border: 1px solid #9ae6b4;
+            color: #22543d;
+        }
+        .status.error {
+            background: #fed7d7;
+            border: 1px solid #feb2b2;
+            color: #742a2a;
+        }
+        .status.info {
+            background: #ebf8ff;
+            border: 1px solid #90cdf4;
+            color: #2a4365;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="container">
+            <div class="header">
+                <h1>Vue 2 Chat Widget Demo 1</h1>
+                <p>Test the Ordify Chat Widget with your own API credentials</p>
+            </div>
+
+            <!-- Configuration Section -->
+            <div class="config-section">
+                <h2>Configuration</h2>
+                <p>Enter your Ordify credentials to test the chat widget:</p>
+                
+                <div v-if="error" class="status error">
+                    {{ error }}
+                </div>
+                
+                <div class="form-group">
+                    <label for="agentId">Agent ID *</label>
+                    <input 
+                        id="agentId"
+                        type="text" 
+                        v-model="config.agentId" 
+                        placeholder="Enter your agent ID"
+                    />
+                </div>
+                
+                <div class="form-group">
+                    <label for="apiKey">API Key *</label>
+                    <input 
+                        id="apiKey"
+                        type="password" 
+                        v-model="config.apiKey" 
+                        placeholder="Enter your API key"
+                    />
+                </div>
+                
+                <div class="form-group">
+                    <label for="apiBaseUrl">API Base URL</label>
+                    <input 
+                        id="apiBaseUrl"
+                        type="text" 
+                        v-model="config.apiBaseUrl" 
+                        placeholder="https://api.ordify.ai"
+                    />
+                </div>
+                
+                <button @click="saveConfig" class="btn btn-primary">Save Configuration</button>
+                <button @click="clearConfig" class="btn btn-secondary">Clear Configuration</button>
+                
+                <div v-if="isConfigured" class="status success">
+                    ✅ Configuration saved! The chat widgets below are now live and functional.
+                </div>
+                
+                <div v-if="sessionId" class="status info">
+                    <strong>🎉 Session Created!</strong><br>
+                    <strong>Session ID:</strong> {{ sessionId }}
+                </div>
+            </div>
+
+            <!-- Demo Sections -->
+            <div v-if="!isConfigured" class="demo-section">
+                <h2>Ready to Test?</h2>
+                <p>Please configure your credentials above to test the live chat widgets.</p>
+                <p>You'll need:</p>
+                <ul>
+                    <li>Your Ordify Agent ID</li>
+                    <li>Your Ordify API Key</li>
+                </ul>
+            </div>
+
+            <div v-else>
+                <!-- Floating Chat Demo -->
+                <div class="demo-section">
+                    <h2>Floating Chat</h2>
+                    <p>A floating chat button that appears in the bottom-right corner of the page.</p>
+                    <div class="status info">
+                        💡 Look for the blue "AI Chat" button in the bottom-right corner to test the floating chat widget!
+                    </div>
+                    <div class="chat-container" style="height: 200px; display: flex; align-items: center; justify-content: center; background: #f7fafc;">
+                        <p style="color: #718096;">The floating chat button appears in the bottom-right corner of the entire page!</p>
+                    </div>
+                </div>
+
+                <!-- Embedded Chat Demo -->
+                <div class="demo-section">
+                    <h2>Embedded Chat</h2>
+                    <p>A full-page chat interface embedded directly in your content.</p>
+                    <div class="chat-container">
+                        <ordify-chat
+                            :agent-id="config.agentId"
+                            :api-key="config.apiKey"
+                            :api-base-url="config.apiBaseUrl"
+                            mode="embedded"
+                            height="100%"
+                            chat-name="Support Assistant"
+                            primary-color="#059669"
+                            placeholder="How can I help you today?"
+                            @session-created="onSessionCreated"
+                        />
+                    </div>
+                </div>
+
+                <!-- Inline Chat Demo -->
+                <div class="demo-section">
+                    <h2>Inline Chat with Initial Message</h2>
+                    <p>A compact chat widget with an initial message feature.</p>
+                    
+                    <div v-if="!inlineChatMounted" class="status info">
+                        <h4>Set Initial Message</h4>
+                        <p>Enter a message that will be automatically sent when the chat widget loads.</p>
+                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                            <input 
+                                type="text" 
+                                v-model="inlineInitialMessage"
+                                @keydown.enter="setInitialMessage"
+                                placeholder="e.g., Hello! I'm interested in your products..."
+                                style="flex: 1; padding: 8px; border: 1px solid #e2e8f0; border-radius: 4px;"
+                            />
+                            <button 
+                                @click="setInitialMessage"
+                                :disabled="!inlineInitialMessage.trim()"
+                                class="btn btn-primary"
+                            >
+                                Set
+                            </button>
+                        </div>
+                    </div>
+
+                    <div v-if="inlineChatMounted" class="status success">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <strong>Chat Widget Active</strong><br>
+                                <small>Initial message: "{{ inlineInitialMessage }}"</small>
+                            </div>
+                            <button @click="resetInlineChat" class="btn btn-secondary">Reset</button>
+                        </div>
+                    </div>
+
+                    <div class="chat-container">
+                        <ordify-chat
+                            v-if="inlineChatMounted"
+                            :agent-id="config.agentId"
+                            :api-key="config.apiKey"
+                            :api-base-url="config.apiBaseUrl"
+                            mode="embedded"
+                            height="100%"
+                            chat-name="Product Assistant"
+                            primary-color="#8b5cf6"
+                            placeholder="Ask about our products..."
+                            @session-created="onSessionCreated"
+                            :initial-message="inlineInitialMessage"
+                        />
+                        <div v-if="!inlineChatMounted" style="height: 100%; display: flex; align-items: center; justify-content: center; background: #f7fafc;">
+                            <div style="text-align: center; color: #718096;">
+                                <div style="font-size: 48px; margin-bottom: 10px;">💬</div>
+                                <p>Set an initial message above to start the chat</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Floating Chat Widget -->
+        <ordify-chat
+            v-if="isConfigured"
+            :agent-id="config.agentId"
+            :api-key="config.apiKey"
+            :api-base-url="config.apiBaseUrl"
+            mode="floating"
+            position="bottom-right"
+            button-text="AI Chat"
+            chat-name="Ordify Assistant"
+            @session-created="onSessionCreated"
+        />
+    </div>
+
+    <script type="module">
+        import Vue from 'vue'
+        import { OrdifyChat } from './dist/index.esm.js'
+        
+        Vue.component('ordify-chat', OrdifyChat)
+        
+        new Vue({
+            el: '#app',
+            data: {
+                config: {
+                    agentId: '',
+                    apiKey: '',
+                    apiBaseUrl: 'https://api.ordify.ai'
+                },
+                isConfigured: false,
+                error: '',
+                sessionId: null,
+                inlineInitialMessage: '',
+                inlineChatMounted: false
+            },
+            methods: {
+                saveConfig() {
+                    if (!this.config.agentId || !this.config.apiKey) {
+                        this.error = 'Please enter both Agent ID and API Key'
+                        return
+                    }
+                    localStorage.setItem('ordify-widget-demo-config', JSON.stringify(this.config))
+                    this.isConfigured = true
+                    this.error = ''
+                },
+                clearConfig() {
+                    localStorage.removeItem('ordify-widget-demo-config')
+                    this.config.agentId = ''
+                    this.config.apiKey = ''
+                    this.config.apiBaseUrl = 'https://api.ordify.ai'
+                    this.isConfigured = false
+                    this.error = ''
+                    this.sessionId = null
+                },
+                onSessionCreated(id) {
+                    this.sessionId = id
+                    console.log('Session created:', id)
+                },
+                setInitialMessage() {
+                    if (this.inlineInitialMessage.trim()) {
+                        this.inlineChatMounted = true
+                    }
+                },
+                resetInlineChat() {
+                    this.inlineChatMounted = false
+                    this.inlineInitialMessage = ''
+                    this.sessionId = null
+                }
+            },
+            mounted() {
+                // Load saved config from localStorage
+                const saved = localStorage.getItem('ordify-widget-demo-config')
+                if (saved) {
+                    try {
+                        const parsed = JSON.parse(saved)
+                        this.config.agentId = parsed.agentId || ''
+                        this.config.apiKey = parsed.apiKey || ''
+                        this.config.apiBaseUrl = parsed.apiBaseUrl || 'https://api.ordify.ai'
+                        this.isConfigured = true
+                    } catch (e) {
+                        console.error('Failed to parse saved config:', e)
+                    }
+                }
+            }
+        })
+    </script>
+</body>
+</html>

@@ -11,6 +11,10 @@ export default defineConfig({
       exclude: ['**/*.stories.*', '**/*.test.*']
     })
   ],
+  server: {
+    port: 3002,
+    open: true
+  },
   build: {
     lib: {
       entry: resolve(__dirname, 'src/index.js'),
@@ -29,7 +33,8 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@': resolve(__dirname, './src')
+      '@': resolve(__dirname, './src'),
+      'vue': 'vue/dist/vue.esm.js'
     }
   }
 })

@@ -1,6 +1,6 @@
 {
   "name": "ordify-chat-widget",
-  "version": "1.0.19",
+  "version": "1.0.20",
   "description": "A professional React chat widget for integrating Ordify AI agents into applications with minimal setup.",
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
@@ -61,25 +61,28 @@
   "homepage": "https://github.com/ordify-ai/chat-widget#readme",
   "peerDependencies": {
     "react": "^18.0.0",
-    "react-dom": "^18.0.0"
+    "react-dom": "^18.0.0",
+    "styled-components": "^6.1.19"
   },
   "dependencies": {
     "lucide-react": "^0.544.0",
     "markdown-to-jsx": "^7.7.13",
-    "styled-components": "^6.1.19",
     "use-stick-to-bottom": "^1.1.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",
+    "@types/styled-components": "^5.1.34",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
     "@vitejs/plugin-react": "^4.2.1",
+    "babel-plugin-styled-components": "^2.1.4",
     "eslint": "^8.55.0",
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-react-refresh": "^0.4.21",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "styled-components": "^6.1.19",
     "typescript": "^5.2.2",
     "vite": "^5.0.8",
     "vite-plugin-dts": "^3.6.4",

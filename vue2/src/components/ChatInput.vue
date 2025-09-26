@@ -1,5 +1,5 @@
 <template>
-  <ChatInput>
+  <StyledChatInput>
     <ProfessionalInput
       ref="input"
       :value="inputValue"
@@ -8,25 +8,28 @@
       @input="handleInput"
       @keydown="handleKeyDown"
     />
-    <SendButton
+    <StyledSendButton
       @click="handleSendMessage"
       :disabled="isLoading || !inputValue.trim()"
     >
       <Send :size="16" />
-    </SendButton>
-  </ChatInput>
+    </StyledSendButton>
+  </StyledChatInput>
 </template>
 
 <script>
-import { ChatInput, SendButton } from './styled/ChatComponents'
+import {
+  ChatInput as StyledChatInput,
+  SendButton as StyledSendButton,
+} from './styled/ChatComponents'
 import ProfessionalInput from './ProfessionalInput.vue'
 import { Send } from 'lucide-vue'
 
 export default {
   name: 'ChatInput',
   components: {
-    ChatInput,
-    SendButton,
+    StyledChatInput,
+    StyledSendButton,
     ProfessionalInput,
     Send,
   },

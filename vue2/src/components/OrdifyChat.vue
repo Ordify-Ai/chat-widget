@@ -2,9 +2,28 @@
   <FloatingChat
     v-if="config.mode === 'floating'"
     :config="config"
-    :chat="chat"
+    :chat="{
+      messages: messages,
+      isLoading: isLoading,
+      error: error,
+      isOpen: isOpen,
+      sendMessage: sendMessage,
+      setIsOpen: setIsOpen,
+    }"
   />
-  <EmbeddedChat v-else :config="config" :chat="chat" @close="handleClose" />
+  <EmbeddedChat
+    v-else
+    :config="config"
+    :chat="{
+      messages: messages,
+      isLoading: isLoading,
+      error: error,
+      isOpen: isOpen,
+      sendMessage: sendMessage,
+      setIsOpen: setIsOpen,
+    }"
+    @close="handleClose"
+  />
 </template>
 
 <script>
