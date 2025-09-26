@@ -1,7 +1,7 @@
 {
-  "name": "ordify-chat-widget",
-  "version": "1.0.18",
-  "description": "A professional React chat widget for integrating Ordify AI agents into applications with minimal setup.",
+  "name": "ordify-chat-widget-vue2",
+  "version": "1.0.0",
+  "description": "A professional Vue 2 chat widget for integrating Ordify AI agents into applications with minimal setup.",
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
@@ -20,26 +20,21 @@
   ],
   "scripts": {
     "dev": "vite",
-    "build": "npm run build:react && npm run build:vue2",
-    "build:react": "tsc && vite build",
-    "build:vue2": "cd vue2 && npm run build",
+    "build": "tsc && vite build",
     "preview": "vite preview",
     "test": "vitest",
-    "test:all": "npm run test:react && npm run test:vue2",
-    "test:react": "vitest",
-    "test:vue2": "cd vue2 && npm test",
-    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "lint": "eslint src --ext ts,js,vue --report-unused-disable-directives --max-warnings 0",
     "type-check": "tsc --noEmit",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
-    "react",
+    "vue2",
+    "vue",
     "chat",
     "ai",
     "ordify",
     "widget",
     "typescript",
-    "shadcn-ui",
     "chatbot",
     "assistant",
     "conversation"
@@ -60,29 +55,26 @@
   },
   "homepage": "https://github.com/ordify-ai/chat-widget#readme",
   "peerDependencies": {
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0"
+    "vue": "^2.6.0"
   },
   "dependencies": {
-    "lucide-react": "^0.544.0",
+    "lucide-vue": "^0.517.0",
     "markdown-to-jsx": "^7.7.13",
-    "styled-components": "^6.1.19",
+    "vue-styled-components": "^1.0.0",
     "use-stick-to-bottom": "^1.1.1"
   },
   "devDependencies": {
-    "@types/react": "^18.2.43",
-    "@types/react-dom": "^18.2.17",
+    "@types/node": "^20.0.0",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
-    "@vitejs/plugin-react": "^4.2.1",
+    "@vitejs/plugin-vue2": "^2.3.1",
     "eslint": "^8.55.0",
-    "eslint-plugin-react-hooks": "^4.6.2",
-    "eslint-plugin-react-refresh": "^0.4.21",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "eslint-plugin-vue": "^9.0.0",
     "typescript": "^5.2.2",
     "vite": "^5.0.8",
     "vite-plugin-dts": "^3.6.4",
-    "vitest": "^1.0.4"
+    "vitest": "^1.0.4",
+    "vue": "^2.7.14",
+    "vue-template-compiler": "^2.7.14"
   }
 }

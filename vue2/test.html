@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue 2 Chat Widget Test</title>
+    <script src="https://unpkg.com/vue@2.7.14/dist/vue.min.js"></script>
+    <script src="./dist/index.cjs.js"></script>
+</head>
+<body>
+    <div id="app">
+        <h1>Vue 2 Chat Widget Test</h1>
+        <div style="margin: 20px 0;">
+            <button @click="showChat = !showChat">
+                {{ showChat ? 'Hide' : 'Show' }} Chat
+            </button>
+        </div>
+        
+        <div v-if="showChat">
+            <ordify-chat
+                agent-id="test-agent"
+                api-key="test-key"
+                api-base-url="https://api.ordify.ai"
+                mode="embedded"
+                chat-name="Test Chat"
+                height="400px"
+                @session-created="onSessionCreated"
+            />
+        </div>
+        
+        <div v-if="sessionId" style="margin-top: 20px; padding: 10px; background: #f0f0f0; border-radius: 5px;">
+            <strong>Session ID:</strong> {{ sessionId }}
+        </div>
+    </div>
+
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                showChat: false,
+                sessionId: null
+            },
+            methods: {
+                onSessionCreated(id) {
+                    this.sessionId = id;
+                    console.log('Session created:', id);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled from 'vue-styled-components'
 
 // Base chat widget container
 export const ChatWidget = styled.div`
@@ -20,7 +20,7 @@ export const ChatWidget = styled.div`
 `
 
 // Chat message base styles
-export const ChatMessage = styled.div<{ $isUser: boolean }>`
+export const ChatMessage = styled.div`
   max-width: 80%;
   padding: 12px;
   border-radius: 8px;
@@ -150,7 +150,7 @@ export const SendButton = styled.button`
 `
 
 // Floating chat button
-export const FloatingButton = styled.button<{ $position: string }>`
+export const FloatingButton = styled.button`
   position: fixed;
   z-index: 50;
   height: 48px;
@@ -167,58 +167,6 @@ export const FloatingButton = styled.button<{ $position: string }>`
   font-weight: 500;
   font-size: 14px;
   transition: all 0.2s ease;
-  
-  /* Responsive positioning */
-  ${props => {
-    switch (props.$position) {
-      case 'bottom-left':
-        return `
-          bottom: max(12px, 1vw);
-          left: max(12px, 1vw);
-        `
-      case 'top-right':
-        return `
-          top: max(12px, 1vw);
-          right: max(12px, 1vw);
-        `
-      case 'top-left':
-        return `
-          top: max(12px, 1vw);
-          left: max(12px, 1vw);
-        `
-      default:
-        return `
-          bottom: max(12px, 1vw);
-          right: max(12px, 1vw);
-        `
-    }
-  }}
-  
-  /* Responsive sizing for small screens */
-  @media (max-width: 480px) {
-    height: 44px;
-    padding: 0 12px;
-    font-size: 13px;
-    gap: 6px;
-    
-    .icon-container {
-      width: 20px;
-      height: 20px;
-    }
-  }
-  
-  /* Ensure button is always visible on very small screens */
-  @media (max-width: 320px) {
-    height: 40px;
-    padding: 0 10px;
-    font-size: 12px;
-    gap: 4px;
-    
-    .icon-container {
-      width: 18px;
-      height: 18px;
-    }
-  }
   
   &:hover {
     background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
@@ -237,7 +185,7 @@ export const FloatingButton = styled.button<{ $position: string }>`
 `
 
 // Chat window container
-export const ChatWindow = styled.div<{ $position: string }>`
+export const ChatWindow = styled.div`
   position: fixed;
   z-index: 50;
   width: 320px;
@@ -248,29 +196,17 @@ export const ChatWindow = styled.div<{ $position: string }>`
   display: flex;
   flex-direction: column;
   
-  /* Responsive positioning */
+  /* Position based on prop */
   ${props => {
     switch (props.$position) {
       case 'bottom-left':
-        return `
-          bottom: max(12px, 1vw);
-          left: max(12px, 1vw);
-        `
+        return 'bottom: 24px; left: 24px;'
       case 'top-right':
-        return `
-          top: max(12px, 1vw);
-          right: max(12px, 1vw);
-        `
+        return 'top: 24px; right: 24px;'
       case 'top-left':
-        return `
-          top: max(12px, 1vw);
-          left: max(12px, 1vw);
-        `
+        return 'top: 24px; left: 24px;'
       default:
-        return `
-          bottom: max(12px, 1vw);
-          right: max(12px, 1vw);
-        `
+        return 'bottom: 24px; right: 24px;'
     }
   }}
   
@@ -279,24 +215,13 @@ export const ChatWindow = styled.div<{ $position: string }>`
     border-color: #374151;
   }
   
-  /* Responsive width adjustments */
-  @media (max-width: 480px) {
-    width: calc(100vw - max(24px, 2vw));
-    max-width: 320px;
-  }
-  
-  @media (max-width: 320px) {
-    width: calc(100vw - max(20px, 2vw));
-    max-width: 300px;
-  }
-  
   @media (min-width: 640px) {
     width: 384px;
   }
 `
 
 // Chat header
-export const ChatHeader = styled.div<{ primaryColor?: string }>`
+export const ChatHeader = styled.div`
   padding: 12px 16px;
   background: ${props => props.primaryColor || '#3b82f6'};
   color: white;
@@ -420,7 +345,7 @@ export const LoadingDots = styled.div`
 `
 
 // Timestamp
-export const Timestamp = styled.div<{ $isUser: boolean }>`
+export const Timestamp = styled.div`
   font-size: 12px;
   margin-top: 4px;
   color: ${props => props.$isUser ? '#6b7280' : '#6b7280'};
@@ -444,7 +369,7 @@ export const ErrorMessage = styled.div`
 `
 
 // Resize handle
-export const ResizeHandle = styled.div<{ $position: string }>`
+export const ResizeHandle = styled.div`
   position: absolute;
   ${props => props.$position === 'top' ? 'top: 0;' : 'bottom: 0;'}
   left: 0;

@@ -52,6 +52,7 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
   if (!isOpen) {
     return (
       <FloatingButton
+        $position={config.position || 'bottom-right'}
         onClick={() => setIsOpen(true)}
         style={config.buttonStyle}
         aria-label="Open chat"
