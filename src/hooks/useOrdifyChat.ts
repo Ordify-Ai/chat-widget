@@ -49,6 +49,11 @@ export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
         const session = await apiClientRef.current!.createSession()
         currentSessionId = session.id
         setSessionId(currentSessionId)
+        
+        // Call onSessionCreated callback if provided
+        if (config.onSessionCreated) {
+          config.onSessionCreated(currentSessionId)
+        }
       }
 
       // Send message and handle streaming response

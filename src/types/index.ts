@@ -74,6 +74,7 @@ export interface OrdifyConfig {
   onMessage?: (message: Message) => void
   onError?: (error: Error) => void
   onClose?: () => void
+  onSessionCreated?: (sessionId: string) => void
 }
 
 export interface UseOrdifyChatReturn {
