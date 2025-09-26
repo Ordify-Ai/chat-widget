@@ -12,6 +12,7 @@ export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
   const [hasInitialized, setHasInitialized] = useState(false)
   
   const apiClientRef = useRef<OrdifyApiClient | null>(null)
+  const initialMessageSentRef = useRef(false)
 
   // Initialize API client
   if (!apiClientRef.current) {
@@ -117,9 +118,10 @@ export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
 
   // Auto-send initial message on mount
   useEffect(() => {
-    if (config.initialMessage && !hasInitialized && !isLoading) {
+    if (config.initialMessage && !hasInitialized && !isLoading && !initialMessageSentRef.current) {
       console.log('🚀 Auto-sending initial message:', config.initialMessage)
       setHasInitialized(true)
+      initialMessageSentRef.current = true
       // Use setTimeout to avoid dependency loop
       setTimeout(() => {
         sendMessage(config.initialMessage!)
