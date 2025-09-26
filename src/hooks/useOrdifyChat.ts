@@ -1,7 +1,7 @@
 import { Message, OrdifyConfig, UseOrdifyChatReturn } from '@/types'
 import { generateId } from '@/utils'
 import { OrdifyApiClient, parseStreamingResponse } from '@/utils/api'
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
   const [messages, setMessages] = useState<Message[]>([])
@@ -9,6 +9,7 @@ export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
   const [error, setError] = useState<string | null>(null)
   const [sessionId, setSessionId] = useState<string | null>(null)
   const [isOpen, setIsOpen] = useState(false)
+  const [hasInitialized, setHasInitialized] = useState(false)
   
   const apiClientRef = useRef<OrdifyApiClient | null>(null)
 
@@ -112,7 +113,19 @@ export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
     } finally {
       setIsLoading(false)
     }
-  }, [config, isLoading, sessionId])
+  }, [config.onSessionCreated, config.onMessage, config.onError, isLoading, sessionId])
+
+  // Auto-send initial message on mount
+  useEffect(() => {
+    if (config.initialMessage && !hasInitialized && !isLoading) {
+      console.log('🚀 Auto-sending initial message:', config.initialMessage)
+      setHasInitialized(true)
+      // Use setTimeout to avoid dependency loop
+      setTimeout(() => {
+        sendMessage(config.initialMessage!)
+      }, 0)
+    }
+  }, [config.initialMessage, hasInitialized, isLoading, sendMessage])
 
   return {
     messages,

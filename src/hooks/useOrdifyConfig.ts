@@ -31,7 +31,9 @@ export function useOrdifyConfig(config: OrdifyConfig) {
       showHeader: config.showHeader !== false,
       onMessage: config.onMessage,
       onError: config.onError,
-      onClose: config.onClose
+      onClose: config.onClose,
+      onSessionCreated: config.onSessionCreated,
+      initialMessage: config.initialMessage
     }
   }, [config])
 }
