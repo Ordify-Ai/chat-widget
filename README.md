@@ -106,8 +106,26 @@ function App() {
 | `showHeader` | boolean | true | Show/hide chat header |
 | `height` | number | 400 | Initial chat height (px) |
 | `width` | string | "320px" | Chat width |
+| `onSessionCreated` | function | - | **Optional** - Callback when a new session is created with session ID |
+| `initialMessage` | string | - | **Optional** - Message to automatically send when chat loads |
 
-## 🎯 Theme-Aware Defaults
+## 🎯 Advanced Features
+
+### Session Management
+The `onSessionCreated` callback provides access to the auto-generated session ID when a new chat session is created. This is useful for:
+- **User tracking**: Associate chat sessions with specific users
+- **Analytics**: Track user engagement and conversation patterns
+- **Support**: Link chat sessions to customer support tickets
+- **Persistence**: Store session IDs for conversation history
+
+### Initial Message
+The `initialMessage` prop allows you to automatically send a message when the chat widget loads. This is perfect for:
+- **Product pages**: Pre-populate with product-specific questions
+- **Support**: Start with a greeting or help prompt
+- **Onboarding**: Guide new users with initial instructions
+- **A/B testing**: Test different conversation starters
+
+### Theme-Aware Defaults
 
 When no `primaryColor` is specified, the header automatically adapts:
 - **Light mode**: White background with dark text
@@ -157,6 +175,65 @@ export function ChatWidget() {
       mode="floating"
       position="bottom-right"
       buttonText="AI Chat"
+    />
+  )
+}
+```
+
+#### Session Management
+```tsx
+// components/ChatWithSessionTracking.tsx
+import { useState } from 'react'
+import { OrdifyChat } from 'ordify-chat-widget'
+
+export function ChatWithSessionTracking() {
+  const [sessionId, setSessionId] = useState<string | null>(null)
+
+  return (
+    <div>
+      {sessionId && (
+        <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+          <p className="text-sm text-blue-800">
+            <strong>Session ID:</strong> <code className="bg-blue-100 px-2 py-1 rounded text-xs">{sessionId}</code>
+          </p>
+        </div>
+      )}
+      
+      <OrdifyChat
+        agentId="your-agent-id"
+        apiKey="your-api-key"
+        apiBaseUrl="https://r.ordify.ai"
+        mode="floating"
+        onSessionCreated={(id) => {
+          setSessionId(id)
+          console.log('New session created:', id)
+          // Store in localStorage, send to analytics, etc.
+        }}
+      />
+    </div>
+  )
+}
+```
+
+#### Initial Message
+```tsx
+// components/ChatWithInitialMessage.tsx
+import { OrdifyChat } from 'ordify-chat-widget'
+
+export function ChatWithInitialMessage() {
+  return (
+    <OrdifyChat
+      agentId="your-agent-id"
+      apiKey="your-api-key"
+      apiBaseUrl="https://r.ordify.ai"
+      mode="embedded"
+      height="400px"
+      chatName="Product Assistant"
+      initialMessage="Hello! I'm interested in learning about your products."
+      onSessionCreated={(sessionId) => {
+        console.log('Chat started with session:', sessionId)
+        // Track user engagement
+      }}
     />
   )
 }
