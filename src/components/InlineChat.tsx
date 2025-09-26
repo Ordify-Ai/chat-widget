@@ -66,13 +66,13 @@ export function InlineChat({ config, chat }: InlineChatProps) {
               justifyContent: message.role === 'user' ? 'flex-end' : 'flex-start'
             }}
           >
-            <ChatMessage isUser={message.role === 'user'}>
+             <ChatMessage $isUser={message.role === 'user'}>
               {message.role === 'assistant' ? (
                 <MarkdownRenderer content={message.content} />
               ) : (
                 message.content
               )}
-              <Timestamp isUser={message.role === 'user'}>
+               <Timestamp $isUser={message.role === 'user'}>
                 {formatTime(message.timestamp)}
               </Timestamp>
             </ChatMessage>
@@ -81,7 +81,7 @@ export function InlineChat({ config, chat }: InlineChatProps) {
 
         {isLoading && (
           <div style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: '12px' }}>
-            <ChatMessage isUser={false}>
+             <ChatMessage $isUser={false}>
               <LoadingDots>
                 <div className="dot"></div>
                 <div className="dot"></div>

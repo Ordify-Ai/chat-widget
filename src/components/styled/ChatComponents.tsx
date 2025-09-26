@@ -20,19 +20,19 @@ export const ChatWidget = styled.div`
 `
 
 // Chat message base styles
-export const ChatMessage = styled.div<{ isUser: boolean }>`
+export const ChatMessage = styled.div<{ $isUser: boolean }>`
   max-width: 80%;
   padding: 12px;
   border-radius: 8px;
   font-size: 14px;
   word-break: break-word;
-  margin-left: ${props => props.isUser ? 'auto' : '0'};
-  margin-right: ${props => props.isUser ? '0' : 'auto'};
+  margin-left: ${props => props.$isUser ? 'auto' : '0'};
+  margin-right: ${props => props.$isUser ? '0' : 'auto'};
   line-height: 1.5;
   
   /* User message styles */
-  background-color: ${props => props.isUser ? '#e5e7eb' : 'transparent'};
-  color: ${props => props.isUser ? '#111827' : '#111827'};
+  background-color: ${props => props.$isUser ? '#e5e7eb' : 'transparent'};
+  color: ${props => props.$isUser ? '#111827' : '#111827'};
   
   /* Ensure bold text has proper contrast */
   strong, b {
@@ -42,8 +42,8 @@ export const ChatMessage = styled.div<{ isUser: boolean }>`
   
   /* Dark mode support */
   @media (prefers-color-scheme: dark) {
-    background-color: ${props => props.isUser ? '#374151' : 'transparent'};
-    color: ${props => props.isUser ? '#f9fafb' : '#f9fafb'};
+    background-color: ${props => props.$isUser ? '#374151' : 'transparent'};
+    color: ${props => props.$isUser ? '#f9fafb' : '#f9fafb'};
     
     strong, b {
       color: #ffffff;
@@ -185,7 +185,7 @@ export const FloatingButton = styled.button`
 `
 
 // Chat window container
-export const ChatWindow = styled.div<{ position: string }>`
+export const ChatWindow = styled.div<{ $position: string }>`
   position: fixed;
   z-index: 50;
   width: 320px;
@@ -198,7 +198,7 @@ export const ChatWindow = styled.div<{ position: string }>`
   
   /* Position based on prop */
   ${props => {
-    switch (props.position) {
+    switch (props.$position) {
       case 'bottom-left':
         return 'bottom: 24px; left: 24px;'
       case 'top-right':
@@ -345,13 +345,13 @@ export const LoadingDots = styled.div`
 `
 
 // Timestamp
-export const Timestamp = styled.div<{ isUser: boolean }>`
+export const Timestamp = styled.div<{ $isUser: boolean }>`
   font-size: 12px;
   margin-top: 4px;
-  color: ${props => props.isUser ? '#6b7280' : '#6b7280'};
+  color: ${props => props.$isUser ? '#6b7280' : '#6b7280'};
   
   @media (prefers-color-scheme: dark) {
-    color: ${props => props.isUser ? '#9ca3af' : '#9ca3af'};
+    color: ${props => props.$isUser ? '#9ca3af' : '#9ca3af'};
   }
 `
 
@@ -369,15 +369,15 @@ export const ErrorMessage = styled.div`
 `
 
 // Resize handle
-export const ResizeHandle = styled.div<{ position: string }>`
+export const ResizeHandle = styled.div<{ $position: string }>`
   position: absolute;
-  ${props => props.position === 'top' ? 'top: 0;' : 'bottom: 0;'}
+  ${props => props.$position === 'top' ? 'top: 0;' : 'bottom: 0;'}
   left: 0;
   right: 0;
   height: 6px;
   background: linear-gradient(90deg, #e5e7eb 0%, #3b82f6 50%, #e5e7eb 100%);
-  cursor: ${props => props.position === 'top' ? 'ns-resize' : 'ns-resize'};
-  border-radius: ${props => props.position === 'top' ? '8px 8px 0 0' : '0 0 8px 8px'};
+  cursor: ${props => props.$position === 'top' ? 'ns-resize' : 'ns-resize'};
+  border-radius: ${props => props.$position === 'top' ? '8px 8px 0 0' : '0 0 8px 8px'};
   opacity: 0.7;
   transition: opacity 0.2s ease;
   

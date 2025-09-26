@@ -68,7 +68,7 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
 
   return (
     <ChatWindow
-      position={config.position || 'bottom-right'}
+      $position={config.position || 'bottom-right'}
       style={{
         height: chatHeight,
         ...config.chatWindowStyle
@@ -77,7 +77,7 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
       {/* Resize handle at top */}
       {config.resizable !== false && (
         <StyledResizeHandle
-          position="top"
+          $position="top"
           onMouseDown={(e) => {
             e.preventDefault()
             const startY = e.clientY
@@ -131,13 +131,13 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
               justifyContent: message.role === 'user' ? 'flex-end' : 'flex-start'
             }}
           >
-            <ChatMessage isUser={message.role === 'user'}>
+             <ChatMessage $isUser={message.role === 'user'}>
               {message.role === 'assistant' ? (
                 <MarkdownRenderer content={message.content} />
               ) : (
                 message.content
               )}
-              <Timestamp isUser={message.role === 'user'}>
+               <Timestamp $isUser={message.role === 'user'}>
                 {formatTime(message.timestamp)}
               </Timestamp>
             </ChatMessage>
@@ -146,7 +146,7 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
 
         {isLoading && (
           <div style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: '16px' }}>
-            <ChatMessage isUser={false}>
+             <ChatMessage $isUser={false}>
               <LoadingDots>
                 <div className="dot"></div>
                 <div className="dot"></div>
