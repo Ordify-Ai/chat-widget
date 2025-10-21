@@ -11,12 +11,25 @@ function DemoApp() {
   // State for dynamic testing
   const [initialMessage, setInitialMessage] = useState("Hi")
   const [initialContext, setInitialContext] = useState("user_id: test123, page: /demo, name: Test User")
+  const [activeMessage, setActiveMessage] = useState("Hi")
+  const [activeContext, setActiveContext] = useState("user_id: test123, page: /demo, name: Test User")
   const [testKey, setTestKey] = useState(0) // Force re-render of widgets
+  const [widgetsMounted, setWidgetsMounted] = useState(false)
 
   const handleTestScenario = (message: string, context: string) => {
     setInitialMessage(message)
     setInitialContext(context)
+    setActiveMessage(message)
+    setActiveContext(context)
     setTestKey(prev => prev + 1) // Force widget re-render
+    setWidgetsMounted(true)
+  }
+
+  const handleApplySettings = () => {
+    setActiveMessage(initialMessage)
+    setActiveContext(initialContext)
+    setTestKey(prev => prev + 1) // Force widget re-render
+    setWidgetsMounted(true)
   }
 
   return (
@@ -74,7 +87,7 @@ function DemoApp() {
 
         <div style={{ marginBottom: '15px' }}>
           <h3>Quick Test Scenarios:</h3>
-          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '10px' }}>
             <button
               onClick={() => handleTestScenario("Hi", "user_id: test123, page: /demo, name: Test User")}
               style={{ padding: '8px 12px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
@@ -100,72 +113,113 @@ function DemoApp() {
               Message Only
             </button>
           </div>
+          
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+            <button
+              onClick={handleApplySettings}
+              style={{ 
+                padding: '10px 20px', 
+                backgroundColor: '#6f42c1', 
+                color: 'white', 
+                border: 'none', 
+                borderRadius: '4px', 
+                cursor: 'pointer',
+                fontWeight: 'bold'
+              }}
+            >
+              🚀 Apply Custom Settings
+            </button>
+            <span style={{ fontSize: '14px', color: '#666' }}>
+              Click to mount widgets with your custom settings
+            </span>
+          </div>
         </div>
 
         <div style={{ fontSize: '14px', color: '#666' }}>
-          <strong>Current Settings:</strong><br/>
+          <strong>Input Settings:</strong><br/>
           Message: "{initialMessage}"<br/>
-          Context: "{initialContext}"
+          Context: "{initialContext}"<br/><br/>
+          <strong>Active Settings:</strong><br/>
+          Message: "{activeMessage}"<br/>
+          Context: "{activeContext}"
         </div>
       </div>
       
-      <div style={{ marginBottom: '20px' }}>
-        <h2>Test 1: Floating Widget</h2>
-        <p>Button should show: "?"</p>
-        <p>Auto-scroll should work when new messages arrive</p>
-      </div>
+      {!widgetsMounted && (
+        <div style={{ 
+          marginBottom: '30px', 
+          padding: '20px', 
+          border: '2px dashed #ccc', 
+          borderRadius: '8px',
+          backgroundColor: '#f8f9fa',
+          textAlign: 'center'
+        }}>
+          <h2>🚀 Ready to Test!</h2>
+          <p>Configure your initial message and context above, then click "Apply Custom Settings" or use one of the quick test scenarios to mount the widgets.</p>
+        </div>
+      )}
 
-      <OrdifyChat
-        key={`floating-${testKey}`}
-        agentId={agentId}
-        apiKey={apiKey}
-        apiBaseUrl={apiBaseUrl}
-        mode="floating"
-        position="bottom-right"
-        buttonText={buttonText}
-        chatName="Floating Assistant"
-        placeholder="Test the floating widget"
-        initialMessage={initialMessage}
-        initialContext={initialContext}
-        onSessionCreated={(sessionId) => {
-          console.log('✅ Floating session created:', sessionId)
-        }}
-        onMessage={(message) => {
-          console.log('📨 Floating message received:', message)
-        }}
-        onError={(error) => {
-          console.error('❌ Floating chat error:', error)
-        }}
-      />
+      {widgetsMounted && (
+        <>
+          <div style={{ marginBottom: '20px' }}>
+            <h2>Test 1: Floating Widget</h2>
+            <p>Button should show: "?"</p>
+            <p>Auto-scroll should work when new messages arrive</p>
+          </div>
 
-      <div style={{ marginTop: '40px', marginBottom: '20px' }}>
-        <h2>Test 2: Embedded Chat</h2>
-        <p>Auto-scroll should work when new messages arrive</p>
-        <p>Widget should be embedded as a full-page chat interface</p>
-      </div>
+          <OrdifyChat
+            key={`floating-${testKey}`}
+            agentId={agentId}
+            apiKey={apiKey}
+            apiBaseUrl={apiBaseUrl}
+            mode="floating"
+            position="bottom-right"
+            buttonText={buttonText}
+            chatName="Floating Assistant"
+            placeholder="Test the floating widget"
+            initialMessage={activeMessage}
+            initialContext={activeContext}
+            onSessionCreated={(sessionId) => {
+              console.log('✅ Floating session created:', sessionId)
+            }}
+            onMessage={(message) => {
+              console.log('📨 Floating message received:', message)
+            }}
+            onError={(error) => {
+              console.error('❌ Floating chat error:', error)
+            }}
+          />
 
-      <div style={{ border: '1px solid #e0e0e0', borderRadius: '8px', height: '500px' }}>
-        <OrdifyChat
-          key={`embedded-${testKey}`}
-          agentId={agentId}
-          apiKey={apiKey}
-          apiBaseUrl={apiBaseUrl}
-          mode="embedded"
-          chatName="Embedded Assistant"
-          placeholder="Test the embedded widget"
-          initialMessage={initialMessage}
-          initialContext={initialContext}
-          onSessionCreated={(sessionId) => {
-            console.log('✅ Embedded session created:', sessionId)
-          }}
-          onMessage={(message) => {
-            console.log('📨 Embedded message received:', message)
-          }}
-          onError={(error) => {
-            console.error('❌ Embedded chat error:', error)
-          }}
-        />
-      </div>
+          <div style={{ marginTop: '40px', marginBottom: '20px' }}>
+            <h2>Test 2: Embedded Chat</h2>
+            <p>Auto-scroll should work when new messages arrive</p>
+            <p>Widget should be embedded as a full-page chat interface</p>
+          </div>
+
+          <div style={{ border: '1px solid #e0e0e0', borderRadius: '8px', height: '500px' }}>
+            <OrdifyChat
+              key={`embedded-${testKey}`}
+              agentId={agentId}
+              apiKey={apiKey}
+              apiBaseUrl={apiBaseUrl}
+              mode="embedded"
+              chatName="Embedded Assistant"
+              placeholder="Test the embedded widget"
+              initialMessage={activeMessage}
+              initialContext={activeContext}
+              onSessionCreated={(sessionId) => {
+                console.log('✅ Embedded session created:', sessionId)
+              }}
+              onMessage={(message) => {
+                console.log('📨 Embedded message received:', message)
+              }}
+              onError={(error) => {
+                console.error('❌ Embedded chat error:', error)
+              }}
+            />
+          </div>
+        </>
+      )}
     </div>
   )
 }
