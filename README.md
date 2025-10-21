@@ -108,6 +108,7 @@ function App() {
 | `width` | string | "320px" | Chat width |
 | `onSessionCreated` | function | - | **Optional** - Callback when a new session is created with session ID |
 | `initialMessage` | string | - | **Optional** - Message to automatically send when chat loads |
+| `initialContext` | string | - | **Optional** - Hidden system context sent to backend (user ID, page info, etc.) |
 
 ## 🎯 Advanced Features
 
@@ -124,6 +125,48 @@ The `initialMessage` prop allows you to automatically send a message when the ch
 - **Support**: Start with a greeting or help prompt
 - **Onboarding**: Guide new users with initial instructions
 - **A/B testing**: Test different conversation starters
+
+### System Context (initialContext)
+The `initialContext` prop allows you to send hidden system information to your AI agent without displaying it to users. This is perfect for:
+- **User identification**: Send user ID, email, or subscription tier
+- **Page context**: Include current page URL, product ID, or section
+- **Session data**: Pass cart items, preferences, or previous interactions
+- **Analytics**: Include tracking data, campaign sources, or A/B test groups
+
+**Key Features**:
+- **Hidden from users**: Context is sent to backend but never displayed in chat
+- **Flexible scenarios**: Works with or without `initialMessage`
+- **Backward compatible**: Existing usage without `initialContext` continues to work
+
+**Usage Scenarios**:
+
+1. **Both message and context**:
+```tsx
+<OrdifyChat
+  agentId="your-agent-id"
+  apiKey="your-api-key"
+  initialMessage="Help me with the Library page"
+  initialContext={`user_id: ${userId}, page: /library, tier: premium`}
+/>
+```
+
+2. **Context only** (auto-adds "Hi" greeting):
+```tsx
+<OrdifyChat
+  agentId="your-agent-id"
+  apiKey="your-api-key"
+  initialContext={`user_id: ${userId}, page: /checkout, cart_items: 3`}
+/>
+```
+
+3. **Message only** (backward compatible):
+```tsx
+<OrdifyChat
+  agentId="your-agent-id"
+  apiKey="your-api-key"
+  initialMessage="Hello!"
+/>
+```
 
 ### Theme-Aware Defaults
 
@@ -233,6 +276,40 @@ export function ChatWithInitialMessage() {
       onSessionCreated={(sessionId) => {
         console.log('Chat started with session:', sessionId)
         // Track user engagement
+      }}
+    />
+  )
+}
+```
+
+#### System Context Integration
+```tsx
+// components/ChatWithContext.tsx
+import { OrdifyChat } from 'ordify-chat-widget'
+import { useUser } from './hooks/useUser'
+import { useRouter } from 'next/router'
+
+export function ChatWithContext() {
+  const { user } = useUser()
+  const router = useRouter()
+
+  return (
+    <OrdifyChat
+      agentId="your-agent-id"
+      apiKey="your-api-key"
+      apiBaseUrl="https://r.ordify.ai"
+      mode="floating"
+      buttonText="Need Help?"
+      initialMessage={`Hi! I'm ${user?.name || 'a visitor'}, help me with this page.`}
+      initialContext={`user_id: ${user?.id}, email: ${user?.email}, page: ${router.pathname}, tier: ${user?.subscriptionTier || 'free'}`}
+      onSessionCreated={(sessionId) => {
+        console.log('Session created with context:', sessionId)
+        // Analytics tracking with user context
+        analytics.track('chat_session_started', {
+          sessionId,
+          userId: user?.id,
+          page: router.pathname
+        })
       }}
     />
   )
