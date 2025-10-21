@@ -27,7 +27,7 @@ export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
     setError(null)
   }, [])
 
-  const sendMessage = useCallback(async (content: string) => {
+  const sendMessage = useCallback(async (content: string, context?: string) => {
     if (!content.trim() || isLoading) return
 
     setIsLoading(true)
@@ -59,7 +59,7 @@ export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
       }
 
       // Send message and handle streaming response
-      const stream = await apiClientRef.current!.sendMessage(content.trim(), currentSessionId)
+      const stream = await apiClientRef.current!.sendMessage(content.trim(), currentSessionId, context)
       const reader = stream.getReader()
       const decoder = new TextDecoder()
 
@@ -118,15 +118,37 @@ export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
 
   // Auto-send initial message on mount
   useEffect(() => {
-    if (config.initialMessage && !hasInitialized && !isLoading && !initialMessageSentRef.current) {
+    if ((config.initialMessage || config.initialContext) && !hasInitialized && !isLoading && !initialMessageSentRef.current) {
       setHasInitialized(true)
       initialMessageSentRef.current = true
+      
+      // Determine what message to send and what context to include
+      let messageToSend: string
+      let contextToSend: string | undefined
+      
+      if (config.initialMessage && config.initialContext) {
+        // Both provided: send message + context
+        messageToSend = config.initialMessage
+        contextToSend = config.initialContext
+      } else if (config.initialMessage) {
+        // Only message provided: send message only (backward compatible)
+        messageToSend = config.initialMessage
+        contextToSend = undefined
+      } else if (config.initialContext) {
+        // Only context provided: send default greeting + context
+        messageToSend = "Hi"
+        contextToSend = config.initialContext
+      } else {
+        // Neither provided: do nothing
+        return
+      }
+      
       // Use setTimeout to avoid dependency loop
       setTimeout(() => {
-        sendMessage(config.initialMessage!)
+        sendMessage(messageToSend, contextToSend)
       }, 0)
     }
-  }, [config.initialMessage, hasInitialized, isLoading, sendMessage])
+  }, [config.initialMessage, config.initialContext, hasInitialized, isLoading, sendMessage])
 
   return {
     messages,

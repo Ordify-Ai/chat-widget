@@ -29,11 +29,14 @@ export function useOrdifyConfig(config: OrdifyConfig) {
       buttonStyle: config.buttonStyle || {},
       chatWindowStyle: config.chatWindowStyle || {},
       showHeader: config.showHeader !== false,
+      buttonText: config.buttonText,
+      chatName: config.chatName,
       onMessage: config.onMessage,
       onError: config.onError,
       onClose: config.onClose,
       onSessionCreated: config.onSessionCreated,
-      initialMessage: config.initialMessage
+      initialMessage: config.initialMessage,
+      initialContext: config.initialContext
     }
   }, [config])
 }
