@@ -46,32 +46,31 @@ function DemoApp() {
       />
 
       <div style={{ marginTop: '40px', marginBottom: '20px' }}>
-        <h2>Test 2: Inline Widget</h2>
+        <h2>Test 2: Embedded Chat</h2>
         <p>Should show: "Hi" in chat</p>
         <p>Should send context: "user_id: test123, page: /demo, name: Test User"</p>
         <p>Auto-scroll should work when new messages arrive</p>
-        <p>Widget should be embedded inline in the page</p>
+        <p>Widget should be embedded as a full-page chat interface</p>
       </div>
 
-      <div style={{ border: '1px solid #e0e0e0', borderRadius: '8px', height: '400px' }}>
+      <div style={{ border: '1px solid #e0e0e0', borderRadius: '8px', height: '500px' }}>
         <OrdifyChat
           agentId={agentId}
           apiKey={apiKey}
           apiBaseUrl={apiBaseUrl}
-          mode="inline"
-          buttonText="Inline Chat"
-          chatName="Inline Assistant"
-          placeholder="Test the inline widget"
+          mode="embedded"
+          chatName="Embedded Assistant"
+          placeholder="Test the embedded widget"
           initialMessage={initialMessage}
           initialContext={initialContext}
           onSessionCreated={(sessionId) => {
-            console.log('✅ Inline session created:', sessionId)
+            console.log('✅ Embedded session created:', sessionId)
           }}
           onMessage={(message) => {
-            console.log('📨 Inline message received:', message)
+            console.log('📨 Embedded message received:', message)
           }}
           onError={(error) => {
-            console.error('❌ Inline chat error:', error)
+            console.error('❌ Embedded chat error:', error)
           }}
         />
       </div>
