@@ -13,13 +13,14 @@ function DemoApp() {
   return (
     <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
       <h1>Ordify Chat Widget Test</h1>
-      <p>Testing the initialContext feature and button configurability</p>
+      <p>Testing the initialContext feature, button configurability, and auto-scroll</p>
       
       <div style={{ marginBottom: '20px' }}>
-        <h2>Test 1: Both initialMessage and initialContext</h2>
+        <h2>Test 1: Floating Widget</h2>
         <p>Should show: "Hi" in chat</p>
         <p>Should send context: "user_id: test123, page: /demo, name: Test User"</p>
         <p>Button should show: "?"</p>
+        <p>Auto-scroll should work when new messages arrive</p>
       </div>
 
       <OrdifyChat
@@ -29,20 +30,51 @@ function DemoApp() {
         mode="floating"
         position="bottom-right"
         buttonText={buttonText}
-        chatName="Test Assistant"
-        placeholder="Test the initialContext feature"
+        chatName="Floating Assistant"
+        placeholder="Test the floating widget"
         initialMessage={initialMessage}
         initialContext={initialContext}
         onSessionCreated={(sessionId) => {
-          console.log('✅ Session created:', sessionId)
+          console.log('✅ Floating session created:', sessionId)
         }}
         onMessage={(message) => {
-          console.log('📨 Message received:', message)
+          console.log('📨 Floating message received:', message)
         }}
         onError={(error) => {
-          console.error('❌ Chat error:', error)
+          console.error('❌ Floating chat error:', error)
         }}
       />
+
+      <div style={{ marginTop: '40px', marginBottom: '20px' }}>
+        <h2>Test 2: Inline Widget</h2>
+        <p>Should show: "Hi" in chat</p>
+        <p>Should send context: "user_id: test123, page: /demo, name: Test User"</p>
+        <p>Auto-scroll should work when new messages arrive</p>
+        <p>Widget should be embedded inline in the page</p>
+      </div>
+
+      <div style={{ border: '1px solid #e0e0e0', borderRadius: '8px', height: '400px' }}>
+        <OrdifyChat
+          agentId={agentId}
+          apiKey={apiKey}
+          apiBaseUrl={apiBaseUrl}
+          mode="inline"
+          buttonText="Inline Chat"
+          chatName="Inline Assistant"
+          placeholder="Test the inline widget"
+          initialMessage={initialMessage}
+          initialContext={initialContext}
+          onSessionCreated={(sessionId) => {
+            console.log('✅ Inline session created:', sessionId)
+          }}
+          onMessage={(message) => {
+            console.log('📨 Inline message received:', message)
+          }}
+          onError={(error) => {
+            console.error('❌ Inline chat error:', error)
+          }}
+        />
+      </div>
     </div>
   )
 }
