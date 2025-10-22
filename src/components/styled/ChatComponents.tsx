@@ -150,7 +150,7 @@ export const SendButton = styled.button`
 `
 
 // Floating chat button
-export const FloatingButton = styled.button`
+export const FloatingButton = styled.button<{ $position?: string }>`
   position: fixed;
   z-index: 50;
   height: 48px;
@@ -167,6 +167,20 @@ export const FloatingButton = styled.button`
   font-weight: 500;
   font-size: 14px;
   transition: all 0.2s ease;
+  
+  /* Position based on prop */
+  ${props => {
+    switch (props.$position) {
+      case 'bottom-left':
+        return 'bottom: 24px; left: 24px;'
+      case 'top-right':
+        return 'top: 24px; right: 24px;'
+      case 'top-left':
+        return 'top: 24px; left: 24px;'
+      default:
+        return 'bottom: 24px; right: 24px;'
+    }
+  }}
   
   &:hover {
     background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
