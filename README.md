@@ -38,14 +38,26 @@ Before integrating the chat widget, ensure you have:
 
 ### 1. Install the Library
 
+**From NPM (Public Registry):**
 ```bash
 npm install ordify-chat-widget
 ```
 
+**From GitHub Packages (Latest Development):**
+```bash
+npm install @ordify-ai/chat-widget
+```
+
 ### 2. Add to Your React App
 
+**If using NPM package:**
 ```tsx
 import { OrdifyChat } from 'ordify-chat-widget'
+```
+
+**If using GitHub Packages:**
+```tsx
+import { OrdifyChat } from '@ordify-ai/chat-widget'
 
 function App() {
   return (
@@ -61,6 +73,21 @@ function App() {
 ```
 
 **That's it!** No CSS imports, no additional setup. The library includes all necessary styles automatically.
+
+### GitHub Packages Setup (Optional)
+
+If you want to use the latest development version from GitHub Packages, you'll need to configure authentication:
+
+1. **Create a Personal Access Token** with `read:packages` scope
+2. **Configure npm authentication:**
+   ```bash
+   npm login --scope=@ordify-ai --auth-type=legacy --registry=https://npm.pkg.github.com
+   ```
+3. **Or add to your `.npmrc` file:**
+   ```
+   @ordify-ai:registry=https://npm.pkg.github.com
+   //npm.pkg.github.com/:_authToken=YOUR_TOKEN
+   ```
 
 ## 🎨 Chat Modes
 
@@ -354,6 +381,22 @@ npm run dev
 ### Build
 ```bash
 npm run build
+```
+
+### Publishing
+
+**Automatic Publishing**: This package is automatically published to both NPM and GitHub Packages when changes are merged to the `main` branch.
+
+- **NPM**: Published as `ordify-chat-widget` (public registry)
+- **GitHub Packages**: Published as `@ordify-ai/chat-widget` (latest development)
+
+**Manual Publishing** (if needed):
+```bash
+# Publish to NPM
+npm publish --registry=https://registry.npmjs.org/
+
+# Publish to GitHub Packages
+npm publish --registry=https://npm.pkg.github.com
 ```
 
 ### Integration Examples
