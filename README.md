@@ -14,6 +14,8 @@ A professional, production-ready React chat widget that enables seamless integra
 
 Before integrating the chat widget, ensure you have:
 
+- **Node.js**: 18.0.0 or higher
+- **npm**: 9.0.0 or higher  
 - **API Key**: Available in your Ordify dashboard (Account → Settings → API)
 - **Agent ID**: Found in your agent configuration panel within the Ordify application
 - **React Application**: Compatible with React 18+ and modern build tools
@@ -374,6 +376,11 @@ export default function HomePage() {
 
 ### Setup
 ```bash
+# Ensure you have Node.js 18+ and npm 9+
+node --version  # Should be 18.0.0 or higher
+npm --version   # Should be 9.0.0 or higher
+
+# Clone and setup
 git clone https://github.com/ordify-ai/chat-widget.git
 cd chat-widget
 npm install
