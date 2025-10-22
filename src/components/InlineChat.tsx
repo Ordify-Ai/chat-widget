@@ -11,9 +11,9 @@ import {
     ErrorMessage,
     LoadingDots,
     SendButton,
-    Conversation as StyledConversation,
     Timestamp
 } from './styled/ChatComponents'
+import { Conversation, ConversationContent } from './Conversation'
 
 interface InlineChatProps {
   config: OrdifyConfig
@@ -56,47 +56,49 @@ export function InlineChat({ config, chat }: InlineChatProps) {
       }}
     >
       {/* Chat messages */}
-      <StyledConversation style={{ flex: 1, padding: '12px' }}>
-        {messages.map(message => (
-          <div
-            key={message.id}
-            style={{
-              display: 'flex',
-              marginBottom: '12px',
-              justifyContent: message.role === 'user' ? 'flex-end' : 'flex-start'
-            }}
-          >
-             <ChatMessage $isUser={message.role === 'user'}>
-              {message.role === 'assistant' ? (
-                <MarkdownRenderer content={message.content} />
-              ) : (
-                message.content
-              )}
-               <Timestamp $isUser={message.role === 'user'}>
-                {formatTime(message.timestamp)}
-              </Timestamp>
-            </ChatMessage>
-          </div>
-        ))}
+      <Conversation style={{ flex: 1 }}>
+        <ConversationContent>
+          {messages.map(message => (
+            <div
+              key={message.id}
+              style={{
+                display: 'flex',
+                marginBottom: '12px',
+                justifyContent: message.role === 'user' ? 'flex-end' : 'flex-start'
+              }}
+            >
+               <ChatMessage $isUser={message.role === 'user'}>
+                {message.role === 'assistant' ? (
+                  <MarkdownRenderer content={message.content} />
+                ) : (
+                  message.content
+                )}
+                 <Timestamp $isUser={message.role === 'user'}>
+                  {formatTime(message.timestamp)}
+                </Timestamp>
+              </ChatMessage>
+            </div>
+          ))}
 
-        {isLoading && (
-          <div style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: '12px' }}>
-             <ChatMessage $isUser={false}>
-              <LoadingDots>
-                <div className="dot"></div>
-                <div className="dot"></div>
-                <div className="dot"></div>
-              </LoadingDots>
-            </ChatMessage>
-          </div>
-        )}
+          {isLoading && (
+            <div style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: '12px' }}>
+               <ChatMessage $isUser={false}>
+                <LoadingDots>
+                  <div className="dot"></div>
+                  <div className="dot"></div>
+                  <div className="dot"></div>
+                </LoadingDots>
+              </ChatMessage>
+            </div>
+          )}
 
-        {error && (
-          <ErrorMessage>
-            {error}
-          </ErrorMessage>
-        )}
-      </StyledConversation>
+          {error && (
+            <ErrorMessage>
+              {error}
+            </ErrorMessage>
+          )}
+        </ConversationContent>
+      </Conversation>
 
       {/* Chat input */}
       <ChatInput>

@@ -7,12 +7,13 @@ export class OrdifyApiClient {
     this.config = config
   }
 
-  async sendMessage(content: string, sessionId?: string): Promise<ReadableStream<Uint8Array>> {
+  async sendMessage(content: string, sessionId?: string, context?: string): Promise<ReadableStream<Uint8Array>> {
     const url = `${this.config.apiBaseUrl}/chat/agents/${this.config.agentId}`
     
     const requestBody: ChatRequest = {
       message: content,
-      sessionId: sessionId
+      sessionId: sessionId,
+      context: context
     }
 
     const response = await fetch(url, {

@@ -77,6 +77,7 @@ export interface OrdifyConfig {
   onSessionCreated?: (sessionId: string) => void
   // Auto-start
   initialMessage?: string
+  initialContext?: string
 }
 
 export interface UseOrdifyChatReturn {
@@ -114,6 +115,7 @@ export interface OrdifyApiClientConfig {
 export interface ChatRequest {
   message: string
   sessionId?: string
+  context?: string
 }
 
 export interface ChatResponse {

@@ -1,5 +1,6 @@
 import { MarkdownRenderer } from '@/components/MarkdownRenderer'
 import { ProfessionalInput } from '@/components/ProfessionalInput'
+import { Conversation, ConversationContent } from '@/components/Conversation'
 import { OrdifyConfig, UseOrdifyChatReturn } from '@/types'
 import { formatTime } from '@/utils'
 import { MessageSquare, Send } from 'lucide-react'
@@ -13,7 +14,6 @@ import {
     FloatingButton,
     LoadingDots,
     SendButton,
-    Conversation as StyledConversation,
     ResizeHandle as StyledResizeHandle,
     Timestamp
 } from './styled/ChatComponents'
@@ -54,6 +54,7 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
       <FloatingButton
         onClick={() => setIsOpen(true)}
         style={config.buttonStyle}
+        $position={config.position || 'bottom-right'}
         aria-label="Open chat"
       >
         <div className="icon-container">
@@ -121,47 +122,49 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
       )}
 
       {/* Chat messages with auto-scroll */}
-      <StyledConversation>
-        {messages.map(message => (
-          <div
-            key={message.id}
-            style={{
-              display: 'flex',
-              marginBottom: '16px',
-              justifyContent: message.role === 'user' ? 'flex-end' : 'flex-start'
-            }}
-          >
-             <ChatMessage $isUser={message.role === 'user'}>
-              {message.role === 'assistant' ? (
-                <MarkdownRenderer content={message.content} />
-              ) : (
-                message.content
-              )}
-               <Timestamp $isUser={message.role === 'user'}>
-                {formatTime(message.timestamp)}
-              </Timestamp>
-            </ChatMessage>
-          </div>
-        ))}
+      <Conversation>
+        <ConversationContent>
+          {messages.map(message => (
+            <div
+              key={message.id}
+              style={{
+                display: 'flex',
+                marginBottom: '16px',
+                justifyContent: message.role === 'user' ? 'flex-end' : 'flex-start'
+              }}
+            >
+               <ChatMessage $isUser={message.role === 'user'}>
+                {message.role === 'assistant' ? (
+                  <MarkdownRenderer content={message.content} />
+                ) : (
+                  message.content
+                )}
+                 <Timestamp $isUser={message.role === 'user'}>
+                  {formatTime(message.timestamp)}
+                </Timestamp>
+              </ChatMessage>
+            </div>
+          ))}
 
-        {isLoading && (
-          <div style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: '16px' }}>
-             <ChatMessage $isUser={false}>
-              <LoadingDots>
-                <div className="dot"></div>
-                <div className="dot"></div>
-                <div className="dot"></div>
-              </LoadingDots>
-            </ChatMessage>
-          </div>
-        )}
+          {isLoading && (
+            <div style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: '16px' }}>
+               <ChatMessage $isUser={false}>
+                <LoadingDots>
+                  <div className="dot"></div>
+                  <div className="dot"></div>
+                  <div className="dot"></div>
+                </LoadingDots>
+              </ChatMessage>
+            </div>
+          )}
 
-        {error && (
-          <ErrorMessage>
-            {error}
-          </ErrorMessage>
-        )}
-      </StyledConversation>
+          {error && (
+            <ErrorMessage>
+              {error}
+            </ErrorMessage>
+          )}
+        </ConversationContent>
+      </Conversation>
 
       {/* Chat input - Full width */}
       <ChatInput>

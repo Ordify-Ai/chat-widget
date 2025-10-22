@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.27] - 2024-12-19
+
+### Added
+- **System Context Support**: New `initialContext` prop allows sending hidden system information to AI agents
+- **GitHub Packages Mirror**: Package now automatically mirrors to GitHub Packages after NPM publishing
+- **Automated Publishing**: GitHub Actions workflow for seamless publishing on main branch merges
+- **Enhanced Documentation**: Updated README with proper registry usage instructions
+
+### Changed
+- Package name updated to `@ordify-ai/chat-widget` for GitHub Packages compatibility
+- Improved auto-scroll behavior with better conversation component structure
+- Enhanced floating button positioning with proper prop support
+
+### Technical
+- Added `.npmrc` configuration for GitHub Packages registry
+- Created GitHub Actions workflow for NPM-first publishing with GitHub Packages mirroring
+- Updated package.json with proper scoped naming and publishConfig
+- **NPM remains the single source of truth** for versioning
+
 ## [1.0.0] - 2024-01-16
 
 ### Added

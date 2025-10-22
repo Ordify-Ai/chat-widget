@@ -38,14 +38,26 @@ Before integrating the chat widget, ensure you have:
 
 ### 1. Install the Library
 
+**From NPM (Recommended):**
 ```bash
 npm install ordify-chat-widget
 ```
 
+**From GitHub Packages (Mirror):**
+```bash
+npm install @ordify-ai/chat-widget
+```
+
 ### 2. Add to Your React App
 
+**If using NPM package (recommended):**
 ```tsx
 import { OrdifyChat } from 'ordify-chat-widget'
+```
+
+**If using GitHub Packages mirror:**
+```tsx
+import { OrdifyChat } from '@ordify-ai/chat-widget'
 
 function App() {
   return (
@@ -61,6 +73,23 @@ function App() {
 ```
 
 **That's it!** No CSS imports, no additional setup. The library includes all necessary styles automatically.
+
+### GitHub Packages Setup (Optional)
+
+GitHub Packages serves as a mirror of the NPM package. If you need to use it, configure authentication:
+
+1. **Create a Personal Access Token** with `read:packages` scope
+2. **Configure npm authentication:**
+   ```bash
+   npm login --scope=@ordify-ai --auth-type=legacy --registry=https://npm.pkg.github.com
+   ```
+3. **Or add to your `.npmrc` file:**
+   ```
+   @ordify-ai:registry=https://npm.pkg.github.com
+   //npm.pkg.github.com/:_authToken=YOUR_TOKEN
+   ```
+
+> **Note**: We recommend using the NPM version (`ordify-chat-widget`) as it's the primary registry and source of truth.
 
 ## 🎨 Chat Modes
 
@@ -108,6 +137,7 @@ function App() {
 | `width` | string | "320px" | Chat width |
 | `onSessionCreated` | function | - | **Optional** - Callback when a new session is created with session ID |
 | `initialMessage` | string | - | **Optional** - Message to automatically send when chat loads |
+| `initialContext` | string | - | **Optional** - Hidden system context sent to backend (user ID, page info, etc.) |
 
 ## 🎯 Advanced Features
 
@@ -124,6 +154,48 @@ The `initialMessage` prop allows you to automatically send a message when the ch
 - **Support**: Start with a greeting or help prompt
 - **Onboarding**: Guide new users with initial instructions
 - **A/B testing**: Test different conversation starters
+
+### System Context (initialContext)
+The `initialContext` prop allows you to send hidden system information to your AI agent without displaying it to users. This is perfect for:
+- **User identification**: Send user ID, email, or subscription tier
+- **Page context**: Include current page URL, product ID, or section
+- **Session data**: Pass cart items, preferences, or previous interactions
+- **Analytics**: Include tracking data, campaign sources, or A/B test groups
+
+**Key Features**:
+- **Hidden from users**: Context is sent to backend but never displayed in chat
+- **Flexible scenarios**: Works with or without `initialMessage`
+- **Backward compatible**: Existing usage without `initialContext` continues to work
+
+**Usage Scenarios**:
+
+1. **Both message and context**:
+```tsx
+<OrdifyChat
+  agentId="your-agent-id"
+  apiKey="your-api-key"
+  initialMessage="Help me with the Library page"
+  initialContext={`user_id: ${userId}, page: /library, tier: premium`}
+/>
+```
+
+2. **Context only** (auto-adds "Hi" greeting):
+```tsx
+<OrdifyChat
+  agentId="your-agent-id"
+  apiKey="your-api-key"
+  initialContext={`user_id: ${userId}, page: /checkout, cart_items: 3`}
+/>
+```
+
+3. **Message only** (backward compatible):
+```tsx
+<OrdifyChat
+  agentId="your-agent-id"
+  apiKey="your-api-key"
+  initialMessage="Hello!"
+/>
+```
 
 ### Theme-Aware Defaults
 
@@ -239,6 +311,40 @@ export function ChatWithInitialMessage() {
 }
 ```
 
+#### System Context Integration
+```tsx
+// components/ChatWithContext.tsx
+import { OrdifyChat } from 'ordify-chat-widget'
+import { useUser } from './hooks/useUser'
+import { useRouter } from 'next/router'
+
+export function ChatWithContext() {
+  const { user } = useUser()
+  const router = useRouter()
+
+  return (
+    <OrdifyChat
+      agentId="your-agent-id"
+      apiKey="your-api-key"
+      apiBaseUrl="https://r.ordify.ai"
+      mode="floating"
+      buttonText="Need Help?"
+      initialMessage={`Hi! I'm ${user?.name || 'a visitor'}, help me with this page.`}
+      initialContext={`user_id: ${user?.id}, email: ${user?.email}, page: ${router.pathname}, tier: ${user?.subscriptionTier || 'free'}`}
+      onSessionCreated={(sessionId) => {
+        console.log('Session created with context:', sessionId)
+        // Analytics tracking with user context
+        analytics.track('chat_session_started', {
+          sessionId,
+          userId: user?.id,
+          page: router.pathname
+        })
+      }}
+    />
+  )
+}
+```
+
 #### Landing Page Integration
 ```tsx
 // pages/index.tsx
@@ -277,6 +383,23 @@ npm run dev
 ### Build
 ```bash
 npm run build
+```
+
+### Publishing
+
+**Automatic Publishing**: This package is automatically published to NPM when changes are merged to the `main` branch, with GitHub Packages serving as a mirror.
+
+- **NPM**: Primary registry (`ordify-chat-widget`) - **source of truth**
+- **GitHub Packages**: Mirror registry (`@ordify-ai/chat-widget`) - automatic backup
+- **Version Sync**: GitHub Packages mirrors NPM versions exactly
+
+**Manual Publishing** (if needed):
+```bash
+# Publish to NPM
+npm publish --registry=https://registry.npmjs.org/
+
+# Publish to GitHub Packages
+npm publish --registry=https://npm.pkg.github.com
 ```
 
 ### Integration Examples

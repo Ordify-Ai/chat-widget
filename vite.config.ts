@@ -8,7 +8,7 @@ export default defineConfig({
     react(),
     dts({
       insertTypesEntry: true,
-      exclude: ['**/*.stories.*', '**/*.test.*']
+      exclude: ['**/*.stories.*', '**/*.test.*', '**/demo.*']
     })
   ],
   build: {
@@ -32,5 +32,9 @@ export default defineConfig({
     alias: {
       '@': resolve(__dirname, './src')
     }
+  },
+  // Add demo support
+  define: {
+    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
   }
 })
