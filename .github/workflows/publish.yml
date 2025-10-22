@@ -75,9 +75,22 @@ jobs:
     - name: Build package
       run: npm run build
         
-    - name: Mirror to GitHub Packages
+    - name: Check if version exists on GitHub Packages
+      id: check-github
       run: |
-        # Only mirror if NPM publish was successful
+        CURRENT_VERSION=$(node -p "require('./package.json').version")
+        if npm view @ordify-ai/chat-widget@$CURRENT_VERSION version >/dev/null 2>&1; then
+          echo "exists=true" >> $GITHUB_OUTPUT
+          echo "Version $CURRENT_VERSION already exists on GitHub Packages"
+        else
+          echo "exists=false" >> $GITHUB_OUTPUT
+          echo "Version $CURRENT_VERSION is new on GitHub Packages"
+        fi
+        
+    - name: Mirror to GitHub Packages
+      if: steps.check-github.outputs.exists == 'false'
+      run: |
+        # Only mirror if version doesn't already exist
         CURRENT_VERSION=$(node -p "require('./package.json').version")
         echo "Mirroring version $CURRENT_VERSION to GitHub Packages"
         npm publish
