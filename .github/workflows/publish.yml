@@ -1,4 +1,4 @@
-name: Publish to NPM and GitHub Packages
+name: Publish to NPM and Mirror to GitHub Packages
 
 on:
   push:
@@ -25,14 +25,27 @@ jobs:
         
     - name: Install dependencies
       run: npm ci
-      
+        
     - name: Run tests
       run: npm test
-      
+        
     - name: Build package
       run: npm run build
-      
+        
+    - name: Check if version exists on NPM
+      id: check-npm
+      run: |
+        CURRENT_VERSION=$(node -p "require('./package.json').version")
+        if npm view ordify-chat-widget@$CURRENT_VERSION version >/dev/null 2>&1; then
+          echo "exists=true" >> $GITHUB_OUTPUT
+          echo "Version $CURRENT_VERSION already exists on NPM"
+        else
+          echo "exists=false" >> $GITHUB_OUTPUT
+          echo "Version $CURRENT_VERSION is new on NPM"
+        fi
+        
     - name: Publish to NPM
+      if: steps.check-npm.outputs.exists == 'false'
       run: |
         # Temporarily change package name for NPM
         npm pkg set name="ordify-chat-widget"
@@ -41,7 +54,8 @@ jobs:
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-  publish-github:
+  mirror-to-github:
+    needs: publish-npm
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -60,14 +74,15 @@ jobs:
         
     - name: Install dependencies
       run: npm ci
-      
-    - name: Run tests
-      run: npm test
-      
+        
     - name: Build package
       run: npm run build
-      
-    - name: Publish to GitHub Packages
-      run: npm publish
+        
+    - name: Mirror to GitHub Packages
+      run: |
+        # Only mirror if NPM publish was successful
+        CURRENT_VERSION=$(node -p "require('./package.json').version")
+        echo "Mirroring version $CURRENT_VERSION to GitHub Packages"
+        npm publish
       env:
         NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

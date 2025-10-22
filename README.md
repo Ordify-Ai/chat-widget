@@ -38,24 +38,24 @@ Before integrating the chat widget, ensure you have:
 
 ### 1. Install the Library
 
-**From NPM (Public Registry):**
+**From NPM (Recommended):**
 ```bash
 npm install ordify-chat-widget
 ```
 
-**From GitHub Packages (Latest Development):**
+**From GitHub Packages (Mirror):**
 ```bash
 npm install @ordify-ai/chat-widget
 ```
 
 ### 2. Add to Your React App
 
-**If using NPM package:**
+**If using NPM package (recommended):**
 ```tsx
 import { OrdifyChat } from 'ordify-chat-widget'
 ```
 
-**If using GitHub Packages:**
+**If using GitHub Packages mirror:**
 ```tsx
 import { OrdifyChat } from '@ordify-ai/chat-widget'
 
@@ -76,7 +76,7 @@ function App() {
 
 ### GitHub Packages Setup (Optional)
 
-If you want to use the latest development version from GitHub Packages, you'll need to configure authentication:
+GitHub Packages serves as a mirror of the NPM package. If you need to use it, configure authentication:
 
 1. **Create a Personal Access Token** with `read:packages` scope
 2. **Configure npm authentication:**
@@ -88,6 +88,8 @@ If you want to use the latest development version from GitHub Packages, you'll n
    @ordify-ai:registry=https://npm.pkg.github.com
    //npm.pkg.github.com/:_authToken=YOUR_TOKEN
    ```
+
+> **Note**: We recommend using the NPM version (`ordify-chat-widget`) as it's the primary registry and source of truth.
 
 ## 🎨 Chat Modes
 
@@ -385,10 +387,11 @@ npm run build
 
 ### Publishing
 
-**Automatic Publishing**: This package is automatically published to both NPM and GitHub Packages when changes are merged to the `main` branch.
+**Automatic Publishing**: This package is automatically published to NPM when changes are merged to the `main` branch, with GitHub Packages serving as a mirror.
 
-- **NPM**: Published as `ordify-chat-widget` (public registry)
-- **GitHub Packages**: Published as `@ordify-ai/chat-widget` (latest development)
+- **NPM**: Primary registry (`ordify-chat-widget`) - **source of truth**
+- **GitHub Packages**: Mirror registry (`@ordify-ai/chat-widget`) - automatic backup
+- **Version Sync**: GitHub Packages mirrors NPM versions exactly
 
 **Manual Publishing** (if needed):
 ```bash
