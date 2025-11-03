@@ -78,6 +78,8 @@ export interface OrdifyConfig {
   // Auto-start
   initialMessage?: string
   initialContext?: string
+  // Session management
+  sessionId?: string
 }
 
 export interface UseOrdifyChatReturn {

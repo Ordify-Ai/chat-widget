@@ -7,7 +7,7 @@ export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
   const [messages, setMessages] = useState<Message[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [sessionId, setSessionId] = useState<string | null>(null)
+  const [sessionId, setSessionId] = useState<string | null>(config.sessionId || null)
   const [isOpen, setIsOpen] = useState(false)
   const [hasInitialized, setHasInitialized] = useState(false)
   
@@ -22,6 +22,13 @@ export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
       agentId: config.agentId
     })
   }
+
+  // Update sessionId if config changes
+  useEffect(() => {
+    if (config.sessionId && config.sessionId !== sessionId) {
+      setSessionId(config.sessionId)
+    }
+  }, [config.sessionId])
 
   const clearError = useCallback(() => {
     setError(null)
@@ -45,8 +52,8 @@ export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
 
       setMessages(prev => [...prev, userMessage])
 
-      // Create session if needed
-      let currentSessionId = sessionId
+      // Use provided sessionId or create new session if needed
+      let currentSessionId = sessionId || config.sessionId || null
       if (!currentSessionId) {
         const session = await apiClientRef.current!.createSession()
         currentSessionId = session.id
@@ -55,6 +62,11 @@ export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
         // Call onSessionCreated callback if provided
         if (config.onSessionCreated) {
           config.onSessionCreated(currentSessionId)
+        }
+      } else {
+        // If using provided sessionId, make sure it's set in state
+        if (currentSessionId !== sessionId) {
+          setSessionId(currentSessionId)
         }
       }
 

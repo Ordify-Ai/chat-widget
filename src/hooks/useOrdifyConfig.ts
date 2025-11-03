@@ -37,7 +37,8 @@ export function useOrdifyConfig(config: OrdifyConfig) {
       onClose: config.onClose,
       onSessionCreated: config.onSessionCreated,
       initialMessage: config.initialMessage,
-      initialContext: config.initialContext
+      initialContext: config.initialContext,
+      sessionId: config.sessionId
     }
   }, [config])
 }
