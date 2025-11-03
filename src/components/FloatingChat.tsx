@@ -78,6 +78,7 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
         onClick={() => setIsOpen(true)}
         style={config.buttonStyle}
         $position={config.position || 'bottom-right'}
+        $primaryColor={config.primaryColor}
         aria-label="Open chat"
       >
         <div className="icon-container">
