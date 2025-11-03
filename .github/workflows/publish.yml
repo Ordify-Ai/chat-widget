@@ -12,6 +12,7 @@ jobs:
     permissions:
       contents: write
       packages: write
+      id-token: write
       
     steps:
     - name: Checkout code
@@ -22,6 +23,7 @@ jobs:
       with:
         node-version: '18'
         registry-url: 'https://registry.npmjs.org'
+        # Uses OIDC authentication (no NPM_TOKEN needed)
         
     - name: Install dependencies
       run: npm ci
@@ -64,9 +66,7 @@ jobs:
         # Temporarily change package name for NPM
         npm pkg set name="ordify-chat-widget"
         npm pkg delete publishConfig
-        npm publish
-      env:
-        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        npm publish --provenance --access public
 
   mirror-to-github:
     needs: publish-npm
