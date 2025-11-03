@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import { OrdifyChat } from './components/OrdifyChat'
 
 const STORAGE_KEY = 'ordify-demo-config'
+const SESSION_STORAGE_KEY = 'ordify-demo-sessions'
 
 function DemoApp() {
   const [agentId, setAgentId] = useState("")
@@ -13,6 +14,8 @@ function DemoApp() {
   const [primaryColor, setPrimaryColor] = useState("")
   const [theme, setTheme] = useState<'light' | 'dark' | 'auto'>('auto')
   const [position, setPosition] = useState<'bottom-right' | 'bottom-left' | 'top-right' | 'top-left'>('bottom-right')
+  const [floatingSessionId, setFloatingSessionId] = useState<string | null>(null)
+  const [embeddedSessionId, setEmbeddedSessionId] = useState<string | null>(null)
 
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY)
@@ -29,6 +32,17 @@ function DemoApp() {
         setPosition(config.position || 'bottom-right')
       } catch (e) {
         console.error('Failed to load saved configuration:', e)
+      }
+    }
+
+    const savedSessions = localStorage.getItem(SESSION_STORAGE_KEY)
+    if (savedSessions) {
+      try {
+        const sessions = JSON.parse(savedSessions)
+        if (sessions.floating) setFloatingSessionId(sessions.floating)
+        if (sessions.embedded) setEmbeddedSessionId(sessions.embedded)
+      } catch (e) {
+        console.error('Failed to load saved sessions:', e)
       }
     }
   }, [])
@@ -70,6 +84,46 @@ function DemoApp() {
       return () => window.removeEventListener('resize', updateHeight)
     }
   }, [useDynamicHeight])
+
+  const saveSession = (type: 'floating' | 'embedded', sessionId: string) => {
+    try {
+      const saved = localStorage.getItem(SESSION_STORAGE_KEY)
+      const sessions = saved ? JSON.parse(saved) : {}
+      sessions[type] = sessionId
+      localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(sessions))
+      
+      if (type === 'floating') {
+        setFloatingSessionId(sessionId)
+      } else {
+        setEmbeddedSessionId(sessionId)
+      }
+    } catch (e) {
+      console.error('Failed to save session:', e)
+    }
+  }
+
+  const clearSession = (type: 'floating' | 'embedded') => {
+    try {
+      const saved = localStorage.getItem(SESSION_STORAGE_KEY)
+      const sessions = saved ? JSON.parse(saved) : {}
+      delete sessions[type]
+      localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(sessions))
+      
+      if (type === 'floating') {
+        setFloatingSessionId(null)
+      } else {
+        setEmbeddedSessionId(null)
+      }
+    } catch (e) {
+      console.error('Failed to clear session:', e)
+    }
+  }
+
+  const clearAllSessions = () => {
+    localStorage.removeItem(SESSION_STORAGE_KEY)
+    setFloatingSessionId(null)
+    setEmbeddedSessionId(null)
+  }
 
   const handleTestScenario = (message: string, context: string) => {
     setInitialMessage(message)
@@ -362,7 +416,7 @@ function DemoApp() {
             </button>
           </div>
 
-          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
             <button
               onClick={handleApplySettings}
               style={{
@@ -377,6 +431,25 @@ function DemoApp() {
             >
               🚀 Apply Custom Settings
             </button>
+            {(floatingSessionId || embeddedSessionId) && (
+              <button
+                onClick={() => {
+                  clearAllSessions()
+                  setTestKey(prev => prev + 1)
+                }}
+                style={{
+                  padding: '10px 20px',
+                  backgroundColor: '#dc3545',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontWeight: 'bold'
+                }}
+              >
+                🗑️ Clear All Sessions
+              </button>
+            )}
             <span style={{ fontSize: '14px', color: '#666' }}>
               Click to mount widgets with your custom settings
             </span>
@@ -410,9 +483,46 @@ function DemoApp() {
       {widgetsMounted && (
         <>
           <div style={{ marginBottom: '20px' }}>
-            <h2>Test 1: Floating Widget</h2>
-            <p>Button should show: "?"</p>
-            <p>Auto-scroll should work when new messages arrive</p>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+              <div>
+                <h2 style={{ margin: 0 }}>Test 1: Floating Widget</h2>
+                <p style={{ margin: '5px 0' }}>Button should show: "?"</p>
+                <p style={{ margin: '5px 0' }}>Auto-scroll should work when new messages arrive</p>
+              </div>
+              {floatingSessionId && (
+                <div style={{ 
+                  padding: '8px 12px', 
+                  backgroundColor: '#e3f2fd', 
+                  borderRadius: '6px',
+                  fontSize: '12px'
+                }}>
+                  <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>Session ID:</div>
+                  <code style={{ 
+                    fontSize: '11px', 
+                    wordBreak: 'break-all',
+                    display: 'block',
+                    marginBottom: '4px'
+                  }}>{floatingSessionId}</code>
+                  <button
+                    onClick={() => {
+                      clearSession('floating')
+                      setTestKey(prev => prev + 1)
+                    }}
+                    style={{
+                      padding: '4px 8px',
+                      fontSize: '11px',
+                      backgroundColor: '#ff5252',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '4px',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Clear Session
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
 
           <OrdifyChat
@@ -427,10 +537,12 @@ function DemoApp() {
             primaryColor={primaryColor || undefined}
             theme={theme}
             placeholder="Test the floating widget"
+            sessionId={floatingSessionId || undefined}
             initialMessage={activeMessage}
             initialContext={activeContext}
             onSessionCreated={(sessionId) => {
               console.log('✅ Floating session created:', sessionId)
+              saveSession('floating', sessionId)
             }}
             onMessage={(message) => {
               console.log('📨 Floating message received:', message)
@@ -441,9 +553,47 @@ function DemoApp() {
           />
 
           <div style={{ marginTop: '40px', marginBottom: '20px' }}>
-            <h2>Test 2: Embedded Chat</h2>
-            <p>Auto-scroll should work when new messages arrive</p>
-            <p>Widget should be embedded as a full-page chat interface</p>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
+              <div>
+                <h2 style={{ margin: 0 }}>Test 2: Embedded Chat</h2>
+                <p style={{ margin: '5px 0' }}>Auto-scroll should work when new messages arrive</p>
+                <p style={{ margin: '5px 0' }}>Widget should be embedded as a full-page chat interface</p>
+              </div>
+              {embeddedSessionId && (
+                <div style={{ 
+                  padding: '8px 12px', 
+                  backgroundColor: '#e3f2fd', 
+                  borderRadius: '6px',
+                  fontSize: '12px',
+                  maxWidth: '300px'
+                }}>
+                  <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>Session ID:</div>
+                  <code style={{ 
+                    fontSize: '11px', 
+                    wordBreak: 'break-all',
+                    display: 'block',
+                    marginBottom: '4px'
+                  }}>{embeddedSessionId}</code>
+                  <button
+                    onClick={() => {
+                      clearSession('embedded')
+                      setTestKey(prev => prev + 1)
+                    }}
+                    style={{
+                      padding: '4px 8px',
+                      fontSize: '11px',
+                      backgroundColor: '#ff5252',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '4px',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Clear Session
+                  </button>
+                </div>
+              )}
+            </div>
             
             <div style={{ 
               marginTop: '15px', 
@@ -545,10 +695,12 @@ function DemoApp() {
                 theme={theme}
                 placeholder="Test the embedded widget"
                 height={useDynamicHeight ? '100%' : containerHeight}
+                sessionId={embeddedSessionId || undefined}
                 initialMessage={activeMessage}
                 initialContext={activeContext}
                 onSessionCreated={(sessionId) => {
                   console.log('✅ Embedded session created:', sessionId)
+                  saveSession('embedded', sessionId)
                 }}
                 onMessage={(message) => {
                   console.log('📨 Embedded message received:', message)

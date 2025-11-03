@@ -1,4 +1,4 @@
-import { Agent, ApiError, ChatRequest, OrdifyApiClientConfig, Session, StreamingResponse } from '@/types'
+import { Agent, ApiError, ChatRequest, Message, OrdifyApiClientConfig, Session, StreamingResponse } from '@/types'
 
 export class OrdifyApiClient {
   private config: OrdifyApiClientConfig
@@ -87,6 +87,25 @@ export class OrdifyApiClient {
 
   async getSessions(): Promise<Session[]> {
     const url = `${this.config.apiBaseUrl}/sessions`
+    
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'api-key': this.config.apiKey,
+        'accept': 'application/json'
+      }
+    })
+
+    if (!response.ok) {
+      const error: ApiError = await response.json()
+      throw new Error(`API Error: ${error.detail}`)
+    }
+
+    return response.json()
+  }
+
+  async getSessionWithMessages(sessionId: string): Promise<{ session: Session; messages: Message[] }> {
+    const url = `${this.config.apiBaseUrl}/sessions/${sessionId}/with-messages`
     
     const response = await fetch(url, {
       method: 'GET',
