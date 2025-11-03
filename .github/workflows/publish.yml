@@ -93,15 +93,30 @@ jobs:
         registry-url: 'https://npm.pkg.github.com'
         scope: '@ordify-ai'
         
+    - name: Restore package.json for GitHub Packages
+      run: |
+        # Get the version that was published to NPM (may have been auto-bumped)
+        CURRENT_VERSION=$(node -p "require('./package.json').version")
+        echo "Restoring package.json for GitHub Packages with version: $CURRENT_VERSION"
+        
+        # Restore scoped name and publishConfig for GitHub Packages
+        npm pkg set name="@ordify-ai/chat-widget"
+        npm pkg set publishConfig.registry="https://npm.pkg.github.com"
+        echo "Package name set to: $(node -p "require('./package.json').name")"
+        echo "Publish config: $(node -p "JSON.stringify(require('./package.json').publishConfig)")"
+        
+        # Explicitly configure npm registry for GitHub Packages
+        echo "@ordify-ai:registry=https://npm.pkg.github.com" >> .npmrc
+        echo "Registry configured for @ordify-ai scope"
+        
     - name: Install dependencies
       run: npm ci
-        
+      
     - name: Build package
       run: npm run build
-        
+      
     - name: Mirror to GitHub Packages
       run: |
-        # Use the version that was published to NPM (may have been auto-bumped)
         CURRENT_VERSION=$(node -p "require('./package.json').version")
         echo "Mirroring version $CURRENT_VERSION to GitHub Packages"
         
