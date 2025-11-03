@@ -67,15 +67,28 @@ export function EmbeddedChat({ config, chat }: EmbeddedChatProps) {
     }
   }
 
+  const heightStyle = React.useMemo(() => {
+    if (config.height === '100%' || config.height === '100vh') {
+      return {
+        height: '100%',
+        minHeight: 0,
+        display: 'flex',
+        flexDirection: 'column' as const,
+        borderRadius: '8px'
+      }
+    }
+    return {
+      height: config.height,
+      display: 'flex',
+      flexDirection: 'column' as const,
+      borderRadius: '8px'
+    }
+  }, [config.height])
+
   return (
     <ChatWidget
       data-theme={getThemeValue()}
-      style={{ 
-        height: config.height,
-        display: 'flex',
-        flexDirection: 'column',
-        borderRadius: '8px'
-      }}
+      style={heightStyle}
     >
       {/* Chat messages */}
       <Conversation style={{ flex: 1 }}>

@@ -5,6 +5,7 @@ export const ChatWidget = styled.div`
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   background-color: white;
   border: 1px solid #e5e7eb;
+  min-height: 0;
   
   /* Try both media query approaches */
   @media (prefers-color-scheme: dark) {

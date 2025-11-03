@@ -54,6 +54,22 @@ function DemoApp() {
   const [activeContext, setActiveContext] = useState("user_id: test123, page: /demo, name: Test User")
   const [testKey, setTestKey] = useState(0) // Force re-render of widgets
   const [widgetsMounted, setWidgetsMounted] = useState(false)
+  const [containerHeight, setContainerHeight] = useState(500)
+  const [useDynamicHeight, setUseDynamicHeight] = useState(true)
+  const [dynamicHeight, setDynamicHeight] = useState(
+    typeof window !== 'undefined' ? Math.max(400, window.innerHeight * 0.6) : 600
+  )
+
+  useEffect(() => {
+    if (useDynamicHeight && typeof window !== 'undefined') {
+      const updateHeight = () => {
+        setDynamicHeight(Math.max(400, window.innerHeight * 0.6))
+      }
+      updateHeight()
+      window.addEventListener('resize', updateHeight)
+      return () => window.removeEventListener('resize', updateHeight)
+    }
+  }, [useDynamicHeight])
 
   const handleTestScenario = (message: string, context: string) => {
     setInitialMessage(message)
@@ -428,31 +444,120 @@ function DemoApp() {
             <h2>Test 2: Embedded Chat</h2>
             <p>Auto-scroll should work when new messages arrive</p>
             <p>Widget should be embedded as a full-page chat interface</p>
+            
+            <div style={{ 
+              marginTop: '15px', 
+              padding: '15px', 
+              backgroundColor: '#f0f0f0', 
+              borderRadius: '8px',
+              border: '1px solid #ddd'
+            }}>
+              <div style={{ display: 'flex', gap: '20px', alignItems: 'center', flexWrap: 'wrap', marginBottom: '10px' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                  <input
+                    type="checkbox"
+                    checked={useDynamicHeight}
+                    onChange={(e) => setUseDynamicHeight(e.target.checked)}
+                    style={{ cursor: 'pointer' }}
+                  />
+                  <span style={{ fontWeight: 'bold' }}>Use Dynamic Height (100%)</span>
+                </label>
+                
+                {useDynamicHeight && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1, minWidth: '300px' }}>
+                    <label style={{ fontWeight: 'bold', fontSize: '12px' }}>Container Height:</label>
+                    <input
+                      type="range"
+                      value={dynamicHeight}
+                      onChange={(e) => setDynamicHeight(Number(e.target.value))}
+                      min={300}
+                      max={typeof window !== 'undefined' ? Math.max(800, window.innerHeight * 0.9) : 1200}
+                      style={{ flex: 1, cursor: 'pointer' }}
+                    />
+                    <span style={{ minWidth: '60px', fontSize: '12px' }}>{dynamicHeight}px</span>
+                  </div>
+                )}
+                
+                {!useDynamicHeight && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <label style={{ fontWeight: 'bold' }}>Fixed Height:</label>
+                    <input
+                      type="number"
+                      value={containerHeight}
+                      onChange={(e) => setContainerHeight(Number(e.target.value))}
+                      min={200}
+                      max={1200}
+                      style={{
+                        width: '80px',
+                        padding: '5px',
+                        border: '1px solid #ccc',
+                        borderRadius: '4px'
+                      }}
+                    />
+                    <span>px</span>
+                  </div>
+                )}
+              </div>
+              
+              <div style={{ fontSize: '12px', color: '#666' }}>
+                {useDynamicHeight 
+                  ? `✅ Chat fills container dynamically (${dynamicHeight}px) - Resize window to see it update automatically` 
+                  : `📐 Chat container height: ${containerHeight}px (fixed)`
+                }
+              </div>
+            </div>
           </div>
 
-          <div style={{ border: '1px solid #e0e0e0', borderRadius: '8px', height: '500px' }}>
-            <OrdifyChat
-              key={`embedded-${testKey}`}
-              agentId={agentId}
-              apiKey={apiKey}
-              apiBaseUrl={apiBaseUrl}
-              mode="embedded"
-              chatName={chatName}
-              primaryColor={primaryColor || undefined}
-              theme={theme}
-              placeholder="Test the embedded widget"
-              initialMessage={activeMessage}
-              initialContext={activeContext}
-              onSessionCreated={(sessionId) => {
-                console.log('✅ Embedded session created:', sessionId)
-              }}
-              onMessage={(message) => {
-                console.log('📨 Embedded message received:', message)
-              }}
-              onError={(error) => {
-                console.error('❌ Embedded chat error:', error)
-              }}
-            />
+          <div 
+            style={{ 
+              border: '2px solid #3b82f6', 
+              borderRadius: '8px', 
+              height: useDynamicHeight ? `${dynamicHeight}px` : `${containerHeight}px`,
+              display: 'flex',
+              flexDirection: 'column',
+              overflow: 'hidden',
+              backgroundColor: '#ffffff',
+              transition: 'height 0.3s ease'
+            }}
+          >
+            <div style={{ 
+              padding: '10px', 
+              backgroundColor: '#3b82f6', 
+              color: 'white',
+              fontWeight: 'bold',
+              fontSize: '12px',
+              borderBottom: '2px solid #2563eb'
+            }}>
+              {useDynamicHeight 
+                ? `Dynamic Container (height: ${dynamicHeight}px, chat uses 100% of this)` 
+                : `Fixed Container (height: ${containerHeight}px)`
+              }
+            </div>
+            <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
+              <OrdifyChat
+                key={`embedded-${testKey}`}
+                agentId={agentId}
+                apiKey={apiKey}
+                apiBaseUrl={apiBaseUrl}
+                mode="embedded"
+                chatName={chatName}
+                primaryColor={primaryColor || undefined}
+                theme={theme}
+                placeholder="Test the embedded widget"
+                height={useDynamicHeight ? '100%' : containerHeight}
+                initialMessage={activeMessage}
+                initialContext={activeContext}
+                onSessionCreated={(sessionId) => {
+                  console.log('✅ Embedded session created:', sessionId)
+                }}
+                onMessage={(message) => {
+                  console.log('📨 Embedded message received:', message)
+                }}
+                onError={(error) => {
+                  console.error('❌ Embedded chat error:', error)
+                }}
+              />
+            </div>
           </div>
         </>
       )}

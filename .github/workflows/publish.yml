@@ -12,7 +12,6 @@ jobs:
     permissions:
       contents: write
       packages: write
-      id-token: write
       
     steps:
     - name: Checkout code
@@ -23,10 +22,6 @@ jobs:
       with:
         node-version: '18'
         registry-url: 'https://registry.npmjs.org'
-        # OIDC: setup-node@v4 will automatically use OIDC if trusted publisher is configured
-        
-    - name: Update npm to latest (required for OIDC)
-      run: npm install -g npm@latest
         
     - name: Prepare package for NPM publishing
       run: |
@@ -71,19 +66,12 @@ jobs:
           echo "bumped=false" >> $GITHUB_OUTPUT
         fi
         
-    - name: Verify OIDC setup
-      run: |
-        echo "Repository: ${{ github.repository }}"
-        echo "Workflow file: .github/workflows/publish.yml"
-        echo "Package name: $(node -p "require('./package.json').name")"
-        echo "npm version: $(npm --version)"
-        echo "Registry: $(npm config get registry)"
-        
     - name: Publish to NPM
       run: |
-        # OIDC authentication is automatic via setup-node when trusted publisher is configured
-        # Trusted publisher checks: repository (ordify-ai/chat-widget) + workflow (publish.yml)
-        npm publish --provenance --access public
+        # Using NODE_AUTH_TOKEN for authentication (Granular access token)
+        npm publish --access public
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
 
   mirror-to-github:
     needs: publish-npm
