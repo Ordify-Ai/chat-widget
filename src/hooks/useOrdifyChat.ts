@@ -26,11 +26,15 @@ export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
     })
   }
 
+  // Track the last sessionId we attempted to load to prevent duplicate loads
+  const lastLoadedSessionIdRef = useRef<string | null>(null)
+
   // Update sessionId if config changes
   useEffect(() => {
     if (config.sessionId && config.sessionId !== sessionId) {
       setSessionId(config.sessionId)
       historyLoadedRef.current = false
+      lastLoadedSessionIdRef.current = null
       setHasExistingMessages(false)
       setMessages([])
     }
@@ -44,14 +48,18 @@ export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
       // If no sessionId, mark as loaded so initial message can proceed
       if (!currentSessionId) {
         historyLoadedRef.current = true
+        lastLoadedSessionIdRef.current = null
         setHasExistingMessages(false)
         return
       }
 
-      // If already loaded for this session, skip
-      if (historyLoadedRef.current) {
+      // If we already tried to load this exact sessionId, skip
+      if (lastLoadedSessionIdRef.current === currentSessionId) {
         return
       }
+
+      // Mark that we're attempting to load this session
+      lastLoadedSessionIdRef.current = currentSessionId
 
       setIsLoadingHistory(true)
       try {
@@ -72,6 +80,11 @@ export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
       } catch (err) {
         console.warn('Failed to load session history:', err)
         setHasExistingMessages(false)
+        // If session not found (404), clear the invalid sessionId so a new one will be created
+        if (err instanceof Error && err.message.includes('404')) {
+          setSessionId(null)
+          lastLoadedSessionIdRef.current = null
+        }
       } finally {
         setIsLoadingHistory(false)
         historyLoadedRef.current = true
@@ -104,6 +117,7 @@ export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
       setMessages(prev => [...prev, userMessage])
 
       // Use provided sessionId or create new session if needed
+      // If sessionId was cleared due to 404 error, create new session
       let currentSessionId = sessionId || config.sessionId || null
       if (!currentSessionId) {
         const session = await apiClientRef.current!.createSession()
