@@ -27,7 +27,30 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
   const { messages, sendMessage, isLoading, error, isOpen, setIsOpen } = chat
   const [inputValue, setInputValue] = React.useState('')
   const [chatHeight, setChatHeight] = React.useState<number | string>(config.height || 400)
+  const [isDarkMode, setIsDarkMode] = React.useState(false)
   const inputRef = React.useRef<HTMLTextAreaElement>(null)
+
+  const getThemeValue = () => {
+    if (config.theme === 'dark') return 'dark'
+    if (config.theme === 'light') return 'light'
+    return isDarkMode ? 'dark' : 'light'
+  }
+
+  React.useEffect(() => {
+    if (config.theme === 'auto' || !config.theme) {
+      const checkDarkMode = () => {
+        setIsDarkMode(window.matchMedia('(prefers-color-scheme: dark)').matches)
+      }
+      
+      checkDarkMode()
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+      mediaQuery.addEventListener('change', checkDarkMode)
+      
+      return () => mediaQuery.removeEventListener('change', checkDarkMode)
+    } else {
+      setIsDarkMode(config.theme === 'dark')
+    }
+  }, [config.theme])
 
   const handleSendMessage = async () => {
     if (!inputValue.trim() || isLoading) return
@@ -70,6 +93,7 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
   return (
     <ChatWindow
       $position={config.position || 'bottom-right'}
+      data-theme={getThemeValue()}
       style={{
         height: chatHeight,
         ...config.chatWindowStyle

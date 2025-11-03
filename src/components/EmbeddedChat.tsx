@@ -26,18 +26,27 @@ export function EmbeddedChat({ config, chat }: EmbeddedChatProps) {
   const [isDarkMode, setIsDarkMode] = React.useState(false)
   const inputRef = React.useRef<HTMLTextAreaElement>(null)
 
-  // Detect dark mode
+  const getThemeValue = () => {
+    if (config.theme === 'dark') return 'dark'
+    if (config.theme === 'light') return 'light'
+    return isDarkMode ? 'dark' : 'light'
+  }
+
   React.useEffect(() => {
-    const checkDarkMode = () => {
-      setIsDarkMode(window.matchMedia('(prefers-color-scheme: dark)').matches)
+    if (config.theme === 'auto' || !config.theme) {
+      const checkDarkMode = () => {
+        setIsDarkMode(window.matchMedia('(prefers-color-scheme: dark)').matches)
+      }
+      
+      checkDarkMode()
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+      mediaQuery.addEventListener('change', checkDarkMode)
+      
+      return () => mediaQuery.removeEventListener('change', checkDarkMode)
+    } else {
+      setIsDarkMode(config.theme === 'dark')
     }
-    
-    checkDarkMode()
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-    mediaQuery.addEventListener('change', checkDarkMode)
-    
-    return () => mediaQuery.removeEventListener('change', checkDarkMode)
-  }, [])
+  }, [config.theme])
 
   const handleSendMessage = async () => {
     if (!inputValue.trim() || isLoading) return
@@ -60,7 +69,7 @@ export function EmbeddedChat({ config, chat }: EmbeddedChatProps) {
 
   return (
     <ChatWidget
-      data-theme={isDarkMode ? 'dark' : 'light'}
+      data-theme={getThemeValue()}
       style={{ 
         height: config.height,
         display: 'flex',

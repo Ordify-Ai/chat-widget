@@ -229,6 +229,11 @@ export const ChatWindow = styled.div<{ $position: string }>`
     border-color: #374151;
   }
   
+  &[data-theme="dark"] {
+    background: #1f2937;
+    border-color: #374151;
+  }
+  
   @media (min-width: 640px) {
     width: 384px;
   }
