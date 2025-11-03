@@ -40,7 +40,16 @@ export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
   useEffect(() => {
     const loadSessionHistory = async () => {
       const currentSessionId = sessionId || config.sessionId
-      if (!currentSessionId || historyLoadedRef.current) {
+      
+      // If no sessionId, mark as loaded so initial message can proceed
+      if (!currentSessionId) {
+        historyLoadedRef.current = true
+        setHasExistingMessages(false)
+        return
+      }
+
+      // If already loaded for this session, skip
+      if (historyLoadedRef.current) {
         return
       }
 
