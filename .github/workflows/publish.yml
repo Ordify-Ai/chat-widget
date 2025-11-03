@@ -18,12 +18,12 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       
-    - name: Setup Node.js
+    - name: Setup Node.js for NPM
       uses: actions/setup-node@v4
       with:
         node-version: '18'
         registry-url: 'https://registry.npmjs.org'
-        # Uses OIDC authentication (no NPM_TOKEN needed)
+        # OIDC: setup-node@v4 will automatically use OIDC if trusted publisher is configured
         
     - name: Install dependencies
       run: npm ci
@@ -63,9 +63,11 @@ jobs:
         
     - name: Publish to NPM
       run: |
-        # Temporarily change package name for NPM
+        # Temporarily change package name for NPM (unscoped)
         npm pkg set name="ordify-chat-widget"
         npm pkg delete publishConfig
+        # OIDC authentication is automatic via setup-node when trusted publisher is configured
+        # --provenance adds build attestation for transparency
         npm publish --provenance --access public
 
   mirror-to-github:
