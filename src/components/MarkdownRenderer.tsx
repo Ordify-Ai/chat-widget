@@ -1,4 +1,45 @@
 import Markdown from 'markdown-to-jsx'
+import styled from 'styled-components'
+
+const MarkdownContainer = styled.div`
+  code {
+    @media (prefers-color-scheme: dark) {
+      background-color: #374151 !important;
+      color: #e5e7eb !important;
+    }
+    
+    [data-theme="dark"] & {
+      background-color: #374151 !important;
+      color: #e5e7eb !important;
+    }
+  }
+  
+  pre {
+    @media (prefers-color-scheme: dark) {
+      background-color: #374151 !important;
+      color: #e5e7eb !important;
+    }
+    
+    [data-theme="dark"] & {
+      background-color: #374151 !important;
+      color: #e5e7eb !important;
+    }
+  }
+  
+  blockquote {
+    @media (prefers-color-scheme: dark) {
+      background-color: #1e3a8a !important;
+      border-left-color: #3b82f6 !important;
+      color: #e5e7eb !important;
+    }
+    
+    [data-theme="dark"] & {
+      background-color: #1e3a8a !important;
+      border-left-color: #3b82f6 !important;
+      color: #e5e7eb !important;
+    }
+  }
+`
 
 interface MarkdownRendererProps {
   content: string
@@ -7,34 +48,60 @@ interface MarkdownRendererProps {
 
 export function MarkdownRenderer({ content, className }: MarkdownRendererProps) {
   return (
-    <div className={className}>
+    <MarkdownContainer className={className}>
       <Markdown
         options={{
           overrides: {
             // Custom styling for markdown elements with better spacing
             p: {
               props: {
-                className: "mb-3 last:mb-0 leading-relaxed text-gray-900 dark:text-gray-100"
+                style: { 
+                  marginBottom: '12px',
+                  lineHeight: '1.5',
+                  color: 'inherit'
+                }
               }
             },
             strong: {
               props: {
-                className: "font-semibold text-gray-900 dark:text-white dark:font-bold"
+                style: {
+                  fontWeight: 700,
+                  color: 'inherit'
+                }
               }
             },
             em: {
               props: {
-                className: "italic text-gray-700"
+                style: {
+                  fontStyle: 'italic',
+                  color: 'inherit'
+                }
               }
             },
             code: {
               props: {
-                className: "bg-gray-100 px-1.5 py-0.5 rounded text-sm font-mono text-gray-800"
+                style: {
+                  backgroundColor: '#f3f4f6',
+                  padding: '2px 6px',
+                  borderRadius: '4px',
+                  fontSize: '14px',
+                  fontFamily: 'monospace',
+                  color: '#111827'
+                }
               }
             },
             pre: {
               props: {
-                className: "bg-gray-100 p-3 rounded-md text-sm font-mono text-gray-800 overflow-x-auto mb-3"
+                style: {
+                  backgroundColor: '#f3f4f6',
+                  padding: '12px',
+                  borderRadius: '6px',
+                  fontSize: '14px',
+                  fontFamily: 'monospace',
+                  color: '#111827',
+                  overflowX: 'auto',
+                  marginBottom: '12px'
+                }
               }
             },
             ul: {
@@ -54,47 +121,94 @@ export function MarkdownRenderer({ content, className }: MarkdownRendererProps) 
             },
             blockquote: {
               props: {
-                className: "border-l-4 border-blue-300 pl-4 italic mb-3 text-gray-700 bg-blue-50 py-2 rounded-r"
+                style: {
+                  borderLeft: '4px solid #93c5fd',
+                  paddingLeft: '16px',
+                  padding: '8px',
+                  fontStyle: 'italic',
+                  marginBottom: '12px',
+                  backgroundColor: '#eff6ff',
+                  borderRadius: '4px',
+                  color: 'inherit'
+                }
               }
             },
             h1: {
               props: {
-                className: "text-xl font-bold mb-3 text-gray-900"
+                style: {
+                  fontSize: '20px',
+                  fontWeight: 700,
+                  marginBottom: '12px',
+                  color: 'inherit'
+                }
               }
             },
             h2: {
               props: {
-                className: "text-lg font-bold mb-2 text-gray-900"
+                style: {
+                  fontSize: '18px',
+                  fontWeight: 700,
+                  marginBottom: '8px',
+                  color: 'inherit'
+                }
               }
             },
             h3: {
               props: {
-                className: "text-base font-bold mb-2 text-gray-900"
+                style: {
+                  fontSize: '16px',
+                  fontWeight: 700,
+                  marginBottom: '8px',
+                  color: 'inherit'
+                }
               }
             },
             h4: {
               props: {
-                className: "text-sm font-bold mb-2 text-gray-900"
+                style: {
+                  fontSize: '14px',
+                  fontWeight: 700,
+                  marginBottom: '8px',
+                  color: 'inherit'
+                }
               }
             },
             h5: {
               props: {
-                className: "text-sm font-bold mb-2 text-gray-900"
+                style: {
+                  fontSize: '14px',
+                  fontWeight: 700,
+                  marginBottom: '8px',
+                  color: 'inherit'
+                }
               }
             },
             h6: {
               props: {
-                className: "text-sm font-bold mb-2 text-gray-900"
+                style: {
+                  fontSize: '14px',
+                  fontWeight: 700,
+                  marginBottom: '8px',
+                  color: 'inherit'
+                }
               }
             },
             hr: {
               props: {
-                className: "my-4 border-gray-200"
+                style: {
+                  margin: '16px 0',
+                  borderColor: '#e5e7eb',
+                  borderWidth: '1px',
+                  borderStyle: 'solid'
+                }
               }
             },
             a: {
               props: {
-                className: "text-blue-600 hover:text-blue-800 underline",
+                style: {
+                  color: '#2563eb',
+                  textDecoration: 'underline'
+                },
                 target: "_blank",
                 rel: "noopener noreferrer"
               }
@@ -104,6 +218,6 @@ export function MarkdownRenderer({ content, className }: MarkdownRendererProps) 
       >
         {content}
       </Markdown>
-    </div>
+    </MarkdownContainer>
   )
 }

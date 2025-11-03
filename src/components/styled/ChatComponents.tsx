@@ -30,9 +30,9 @@ export const ChatMessage = styled.div<{ $isUser: boolean }>`
   margin-right: ${props => props.$isUser ? '0' : 'auto'};
   line-height: 1.5;
   
-  /* User message styles */
-  background-color: ${props => props.$isUser ? '#e5e7eb' : 'transparent'};
-  color: ${props => props.$isUser ? '#111827' : '#111827'};
+  /* User message styles - Light mode */
+  background-color: ${props => props.$isUser ? '#3b82f6' : '#f3f4f6'};
+  color: ${props => props.$isUser ? '#ffffff' : '#111827'};
   
   /* Ensure bold text has proper contrast */
   strong, b {
@@ -40,13 +40,24 @@ export const ChatMessage = styled.div<{ $isUser: boolean }>`
     color: inherit;
   }
   
-  /* Dark mode support */
+  /* Dark mode support - Media query */
   @media (prefers-color-scheme: dark) {
-    background-color: ${props => props.$isUser ? '#374151' : 'transparent'};
-    color: ${props => props.$isUser ? '#f9fafb' : '#f9fafb'};
+    background-color: ${props => props.$isUser ? '#3b82f6' : 'transparent'};
+    color: ${props => props.$isUser ? '#ffffff' : '#e5e7eb'};
     
     strong, b {
-      color: #ffffff;
+      color: ${props => props.$isUser ? '#ffffff' : '#ffffff'};
+      font-weight: 700;
+    }
+  }
+  
+  /* Dark mode support - Data attribute (for ChatWindow/ChatWidget parents) */
+  [data-theme="dark"] & {
+    background-color: ${props => props.$isUser ? '#3b82f6' : 'transparent'};
+    color: ${props => props.$isUser ? '#ffffff' : '#e5e7eb'};
+    
+    strong, b {
+      color: ${props => props.$isUser ? '#ffffff' : '#ffffff'};
       font-weight: 700;
     }
   }
@@ -62,6 +73,11 @@ export const ChatInput = styled.div`
   background-color: #ffffff;
   
   @media (prefers-color-scheme: dark) {
+    background-color: #1f2937;
+    border-top-color: #374151;
+  }
+  
+  [data-theme="dark"] & {
     background-color: #1f2937;
     border-top-color: #374151;
   }
@@ -112,6 +128,21 @@ export const ProfessionalInput = styled.textarea`
       box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
     }
   }
+  
+  [data-theme="dark"] & {
+    background-color: #374151;
+    color: #f9fafb;
+    border-color: #4b5563;
+    
+    &::placeholder {
+      color: #9ca3af;
+    }
+    
+    &:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    }
+  }
 `
 
 // Send button
@@ -149,13 +180,32 @@ export const SendButton = styled.button`
   }
 `
 
+const darkenColor = (color: string, amount: number = 0.15): string => {
+  if (color && color.startsWith('#')) {
+    const hex = color.replace('#', '')
+    const num = parseInt(hex, 16)
+    if (isNaN(num)) return color
+    const r = Math.max(0, Math.min(255, (num >> 16) & 0xff) * (1 - amount))
+    const g = Math.max(0, Math.min(255, (num >> 8) & 0xff) * (1 - amount))
+    const b = Math.max(0, Math.min(255, num & 0xff) * (1 - amount))
+    return `#${Math.floor(r).toString(16).padStart(2, '0')}${Math.floor(g).toString(16).padStart(2, '0')}${Math.floor(b).toString(16).padStart(2, '0')}`
+  }
+  return color || '#2563eb'
+}
+
 // Floating chat button
-export const FloatingButton = styled.button<{ $position?: string }>`
+export const FloatingButton = styled.button<{ $position?: string; $primaryColor?: string }>`
   position: fixed;
   z-index: 50;
   height: 48px;
   padding: 0 16px;
-  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  background: ${props => {
+    if (props.$primaryColor) {
+      const darker = darkenColor(props.$primaryColor, 0.1)
+      return `linear-gradient(135deg, ${props.$primaryColor} 0%, ${darker} 100%)`
+    }
+    return 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)'
+  }};
   color: white;
   border: none;
   border-radius: 24px;
@@ -183,7 +233,14 @@ export const FloatingButton = styled.button<{ $position?: string }>`
   }}
   
   &:hover {
-    background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+    background: ${props => {
+      if (props.$primaryColor) {
+        const darker = darkenColor(props.$primaryColor, 0.2)
+        const darkest = darkenColor(props.$primaryColor, 0.3)
+        return `linear-gradient(135deg, ${darker} 0%, ${darkest} 100%)`
+      }
+      return 'linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%)'
+    }};
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   }
   
@@ -225,6 +282,11 @@ export const ChatWindow = styled.div<{ $position: string }>`
   }}
   
   @media (prefers-color-scheme: dark) {
+    background: #1f2937;
+    border-color: #374151;
+  }
+  
+  &[data-theme="dark"] {
     background: #1f2937;
     border-color: #374151;
   }
@@ -322,6 +384,20 @@ export const Conversation = styled.div`
       background: #9ca3af;
     }
   }
+  
+  [data-theme="dark"] & {
+    &::-webkit-scrollbar-track {
+      background: #374151;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: #6b7280;
+    }
+    
+    &::-webkit-scrollbar-thumb:hover {
+      background: #9ca3af;
+    }
+  }
 `
 
 // Loading dots
@@ -362,10 +438,14 @@ export const LoadingDots = styled.div`
 export const Timestamp = styled.div<{ $isUser: boolean }>`
   font-size: 12px;
   margin-top: 4px;
-  color: ${props => props.$isUser ? '#6b7280' : '#6b7280'};
+  color: ${props => props.$isUser ? 'rgba(255, 255, 255, 0.8)' : '#6b7280'};
   
   @media (prefers-color-scheme: dark) {
-    color: ${props => props.$isUser ? '#9ca3af' : '#9ca3af'};
+    color: ${props => props.$isUser ? 'rgba(255, 255, 255, 0.8)' : '#d1d5db'};
+  }
+  
+  [data-theme="dark"] & {
+    color: ${props => props.$isUser ? 'rgba(255, 255, 255, 0.8)' : '#d1d5db'};
   }
 `
 
