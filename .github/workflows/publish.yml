@@ -25,6 +25,16 @@ jobs:
         registry-url: 'https://registry.npmjs.org'
         # OIDC: setup-node@v4 will automatically use OIDC if trusted publisher is configured
         
+    - name: Update npm to latest (required for OIDC)
+      run: npm install -g npm@latest
+        
+    - name: Prepare package for NPM publishing
+      run: |
+        # Change package name for NPM (unscoped) BEFORE any npm commands
+        npm pkg set name="ordify-chat-widget"
+        npm pkg delete publishConfig
+        echo "Package name set to: $(node -p "require('./package.json').name")"
+        
     - name: Install dependencies
       run: npm ci
         
@@ -61,13 +71,18 @@ jobs:
           echo "bumped=false" >> $GITHUB_OUTPUT
         fi
         
+    - name: Verify OIDC setup
+      run: |
+        echo "Repository: ${{ github.repository }}"
+        echo "Workflow file: .github/workflows/publish.yml"
+        echo "Package name: $(node -p "require('./package.json').name")"
+        echo "npm version: $(npm --version)"
+        echo "Registry: $(npm config get registry)"
+        
     - name: Publish to NPM
       run: |
-        # Temporarily change package name for NPM (unscoped)
-        npm pkg set name="ordify-chat-widget"
-        npm pkg delete publishConfig
         # OIDC authentication is automatic via setup-node when trusted publisher is configured
-        # --provenance adds build attestation for transparency
+        # Trusted publisher checks: repository (ordify-ai/chat-widget) + workflow (publish.yml)
         npm publish --provenance --access public
 
   mirror-to-github:
