@@ -16,6 +16,7 @@ export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
   const apiClientRef = useRef<OrdifyApiClient | null>(null)
   const initialMessageSentRef = useRef(false)
   const historyLoadedRef = useRef(false)
+  const isStreamingRef = useRef(false)
 
   // Initialize API client
   if (!apiClientRef.current) {
@@ -44,6 +45,11 @@ export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
   useEffect(() => {
     const loadSessionHistory = async () => {
       const currentSessionId = sessionId || config.sessionId
+      
+      // Don't load history if we're currently streaming a response
+      if (isStreamingRef.current) {
+        return
+      }
       
       // If no sessionId, mark as loaded so initial message can proceed
       if (!currentSessionId) {
@@ -122,7 +128,9 @@ export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
       if (!currentSessionId) {
         const session = await apiClientRef.current!.createSession()
         currentSessionId = session.id
-        setSessionId(currentSessionId)
+        // Don't trigger session loading effect by updating sessionId here
+        // We'll update it after the message is sent to avoid clearing messages
+        // setSessionId(currentSessionId)
         
         // Call onSessionCreated callback if provided
         if (config.onSessionCreated) {
@@ -136,6 +144,7 @@ export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
       }
 
       // Send message and handle streaming response
+      isStreamingRef.current = true
       const stream = await apiClientRef.current!.sendMessage(content.trim(), currentSessionId, context)
       const reader = stream.getReader()
       const decoder = new TextDecoder()
@@ -158,22 +167,35 @@ export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
         const lines = chunk.split('\n')
 
         for (const line of lines) {
+          if (!line.trim()) continue
+          
           const response = parseStreamingResponse(line)
+          
           if (response) {
             if (response.type === 'stream' && response.text) {
-              setMessages(prev => 
-                prev.map(msg => 
+              assistantMessage.content += response.text
+              
+              setMessages(prev => {
+                const found = prev.find(msg => msg.id === assistantMessage.id)
+                if (!found) {
+                  return [...prev, { ...assistantMessage, content: assistantMessage.content }]
+                }
+                return prev.map(msg => 
                   msg.id === assistantMessage.id 
-                    ? { ...msg, content: msg.content + response.text }
+                    ? { ...msg, content: assistantMessage.content }
                     : msg
                 )
-              )
+              })
             } else if (response.type === 'done') {
-              // Message complete
               break
             }
           }
         }
+      }
+
+      // Update sessionId after message is complete to avoid clearing messages
+      if (currentSessionId && currentSessionId !== sessionId) {
+        setSessionId(currentSessionId)
       }
 
       // Call onMessage callback if provided
@@ -189,6 +211,7 @@ export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
         config.onError(err instanceof Error ? err : new Error(errorMessage))
       }
     } finally {
+      isStreamingRef.current = false
       setIsLoading(false)
     }
   }, [config.onSessionCreated, config.onMessage, config.onError, isLoading, sessionId])

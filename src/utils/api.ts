@@ -127,11 +127,15 @@ export class OrdifyApiClient {
 export function parseStreamingResponse(chunk: string): StreamingResponse | null {
   try {
     if (chunk.startsWith('data: ')) {
-      const data = chunk.slice(6)
-      if (data === '[DONE]') {
+      const data = chunk.slice(6).trim()
+      if (data === '[DONE]' || data === '') {
         return { text: '', sessionId: '', type: 'done' }
       }
-      return JSON.parse(data)
+      const parsed = JSON.parse(data)
+      if (parsed.done) {
+        return { text: '', sessionId: parsed.sessionId || '', type: 'done' }
+      }
+      return parsed
     }
   } catch (error) {
     console.warn('Failed to parse streaming response:', error)
