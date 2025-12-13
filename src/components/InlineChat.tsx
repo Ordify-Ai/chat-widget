@@ -4,16 +4,17 @@ import { OrdifyConfig, UseOrdifyChatReturn } from '@/types'
 import { formatTime } from '@/utils'
 import { Send } from 'lucide-react'
 import React from 'react'
-import {
-    ChatInput,
-    ChatMessage,
-    ChatWidget,
-    ErrorMessage,
-    LoadingDots,
-    SendButton,
-    Timestamp
-} from './styled/ChatComponents'
 import { Conversation, ConversationContent } from './Conversation'
+import {
+  AgentAvatar,
+  ChatInput,
+  ChatMessage,
+  ChatWidget,
+  ErrorMessage,
+  LoadingDots,
+  SendButton,
+  Timestamp
+} from './styled/ChatComponents'
 
 interface InlineChatProps {
   config: OrdifyConfig
@@ -46,7 +47,7 @@ export function InlineChat({ config, chat }: InlineChatProps) {
 
   return (
     <ChatWidget
-      style={{ 
+      style={{
         height: config.height,
         display: 'flex',
         flexDirection: 'column',
@@ -64,16 +65,25 @@ export function InlineChat({ config, chat }: InlineChatProps) {
               style={{
                 display: 'flex',
                 marginBottom: '12px',
-                justifyContent: message.role === 'user' ? 'flex-end' : 'flex-start'
+                justifyContent: message.role === 'user' ? 'flex-end' : 'flex-start',
+                alignItems: 'flex-start',
+                gap: '8px'
               }}
             >
-               <ChatMessage $isUser={message.role === 'user'}>
+              {message.role === 'assistant' && config.agentImage && (
+                <AgentAvatar
+                  src={config.agentImage}
+                  alt={config.chatName || "Agent"}
+                  $size="28px"
+                />
+              )}
+              <ChatMessage $isUser={message.role === 'user'}>
                 {message.role === 'assistant' ? (
                   <MarkdownRenderer content={message.content} />
                 ) : (
                   message.content
                 )}
-                 <Timestamp $isUser={message.role === 'user'}>
+                <Timestamp $isUser={message.role === 'user'}>
                   {formatTime(message.timestamp)}
                 </Timestamp>
               </ChatMessage>
@@ -81,8 +91,15 @@ export function InlineChat({ config, chat }: InlineChatProps) {
           ))}
 
           {isLoading && (
-            <div style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: '12px' }}>
-               <ChatMessage $isUser={false}>
+            <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start', gap: '8px', marginBottom: '12px' }}>
+              {config.agentImage && (
+                <AgentAvatar
+                  src={config.agentImage}
+                  alt={config.chatName || "Agent"}
+                  $size="28px"
+                />
+              )}
+              <ChatMessage $isUser={false}>
                 <LoadingDots>
                   <div className="dot"></div>
                   <div className="dot"></div>

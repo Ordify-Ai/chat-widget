@@ -4,16 +4,17 @@ import { OrdifyConfig, UseOrdifyChatReturn } from '@/types'
 import { formatTime } from '@/utils'
 import { Send } from 'lucide-react'
 import React from 'react'
-import {
-    ChatInput,
-    ChatMessage,
-    ChatWidget,
-    ErrorMessage,
-    LoadingDots,
-    SendButton,
-    Timestamp
-} from './styled/ChatComponents'
 import { Conversation, ConversationContent } from './Conversation'
+import {
+  AgentAvatar,
+  ChatInput,
+  ChatMessage,
+  ChatWidget,
+  ErrorMessage,
+  LoadingDots,
+  SendButton,
+  Timestamp
+} from './styled/ChatComponents'
 
 interface EmbeddedChatProps {
   config: OrdifyConfig
@@ -37,11 +38,11 @@ export function EmbeddedChat({ config, chat }: EmbeddedChatProps) {
       const checkDarkMode = () => {
         setIsDarkMode(window.matchMedia('(prefers-color-scheme: dark)').matches)
       }
-      
+
       checkDarkMode()
       const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
       mediaQuery.addEventListener('change', checkDarkMode)
-      
+
       return () => mediaQuery.removeEventListener('change', checkDarkMode)
     } else {
       setIsDarkMode(config.theme === 'dark')
@@ -99,16 +100,25 @@ export function EmbeddedChat({ config, chat }: EmbeddedChatProps) {
               style={{
                 display: 'flex',
                 marginBottom: '16px',
-                justifyContent: message.role === 'user' ? 'flex-end' : 'flex-start'
+                justifyContent: message.role === 'user' ? 'flex-end' : 'flex-start',
+                alignItems: 'flex-start',
+                gap: '8px'
               }}
             >
-               <ChatMessage $isUser={message.role === 'user'}>
+              {message.role === 'assistant' && config.agentImage && (
+                <AgentAvatar
+                  src={config.agentImage}
+                  alt={config.chatName || "Agent"}
+                  $size="28px"
+                />
+              )}
+              <ChatMessage $isUser={message.role === 'user'}>
                 {message.role === 'assistant' ? (
                   <MarkdownRenderer content={message.content} />
                 ) : (
                   message.content
                 )}
-                 <Timestamp $isUser={message.role === 'user'}>
+                <Timestamp $isUser={message.role === 'user'}>
                   {formatTime(message.timestamp)}
                 </Timestamp>
               </ChatMessage>
@@ -116,8 +126,15 @@ export function EmbeddedChat({ config, chat }: EmbeddedChatProps) {
           ))}
 
           {isLoading && (
-            <div style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: '16px' }}>
-               <ChatMessage $isUser={false}>
+            <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start', gap: '8px', marginBottom: '16px' }}>
+              {config.agentImage && (
+                <AgentAvatar
+                  src={config.agentImage}
+                  alt={config.chatName || "Agent"}
+                  $size="28px"
+                />
+              )}
+              <ChatMessage $isUser={false}>
                 <LoadingDots>
                   <div className="dot"></div>
                   <div className="dot"></div>

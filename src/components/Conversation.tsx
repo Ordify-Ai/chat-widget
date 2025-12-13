@@ -77,6 +77,7 @@ export function Conversation({ className, children, style }: ConversationProps) 
       className={className}
       style={style}
       initial="smooth"
+      mode="smooth"
       resize="smooth"
       role="log"
     >
