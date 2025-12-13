@@ -12,6 +12,7 @@ jobs:
     permissions:
       contents: write
       packages: write
+      id-token: write  # Required for Trusted Publishing (OIDC)
       
     steps:
     - name: Checkout code
@@ -22,6 +23,7 @@ jobs:
       with:
         node-version: '18'
         registry-url: 'https://registry.npmjs.org'
+        # Trusted Publishing uses OIDC - no token needed
         
     - name: Prepare package for NPM publishing
       run: |
@@ -68,10 +70,9 @@ jobs:
         
     - name: Publish to NPM
       run: |
-        # Using NODE_AUTH_TOKEN for authentication (Granular access token)
-        npm publish --access public
-      env:
-        NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+        # Using Trusted Publishing (OIDC) - no token needed
+        # --provenance flag generates cryptographic proof of build origin
+        npm publish --access public --provenance
 
   mirror-to-github:
     needs: publish-npm
