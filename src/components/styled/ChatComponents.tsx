@@ -235,13 +235,13 @@ export const FloatingButton = styled.button<{ $position?: string; $primaryColor?
   
   &:hover {
     background: ${props => {
-      if (props.$primaryColor) {
-        const darker = darkenColor(props.$primaryColor, 0.2)
-        const darkest = darkenColor(props.$primaryColor, 0.3)
-        return `linear-gradient(135deg, ${darker} 0%, ${darkest} 100%)`
-      }
-      return 'linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%)'
-    }};
+    if (props.$primaryColor) {
+      const darker = darkenColor(props.$primaryColor, 0.2)
+      const darkest = darkenColor(props.$primaryColor, 0.3)
+      return `linear-gradient(135deg, ${darker} 0%, ${darkest} 100%)`
+    }
+    return 'linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%)'
+  }};
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   }
   
@@ -488,4 +488,15 @@ export const ResizeHandle = styled.div<{ $position: string }>`
       background: linear-gradient(90deg, #3b82f6 0%, #1d4ed8 50%, #3b82f6 100%);
     }
   }
+`
+
+// Agent avatar
+export const AgentAvatar = styled.img<{ $size?: string }>`
+  width: ${props => props.$size || '32px'};
+  height: ${props => props.$size || '32px'};
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.1);
 `

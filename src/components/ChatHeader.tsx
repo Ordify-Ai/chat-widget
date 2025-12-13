@@ -1,5 +1,6 @@
 import { X } from 'lucide-react'
 import styled from 'styled-components'
+import { AgentAvatar } from './styled/ChatComponents'
 
 interface ChatHeaderProps {
   chatName?: string
@@ -7,6 +8,7 @@ interface ChatHeaderProps {
   showCloseButton?: boolean
   onClose?: () => void
   primaryColor?: string
+  agentImage?: string
   className?: string
 }
 
@@ -94,20 +96,28 @@ export function ChatHeader({
   showCloseButton = true,
   onClose,
   primaryColor,
+  agentImage,
   className
 }: ChatHeaderProps) {
   return (
-    <HeaderContainer 
+    <HeaderContainer
       $primaryColor={primaryColor}
       className={className}
     >
       <HeaderContent>
+        {agentImage && (
+          <AgentAvatar
+            src={agentImage}
+            alt={chatName || "Agent"}
+            $size="32px"
+          />
+        )}
         <StatusIndicator>
           <StatusDot />
           <ChatName>{chatName}</ChatName>
         </StatusIndicator>
       </HeaderContent>
-      
+
       <HeaderActions>
         {showCloseButton && (
           <CloseButton

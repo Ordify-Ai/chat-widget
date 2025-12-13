@@ -1,21 +1,22 @@
+import { Conversation, ConversationContent } from '@/components/Conversation'
 import { MarkdownRenderer } from '@/components/MarkdownRenderer'
 import { ProfessionalInput } from '@/components/ProfessionalInput'
-import { Conversation, ConversationContent } from '@/components/Conversation'
 import { OrdifyConfig, UseOrdifyChatReturn } from '@/types'
 import { formatTime } from '@/utils'
 import { MessageSquare, Send } from 'lucide-react'
 import React from 'react'
+import { ChatHeader } from './ChatHeader'
 import {
-    ChatHeader,
-    ChatInput,
-    ChatMessage,
-    ChatWindow,
-    ErrorMessage,
-    FloatingButton,
-    LoadingDots,
-    SendButton,
-    ResizeHandle as StyledResizeHandle,
-    Timestamp
+  AgentAvatar,
+  ChatInput,
+  ChatMessage,
+  ChatWindow,
+  ErrorMessage,
+  FloatingButton,
+  LoadingDots,
+  SendButton,
+  ResizeHandle as StyledResizeHandle,
+  Timestamp
 } from './styled/ChatComponents'
 
 interface FloatingChatProps {
@@ -41,11 +42,11 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
       const checkDarkMode = () => {
         setIsDarkMode(window.matchMedia('(prefers-color-scheme: dark)').matches)
       }
-      
+
       checkDarkMode()
       const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
       mediaQuery.addEventListener('change', checkDarkMode)
-      
+
       return () => mediaQuery.removeEventListener('change', checkDarkMode)
     } else {
       setIsDarkMode(config.theme === 'dark')
@@ -128,22 +129,12 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
 
       {/* Chat header */}
       {config.showHeader !== false && (
-        <ChatHeader primaryColor={config.primaryColor}>
-          <div className="header-content">
-            <div className="font-medium">{config.chatName || "Chat Assistant"}</div>
-          </div>
-          <div className="header-actions">
-            <button
-              onClick={() => setIsOpen(false)}
-              className="hover:bg-white/10 p-1 rounded"
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-              </svg>
-            </button>
-          </div>
-        </ChatHeader>
+        <ChatHeader
+          primaryColor={config.primaryColor}
+          agentImage={config.agentImage}
+          chatName={config.chatName}
+          onClose={() => setIsOpen(false)}
+        />
       )}
 
       {/* Chat messages with auto-scroll */}
@@ -155,16 +146,25 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
               style={{
                 display: 'flex',
                 marginBottom: '16px',
-                justifyContent: message.role === 'user' ? 'flex-end' : 'flex-start'
+                justifyContent: message.role === 'user' ? 'flex-end' : 'flex-start',
+                alignItems: 'flex-start',
+                gap: '8px'
               }}
             >
-               <ChatMessage $isUser={message.role === 'user'}>
+              {message.role === 'assistant' && config.agentImage && (
+                <AgentAvatar
+                  src={config.agentImage}
+                  alt={config.chatName || "Agent"}
+                  $size="28px"
+                />
+              )}
+              <ChatMessage $isUser={message.role === 'user'}>
                 {message.role === 'assistant' ? (
                   <MarkdownRenderer content={message.content} />
                 ) : (
                   message.content
                 )}
-                 <Timestamp $isUser={message.role === 'user'}>
+                <Timestamp $isUser={message.role === 'user'}>
                   {formatTime(message.timestamp)}
                 </Timestamp>
               </ChatMessage>
@@ -172,8 +172,15 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
           ))}
 
           {isLoading && (
-            <div style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: '16px' }}>
-               <ChatMessage $isUser={false}>
+            <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start', gap: '8px', marginBottom: '16px' }}>
+              {config.agentImage && (
+                <AgentAvatar
+                  src={config.agentImage}
+                  alt={config.chatName || "Agent"}
+                  $size="28px"
+                />
+              )}
+              <ChatMessage $isUser={false}>
                 <LoadingDots>
                   <div className="dot"></div>
                   <div className="dot"></div>

@@ -12,6 +12,7 @@ function DemoApp() {
   const [chatName, setChatName] = useState("Chat Assistant")
   const [buttonText, setButtonText] = useState("?")
   const [primaryColor, setPrimaryColor] = useState("")
+  const [agentImage, setAgentImage] = useState("")
   const [theme, setTheme] = useState<'light' | 'dark' | 'auto'>('auto')
   const [position, setPosition] = useState<'bottom-right' | 'bottom-left' | 'top-right' | 'top-left'>('bottom-right')
   const [floatingSessionId, setFloatingSessionId] = useState<string | null>(null)
@@ -28,6 +29,7 @@ function DemoApp() {
         setChatName(config.chatName || "Chat Assistant")
         setButtonText(config.buttonText || "?")
         setPrimaryColor(config.primaryColor || "")
+        setAgentImage(config.agentImage || "")
         setTheme(config.theme || 'auto')
         setPosition(config.position || 'bottom-right')
       } catch (e) {
@@ -55,11 +57,12 @@ function DemoApp() {
       chatName,
       buttonText,
       primaryColor,
+      agentImage,
       theme,
       position
     }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(config))
-  }, [agentId, apiKey, apiBaseUrl, chatName, buttonText, primaryColor, theme, position])
+  }, [agentId, apiKey, apiBaseUrl, chatName, buttonText, primaryColor, agentImage, theme, position])
 
   // State for dynamic testing
   const [initialMessage, setInitialMessage] = useState("Hi")
@@ -91,7 +94,7 @@ function DemoApp() {
       const sessions = saved ? JSON.parse(saved) : {}
       sessions[type] = sessionId
       localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(sessions))
-      
+
       if (type === 'floating') {
         setFloatingSessionId(sessionId)
       } else {
@@ -108,7 +111,7 @@ function DemoApp() {
       const sessions = saved ? JSON.parse(saved) : {}
       delete sessions[type]
       localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(sessions))
-      
+
       if (type === 'floating') {
         setFloatingSessionId(null)
       } else {
@@ -289,6 +292,27 @@ function DemoApp() {
                   }}
                 />
               </div>
+            </div>
+
+            <div>
+              <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
+                Agent Image URL
+              </label>
+              <input
+                type="text"
+                value={agentImage}
+                onChange={(e) => setAgentImage(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '8px',
+                  border: '1px solid #ccc',
+                  borderRadius: '4px'
+                }}
+                placeholder="https://example.com/agent-avatar.png"
+              />
+              <p style={{ fontSize: '12px', color: '#666', marginTop: '4px', marginBottom: 0 }}>
+                Image will appear in header and next to assistant messages
+              </p>
             </div>
           </div>
 
@@ -490,15 +514,15 @@ function DemoApp() {
                 <p style={{ margin: '5px 0' }}>Auto-scroll should work when new messages arrive</p>
               </div>
               {floatingSessionId && (
-                <div style={{ 
-                  padding: '8px 12px', 
-                  backgroundColor: '#e3f2fd', 
+                <div style={{
+                  padding: '8px 12px',
+                  backgroundColor: '#e3f2fd',
                   borderRadius: '6px',
                   fontSize: '12px'
                 }}>
                   <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>Session ID:</div>
-                  <code style={{ 
-                    fontSize: '11px', 
+                  <code style={{
+                    fontSize: '11px',
                     wordBreak: 'break-all',
                     display: 'block',
                     marginBottom: '4px'
@@ -535,6 +559,7 @@ function DemoApp() {
             buttonText={buttonText}
             chatName={chatName}
             primaryColor={primaryColor || undefined}
+            agentImage={agentImage || undefined}
             theme={theme}
             placeholder="Test the floating widget"
             sessionId={floatingSessionId || undefined}
@@ -560,16 +585,16 @@ function DemoApp() {
                 <p style={{ margin: '5px 0' }}>Widget should be embedded as a full-page chat interface</p>
               </div>
               {embeddedSessionId && (
-                <div style={{ 
-                  padding: '8px 12px', 
-                  backgroundColor: '#e3f2fd', 
+                <div style={{
+                  padding: '8px 12px',
+                  backgroundColor: '#e3f2fd',
                   borderRadius: '6px',
                   fontSize: '12px',
                   maxWidth: '300px'
                 }}>
                   <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>Session ID:</div>
-                  <code style={{ 
-                    fontSize: '11px', 
+                  <code style={{
+                    fontSize: '11px',
                     wordBreak: 'break-all',
                     display: 'block',
                     marginBottom: '4px'
@@ -594,11 +619,11 @@ function DemoApp() {
                 </div>
               )}
             </div>
-            
-            <div style={{ 
-              marginTop: '15px', 
-              padding: '15px', 
-              backgroundColor: '#f0f0f0', 
+
+            <div style={{
+              marginTop: '15px',
+              padding: '15px',
+              backgroundColor: '#f0f0f0',
               borderRadius: '8px',
               border: '1px solid #ddd'
             }}>
@@ -612,7 +637,7 @@ function DemoApp() {
                   />
                   <span style={{ fontWeight: 'bold' }}>Use Dynamic Height (100%)</span>
                 </label>
-                
+
                 {useDynamicHeight && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1, minWidth: '300px' }}>
                     <label style={{ fontWeight: 'bold', fontSize: '12px' }}>Container Height:</label>
@@ -627,7 +652,7 @@ function DemoApp() {
                     <span style={{ minWidth: '60px', fontSize: '12px' }}>{dynamicHeight}px</span>
                   </div>
                 )}
-                
+
                 {!useDynamicHeight && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <label style={{ fontWeight: 'bold' }}>Fixed Height:</label>
@@ -648,20 +673,20 @@ function DemoApp() {
                   </div>
                 )}
               </div>
-              
+
               <div style={{ fontSize: '12px', color: '#666' }}>
-                {useDynamicHeight 
-                  ? `✅ Chat fills container dynamically (${dynamicHeight}px) - Resize window to see it update automatically` 
+                {useDynamicHeight
+                  ? `✅ Chat fills container dynamically (${dynamicHeight}px) - Resize window to see it update automatically`
                   : `📐 Chat container height: ${containerHeight}px (fixed)`
                 }
               </div>
             </div>
           </div>
 
-          <div 
-            style={{ 
-              border: '2px solid #3b82f6', 
-              borderRadius: '8px', 
+          <div
+            style={{
+              border: '2px solid #3b82f6',
+              borderRadius: '8px',
               height: useDynamicHeight ? `${dynamicHeight}px` : `${containerHeight}px`,
               display: 'flex',
               flexDirection: 'column',
@@ -670,16 +695,16 @@ function DemoApp() {
               transition: 'height 0.3s ease'
             }}
           >
-            <div style={{ 
-              padding: '10px', 
-              backgroundColor: '#3b82f6', 
+            <div style={{
+              padding: '10px',
+              backgroundColor: '#3b82f6',
               color: 'white',
               fontWeight: 'bold',
               fontSize: '12px',
               borderBottom: '2px solid #2563eb'
             }}>
-              {useDynamicHeight 
-                ? `Dynamic Container (height: ${dynamicHeight}px, chat uses 100% of this)` 
+              {useDynamicHeight
+                ? `Dynamic Container (height: ${dynamicHeight}px, chat uses 100% of this)`
                 : `Fixed Container (height: ${containerHeight}px)`
               }
             </div>
@@ -692,6 +717,7 @@ function DemoApp() {
                 mode="embedded"
                 chatName={chatName}
                 primaryColor={primaryColor || undefined}
+                agentImage={agentImage || undefined}
                 theme={theme}
                 placeholder="Test the embedded widget"
                 height={useDynamicHeight ? '100%' : containerHeight}

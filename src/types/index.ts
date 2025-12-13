@@ -66,6 +66,8 @@ export interface OrdifyConfig {
   // Header customization
   glassEffect?: boolean // Enable glass morphism effect
   darkMode?: boolean // Force dark/light mode
+  // Agent image
+  agentImage?: string // URL or path to agent avatar image (shown in header and next to assistant messages)
   // Button styling
   buttonStyle?: CSSProperties
   buttonText?: string // Added for customizable button text

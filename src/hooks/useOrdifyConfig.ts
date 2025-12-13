@@ -7,11 +7,11 @@ export function useOrdifyConfig(config: OrdifyConfig) {
     const agentId = config.agentId || process.env.ORDIFY_AGENT_ID
     const apiKey = config.apiKey || process.env.ORDIFY_API_KEY
     const apiBaseUrl = config.apiBaseUrl || process.env.ORDIFY_API_BASE_URL || 'https://r.ordify.ai'
-    
+
     if (!agentId) {
       throw new Error('Ordify agent ID is required. Provide agentId prop or set ORDIFY_AGENT_ID environment variable.')
     }
-    
+
     if (!apiKey) {
       throw new Error('Ordify API key is required. Provide apiKey prop or set ORDIFY_API_KEY environment variable.')
     }
@@ -32,6 +32,7 @@ export function useOrdifyConfig(config: OrdifyConfig) {
       buttonText: config.buttonText,
       chatName: config.chatName,
       primaryColor: config.primaryColor,
+      agentImage: config.agentImage,
       onMessage: config.onMessage,
       onError: config.onError,
       onClose: config.onClose,
