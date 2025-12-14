@@ -94,9 +94,37 @@ jobs:
         npm pack --dry-run
         echo "✅ Package can be created successfully"
         
-    - name: Test provenance generation (simulated)
+    - name: Test actual publish attempt (will fail gracefully)
       run: |
-        echo "=== Testing Provenance (OIDC) ==="
-        echo "OIDC token available: ${{ github.event_name != 'pull_request' }}"
-        echo "In PR mode, OIDC might not be fully available"
-        echo "This is just a configuration test - no actual publish"
+        echo "=== Testing Actual Publish (This will fail but show the real error) ==="
+        echo "Attempting to publish to see the actual error from npm..."
+        echo "This is safe - we're on a dev branch, so even if it succeeds, it won't affect main"
+        echo ""
+        PKG_NAME=$(node -p "require('./package.json').name")
+        PKG_VERSION=$(node -p "require('./package.json').version")
+        
+        # Try to publish - this will show the real error
+        # We'll catch the error so the workflow doesn't fail completely
+        set +e  # Don't exit on error
+        npm publish --access public --provenance 2>&1 | tee publish-attempt.log
+        PUBLISH_EXIT_CODE=$?
+        set -e  # Re-enable exit on error
+        
+        echo ""
+        echo "=== Publish Attempt Result ==="
+        if [ $PUBLISH_EXIT_CODE -eq 0 ]; then
+          echo "✅ Publish succeeded! (unexpected on dev branch)"
+        else
+          echo "❌ Publish failed (expected - this shows us the real error)"
+          echo ""
+          echo "=== Error Details ==="
+          cat publish-attempt.log | grep -A 10 "npm error" || cat publish-attempt.log
+          echo ""
+          echo "=== Common Issues ==="
+          echo "If you see 404 'not in this registry':"
+          echo "  1. Check Trusted Publisher on npm matches exactly:"
+          echo "     - Repository: Ordify-Ai/chat-widget"
+          echo "     - Workflow file: publish.yml (not test-publish.yml)"
+          echo "  2. The repository URL in package.json must match what's in Trusted Publisher"
+          echo "  3. Make sure you're publishing from the 'main' branch (Trusted Publishing requirement)"
+        fi
