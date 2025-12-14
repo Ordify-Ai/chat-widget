@@ -26,7 +26,7 @@ interface FloatingChatProps {
 export function FloatingChat({ config, chat }: FloatingChatProps) {
   const { messages, sendMessage, isLoading, error, isOpen, setIsOpen, hasSessionStarted } = chat
   const [inputValue, setInputValue] = React.useState('')
-  const [chatHeight, setChatHeight] = React.useState<number | string>(config.height || 400)
+  const [chatHeight, setChatHeight] = React.useState<number | string>(config.height || 600)
   const [isDarkMode, setIsDarkMode] = React.useState(false)
   const inputRef = React.useRef<HTMLTextAreaElement>(null)
 
@@ -107,7 +107,7 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
           onMouseDown={(e) => {
             e.preventDefault()
             const startY = e.clientY
-            const startHeight = typeof chatHeight === 'number' ? chatHeight : 400
+            const startHeight = typeof chatHeight === 'number' ? chatHeight : 600
 
             const handleMouseMove = (e: MouseEvent) => {
               const deltaY = e.clientY - startY

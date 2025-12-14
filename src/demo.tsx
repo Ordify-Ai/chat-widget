@@ -637,7 +637,7 @@ function DemoApp() {
             welcomeMessage={welcomeMessage || undefined}
             welcomeImage={welcomeImage || undefined}
             theme={theme}
-            placeholder="Test the floating widget"
+            placeholder="Type a message..."
             sessionId={floatingSessionId || undefined}
             initialMessage={activeMessage}
             initialContext={activeContext}
@@ -798,7 +798,7 @@ function DemoApp() {
                 welcomeMessage={welcomeMessage || undefined}
                 welcomeImage={welcomeImage || undefined}
                 theme={theme}
-                placeholder="Test the embedded widget"
+                placeholder="Type a message..."
                 height={useDynamicHeight ? '100%' : containerHeight}
                 sessionId={embeddedSessionId || undefined}
                 initialMessage={activeMessage}

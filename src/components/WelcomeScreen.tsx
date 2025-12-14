@@ -39,7 +39,7 @@ export function WelcomeScreen({ config, onQuestionClick, onSendMessage, isLoadin
   const welcomeMessage = config.welcomeMessage || "Hi there 👋 How can we help?"
 
   return (
-    <WelcomeScreenContainer>
+    <WelcomeScreenContainer $primaryColor={config.primaryColor}>
       {config.welcomeImage && (
         <WelcomeImage
           src={config.welcomeImage}

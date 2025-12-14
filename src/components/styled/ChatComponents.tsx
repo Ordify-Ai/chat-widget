@@ -501,16 +501,55 @@ export const AgentAvatar = styled.img<{ $size?: string }>`
   background-color: rgba(255, 255, 255, 0.1);
 `
 
+// Helper function to convert hex to rgba with opacity
+const hexToRgba = (hex: string, opacity: number): string => {
+  if (!hex || !hex.startsWith('#')) {
+    return hex || 'transparent'
+  }
+  const r = parseInt(hex.slice(1, 3), 16)
+  const g = parseInt(hex.slice(3, 5), 16)
+  const b = parseInt(hex.slice(5, 7), 16)
+  return `rgba(${r}, ${g}, ${b}, ${opacity})`
+}
+
 // Welcome screen container
-export const WelcomeScreenContainer = styled.div`
+export const WelcomeScreenContainer = styled.div<{ $primaryColor?: string }>`
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
   padding: 24px 16px;
-  height: 100%;
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
   gap: 20px;
+  position: relative;
+  
+  /* Gradient background - starts with full primary color at top, fades to background color */
+  background: ${props => {
+    if (props.$primaryColor) {
+      return `linear-gradient(to bottom, ${props.$primaryColor} 0%, ${props.$primaryColor} 20%, rgba(255, 255, 255, 0.3) 45%, rgba(255, 255, 255, 0.7) 65%, rgba(255, 255, 255, 1) 100%)`
+    }
+    return 'transparent'
+  }};
+  
+  @media (prefers-color-scheme: dark) {
+    background: ${props => {
+      if (props.$primaryColor) {
+        return `linear-gradient(to bottom, ${props.$primaryColor} 0%, ${props.$primaryColor} 20%, rgba(31, 41, 55, 0.3) 45%, rgba(31, 41, 55, 0.7) 65%, rgba(31, 41, 55, 1) 100%)`
+      }
+      return 'transparent'
+    }};
+  }
+  
+  [data-theme="dark"] & {
+    background: ${props => {
+      if (props.$primaryColor) {
+        return `linear-gradient(to bottom, ${props.$primaryColor} 0%, ${props.$primaryColor} 20%, rgba(31, 41, 55, 0.3) 45%, rgba(31, 41, 55, 0.7) 65%, rgba(31, 41, 55, 1) 100%)`
+      }
+      return 'transparent'
+    }};
+  }
 `
 
 // Welcome greeting

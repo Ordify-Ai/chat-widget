@@ -20,12 +20,12 @@ const HeaderContainer = styled.div<{ $primaryColor?: string }>`
   border-radius: 8px 8px 0 0;
   background: ${props => props.$primaryColor || '#ffffff'};
   color: ${props => props.$primaryColor ? 'white' : '#111827'};
-  border-bottom: ${props => props.$primaryColor ? 'none' : '1px solid #e5e7eb'};
+  border-bottom: none;
 
   @media (prefers-color-scheme: dark) {
     background: ${props => props.$primaryColor || '#1f2937'};
     color: ${props => props.$primaryColor ? 'white' : '#f9fafb'};
-    border-bottom-color: ${props => props.$primaryColor ? 'none' : '#374151'};
+    border-bottom: none;
   }
 `
 
