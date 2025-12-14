@@ -18,19 +18,25 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       
+    - name: Prepare package for NPM publishing
+      run: |
+        # Change package name for NPM (unscoped) BEFORE setup-node
+        # This ensures Trusted Publishing can verify the package correctly
+        npm pkg set name="ordify-chat-widget"
+        npm pkg delete publishConfig
+        # Ensure repository field matches GitHub repo exactly for Trusted Publishing
+        # Must match: Ordify-Ai/chat-widget (case-sensitive)
+        npm pkg set repository.type="git"
+        npm pkg set repository.url="git+https://github.com/Ordify-Ai/chat-widget.git"
+        echo "Package name set to: $(node -p "require('./package.json').name")"
+        echo "Repository set to: $(node -p "require('./package.json').repository.url")"
+        
     - name: Setup Node.js for NPM
       uses: actions/setup-node@v4
       with:
         node-version: '18'
         registry-url: 'https://registry.npmjs.org'
         # Trusted Publishing uses OIDC - no token needed
-        
-    - name: Prepare package for NPM publishing
-      run: |
-        # Change package name for NPM (unscoped) BEFORE any npm commands
-        npm pkg set name="ordify-chat-widget"
-        npm pkg delete publishConfig
-        echo "Package name set to: $(node -p "require('./package.json').name")"
         
     - name: Install dependencies
       run: npm ci
@@ -68,10 +74,20 @@ jobs:
           echo "bumped=false" >> $GITHUB_OUTPUT
         fi
         
+    - name: Verify package configuration
+      run: |
+        echo "Package name: $(node -p "require('./package.json').name")"
+        echo "Package version: $(node -p "require('./package.json').version")"
+        echo "Repository: $(node -p "require('./package.json').repository.url")"
+        echo "Verifying package exists on npm..."
+        npm view ordify-chat-widget || echo "Package check completed"
+        
     - name: Publish to NPM
       run: |
         # Using Trusted Publishing (OIDC) - no token needed
         # --provenance flag generates cryptographic proof of build origin
+        # Note: Trusted Publisher must be configured for this package on npm
+        # Repository URL must match exactly: Ordify-Ai/chat-widget
         npm publish --access public --provenance
 
   mirror-to-github:
