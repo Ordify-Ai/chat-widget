@@ -22,6 +22,8 @@ jobs:
       with:
         node-version: '18'
         registry-url: 'https://registry.npmjs.org'
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
         
     - name: Prepare package for NPM publishing
       run: |

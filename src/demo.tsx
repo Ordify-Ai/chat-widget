@@ -13,6 +13,9 @@ function DemoApp() {
   const [buttonText, setButtonText] = useState("?")
   const [primaryColor, setPrimaryColor] = useState("")
   const [agentImage, setAgentImage] = useState("")
+  const [quickQuestions, setQuickQuestions] = useState("")
+  const [welcomeMessage, setWelcomeMessage] = useState("")
+  const [welcomeImage, setWelcomeImage] = useState("")
   const [theme, setTheme] = useState<'light' | 'dark' | 'auto'>('auto')
   const [position, setPosition] = useState<'bottom-right' | 'bottom-left' | 'top-right' | 'top-left'>('bottom-right')
   const [floatingSessionId, setFloatingSessionId] = useState<string | null>(null)
@@ -30,6 +33,9 @@ function DemoApp() {
         setButtonText(config.buttonText || "?")
         setPrimaryColor(config.primaryColor || "")
         setAgentImage(config.agentImage || "")
+        setQuickQuestions(config.quickQuestions || "")
+        setWelcomeMessage(config.welcomeMessage || "")
+        setWelcomeImage(config.welcomeImage || "")
         setTheme(config.theme || 'auto')
         setPosition(config.position || 'bottom-right')
       } catch (e) {
@@ -58,11 +64,14 @@ function DemoApp() {
       buttonText,
       primaryColor,
       agentImage,
+      quickQuestions,
+      welcomeMessage,
+      welcomeImage,
       theme,
       position
     }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(config))
-  }, [agentId, apiKey, apiBaseUrl, chatName, buttonText, primaryColor, agentImage, theme, position])
+  }, [agentId, apiKey, apiBaseUrl, chatName, buttonText, primaryColor, agentImage, quickQuestions, welcomeMessage, welcomeImage, theme, position])
 
   // State for dynamic testing
   const [initialMessage, setInitialMessage] = useState("Hi")
@@ -314,6 +323,70 @@ function DemoApp() {
                 Image will appear in header and next to assistant messages
               </p>
             </div>
+
+            <div>
+              <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
+                Quick Questions (one per line)
+              </label>
+              <textarea
+                value={quickQuestions}
+                onChange={(e) => setQuickQuestions(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '8px',
+                  border: '1px solid #ccc',
+                  borderRadius: '4px',
+                  minHeight: '80px',
+                  resize: 'vertical'
+                }}
+                placeholder="I want to schedule an appointment.&#10;I want to find a location near me.&#10;I want a FREE hearing screening."
+              />
+              <p style={{ fontSize: '12px', color: '#666', marginTop: '4px', marginBottom: 0 }}>
+                Enter one question per line. These will appear as buttons in the welcome screen.
+              </p>
+            </div>
+
+            <div>
+              <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
+                Welcome Message
+              </label>
+              <input
+                type="text"
+                value={welcomeMessage}
+                onChange={(e) => setWelcomeMessage(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '8px',
+                  border: '1px solid #ccc',
+                  borderRadius: '4px'
+                }}
+                placeholder="Hi there 👋 How can we help?"
+              />
+              <p style={{ fontSize: '12px', color: '#666', marginTop: '4px', marginBottom: 0 }}>
+                Custom greeting message shown in welcome screen
+              </p>
+            </div>
+
+            <div>
+              <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
+                Welcome Image URL
+              </label>
+              <input
+                type="text"
+                value={welcomeImage}
+                onChange={(e) => setWelcomeImage(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '8px',
+                  border: '1px solid #ccc',
+                  borderRadius: '4px'
+                }}
+                placeholder="https://example.com/welcome-image.png"
+              />
+              <p style={{ fontSize: '12px', color: '#666', marginTop: '4px', marginBottom: 0 }}>
+                Optional image/graphic to display in welcome screen
+              </p>
+            </div>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '15px' }}>
@@ -560,8 +633,11 @@ function DemoApp() {
             chatName={chatName}
             primaryColor={primaryColor || undefined}
             agentImage={agentImage || undefined}
+            quickQuestions={quickQuestions ? quickQuestions.split('\n').filter(q => q.trim()) : undefined}
+            welcomeMessage={welcomeMessage || undefined}
+            welcomeImage={welcomeImage || undefined}
             theme={theme}
-            placeholder="Test the floating widget"
+            placeholder="Type a message..."
             sessionId={floatingSessionId || undefined}
             initialMessage={activeMessage}
             initialContext={activeContext}
@@ -718,8 +794,11 @@ function DemoApp() {
                 chatName={chatName}
                 primaryColor={primaryColor || undefined}
                 agentImage={agentImage || undefined}
+                quickQuestions={quickQuestions ? quickQuestions.split('\n').filter(q => q.trim()) : undefined}
+                welcomeMessage={welcomeMessage || undefined}
+                welcomeImage={welcomeImage || undefined}
                 theme={theme}
-                placeholder="Test the embedded widget"
+                placeholder="Type a message..."
                 height={useDynamicHeight ? '100%' : containerHeight}
                 sessionId={embeddedSessionId || undefined}
                 initialMessage={activeMessage}
