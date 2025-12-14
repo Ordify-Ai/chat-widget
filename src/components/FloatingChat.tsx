@@ -1,22 +1,21 @@
 import { Conversation, ConversationContent } from '@/components/Conversation'
 import { MarkdownRenderer } from '@/components/MarkdownRenderer'
 import { ProfessionalInput } from '@/components/ProfessionalInput'
+import { WelcomeScreen } from '@/components/WelcomeScreen'
 import { OrdifyConfig, UseOrdifyChatReturn } from '@/types'
-import { formatTime } from '@/utils'
 import { MessageSquare, Send } from 'lucide-react'
 import React from 'react'
 import { ChatHeader } from './ChatHeader'
 import {
   AgentAvatar,
-  ChatInput,
-  ChatMessage,
-  ChatWindow,
-  ErrorMessage,
-  FloatingButton,
-  LoadingDots,
-  SendButton,
-  ResizeHandle as StyledResizeHandle,
-  Timestamp
+    ChatInput,
+    ChatMessage,
+    ChatWindow,
+    ErrorMessage,
+    FloatingButton,
+    LoadingDots,
+    SendButton,
+    ResizeHandle as StyledResizeHandle
 } from './styled/ChatComponents'
 
 interface FloatingChatProps {
@@ -25,7 +24,7 @@ interface FloatingChatProps {
 }
 
 export function FloatingChat({ config, chat }: FloatingChatProps) {
-  const { messages, sendMessage, isLoading, error, isOpen, setIsOpen } = chat
+  const { messages, sendMessage, isLoading, error, isOpen, setIsOpen, hasSessionStarted } = chat
   const [inputValue, setInputValue] = React.useState('')
   const [chatHeight, setChatHeight] = React.useState<number | string>(config.height || 400)
   const [isDarkMode, setIsDarkMode] = React.useState(false)
@@ -42,11 +41,11 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
       const checkDarkMode = () => {
         setIsDarkMode(window.matchMedia('(prefers-color-scheme: dark)').matches)
       }
-
+      
       checkDarkMode()
       const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
       mediaQuery.addEventListener('change', checkDarkMode)
-
+      
       return () => mediaQuery.removeEventListener('change', checkDarkMode)
     } else {
       setIsDarkMode(config.theme === 'dark')
@@ -137,84 +136,94 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
         />
       )}
 
-      {/* Chat messages with auto-scroll */}
-      <Conversation>
-        <ConversationContent>
-          {messages.map(message => (
-            <div
-              key={message.id}
-              style={{
-                display: 'flex',
-                marginBottom: '16px',
-                justifyContent: message.role === 'user' ? 'flex-end' : 'flex-start',
-                alignItems: 'flex-start',
-                gap: '8px'
-              }}
-            >
-              {message.role === 'assistant' && config.agentImage && (
-                <AgentAvatar
-                  src={config.agentImage}
-                  alt={config.chatName || "Agent"}
-                  $size="28px"
-                />
-              )}
-              <ChatMessage $isUser={message.role === 'user'}>
-                {message.role === 'assistant' ? (
-                  <MarkdownRenderer content={message.content} />
-                ) : (
-                  message.content
-                )}
-                <Timestamp $isUser={message.role === 'user'}>
-                  {formatTime(message.timestamp)}
-                </Timestamp>
-              </ChatMessage>
-            </div>
-          ))}
-
-          {isLoading && (
-            <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start', gap: '8px', marginBottom: '16px' }}>
-              {config.agentImage && (
-                <AgentAvatar
-                  src={config.agentImage}
-                  alt={config.chatName || "Agent"}
-                  $size="28px"
-                />
-              )}
-              <ChatMessage $isUser={false}>
-                <LoadingDots>
-                  <div className="dot"></div>
-                  <div className="dot"></div>
-                  <div className="dot"></div>
-                </LoadingDots>
-              </ChatMessage>
-            </div>
-          )}
-
-          {error && (
-            <ErrorMessage>
-              {error}
-            </ErrorMessage>
-          )}
-        </ConversationContent>
-      </Conversation>
-
-      {/* Chat input - Full width */}
-      <ChatInput>
-        <ProfessionalInput
-          ref={inputRef}
-          value={inputValue}
-          onChange={setInputValue}
-          onKeyDown={handleKeyPress}
-          placeholder={config.placeholder}
-          disabled={isLoading}
+      {/* Welcome screen or chat messages */}
+      {config.quickQuestions && config.quickQuestions.length > 0 && !hasSessionStarted ? (
+        <WelcomeScreen
+          config={config}
+          onQuestionClick={async (question) => {
+            await sendMessage(question)
+          }}
+          onSendMessage={sendMessage}
+          isLoading={isLoading}
         />
-        <SendButton
-          onClick={handleSendMessage}
-          disabled={isLoading || !inputValue.trim()}
-        >
-          <Send size={16} />
-        </SendButton>
-      </ChatInput>
+      ) : (
+        <>
+          <Conversation>
+            <ConversationContent>
+              {messages.map(message => (
+                <div
+                  key={message.id}
+                  style={{
+                    display: 'flex',
+                    marginBottom: '16px',
+                    justifyContent: message.role === 'user' ? 'flex-end' : 'flex-start',
+                    alignItems: 'flex-start',
+                    gap: '8px'
+                  }}
+                >
+                  {message.role === 'assistant' && config.agentImage && (
+                    <AgentAvatar
+                      src={config.agentImage}
+                      alt={config.chatName || "Agent"}
+                      $size="28px"
+                    />
+                  )}
+                   <ChatMessage $isUser={message.role === 'user'}>
+                    {message.role === 'assistant' ? (
+                      <MarkdownRenderer content={message.content} />
+                    ) : (
+                      message.content
+                    )}
+                  </ChatMessage>
+                </div>
+              ))}
+
+              {isLoading && (
+                <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start', gap: '8px', marginBottom: '16px' }}>
+                  {config.agentImage && (
+                    <AgentAvatar
+                      src={config.agentImage}
+                      alt={config.chatName || "Agent"}
+                      $size="28px"
+                    />
+                  )}
+                   <ChatMessage $isUser={false}>
+                    <LoadingDots>
+                      <div className="dot"></div>
+                      <div className="dot"></div>
+                      <div className="dot"></div>
+                    </LoadingDots>
+                  </ChatMessage>
+                </div>
+              )}
+
+              {error && (
+                <ErrorMessage>
+                  {error}
+                </ErrorMessage>
+              )}
+            </ConversationContent>
+          </Conversation>
+
+          {/* Chat input - Full width */}
+          <ChatInput>
+            <ProfessionalInput
+              ref={inputRef}
+              value={inputValue}
+              onChange={setInputValue}
+              onKeyDown={handleKeyPress}
+              placeholder={config.placeholder}
+              disabled={isLoading}
+            />
+            <SendButton
+              onClick={handleSendMessage}
+              disabled={isLoading || !inputValue.trim()}
+            >
+              <Send size={16} />
+            </SendButton>
+          </ChatInput>
+        </>
+      )}
     </ChatWindow>
   )
 }

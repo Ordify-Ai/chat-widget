@@ -82,6 +82,10 @@ export interface OrdifyConfig {
   initialContext?: string
   // Session management
   sessionId?: string
+  // Welcome screen and quick questions
+  quickQuestions?: string[]
+  welcomeMessage?: string
+  welcomeImage?: string
 }
 
 export interface UseOrdifyChatReturn {
@@ -93,6 +97,7 @@ export interface UseOrdifyChatReturn {
   sessionId: string | null
   isOpen: boolean
   setIsOpen: (open: boolean) => void
+  hasSessionStarted: boolean
 }
 
 export interface StreamingResponse {

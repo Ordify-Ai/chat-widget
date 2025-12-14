@@ -500,3 +500,125 @@ export const AgentAvatar = styled.img<{ $size?: string }>`
   border: 2px solid rgba(255, 255, 255, 0.2);
   background-color: rgba(255, 255, 255, 0.1);
 `
+
+// Welcome screen container
+export const WelcomeScreenContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 24px 16px;
+  height: 100%;
+  overflow-y: auto;
+  gap: 20px;
+`
+
+// Welcome greeting
+export const WelcomeGreeting = styled.div`
+  font-size: 18px;
+  font-weight: 600;
+  text-align: center;
+  color: #111827;
+  margin-bottom: 8px;
+  
+  @media (prefers-color-scheme: dark) {
+    color: #f9fafb;
+  }
+  
+  [data-theme="dark"] & {
+    color: #f9fafb;
+  }
+`
+
+// Welcome image
+export const WelcomeImage = styled.img`
+  max-width: 120px;
+  max-height: 120px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  margin-bottom: 8px;
+  border-radius: 8px;
+`
+
+// Welcome questions container
+export const WelcomeQuestionsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 100%;
+  margin-bottom: 16px;
+`
+
+// Question button
+export const QuestionButton = styled.button<{ $primaryColor?: string }>`
+  width: 100%;
+  padding: 12px 16px;
+  text-align: left;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background-color: #ffffff;
+  color: #111827;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover:not(:disabled) {
+    background-color: ${props => props.$primaryColor ? `${props.$primaryColor}15` : '#f3f4f6'};
+    border-color: ${props => props.$primaryColor || '#d1d5db'};
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  @media (prefers-color-scheme: dark) {
+    background-color: #374151;
+    color: #f9fafb;
+    border-color: #4b5563;
+    
+    &:hover:not(:disabled) {
+      background-color: ${props => props.$primaryColor ? `${props.$primaryColor}25` : '#4b5563'};
+      border-color: ${props => props.$primaryColor || '#6b7280'};
+    }
+  }
+  
+  [data-theme="dark"] & {
+    background-color: #374151;
+    color: #f9fafb;
+    border-color: #4b5563;
+    
+    &:hover:not(:disabled) {
+      background-color: ${props => props.$primaryColor ? `${props.$primaryColor}25` : '#4b5563'};
+      border-color: ${props => props.$primaryColor || '#6b7280'};
+    }
+  }
+`
+
+// Welcome input container
+export const WelcomeInputContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid #e5e7eb;
+  
+  @media (prefers-color-scheme: dark) {
+    border-top-color: #374151;
+  }
+  
+  [data-theme="dark"] & {
+    border-top-color: #374151;
+  }
+`

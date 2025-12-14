@@ -1,7 +1,7 @@
 import { MarkdownRenderer } from '@/components/MarkdownRenderer'
 import { ProfessionalInput } from '@/components/ProfessionalInput'
+import { WelcomeScreen } from '@/components/WelcomeScreen'
 import { OrdifyConfig, UseOrdifyChatReturn } from '@/types'
-import { formatTime } from '@/utils'
 import { Send } from 'lucide-react'
 import React from 'react'
 import { Conversation, ConversationContent } from './Conversation'
@@ -12,8 +12,7 @@ import {
   ChatWidget,
   ErrorMessage,
   LoadingDots,
-  SendButton,
-  Timestamp
+  SendButton
 } from './styled/ChatComponents'
 
 interface InlineChatProps {
@@ -22,7 +21,7 @@ interface InlineChatProps {
 }
 
 export function InlineChat({ config, chat }: InlineChatProps) {
-  const { messages, sendMessage, isLoading, error } = chat
+  const { messages, sendMessage, isLoading, error, hasSessionStarted } = chat
   const [inputValue, setInputValue] = React.useState('')
   const inputRef = React.useRef<HTMLTextAreaElement>(null)
 
@@ -56,39 +55,47 @@ export function InlineChat({ config, chat }: InlineChatProps) {
         borderRadius: '8px'
       }}
     >
-      {/* Chat messages */}
-      <Conversation style={{ flex: 1 }}>
-        <ConversationContent>
-          {messages.map(message => (
-            <div
-              key={message.id}
-              style={{
-                display: 'flex',
-                marginBottom: '12px',
-                justifyContent: message.role === 'user' ? 'flex-end' : 'flex-start',
-                alignItems: 'flex-start',
-                gap: '8px'
-              }}
-            >
-              {message.role === 'assistant' && config.agentImage && (
-                <AgentAvatar
-                  src={config.agentImage}
-                  alt={config.chatName || "Agent"}
-                  $size="28px"
-                />
-              )}
-              <ChatMessage $isUser={message.role === 'user'}>
-                {message.role === 'assistant' ? (
-                  <MarkdownRenderer content={message.content} />
-                ) : (
-                  message.content
-                )}
-                <Timestamp $isUser={message.role === 'user'}>
-                  {formatTime(message.timestamp)}
-                </Timestamp>
-              </ChatMessage>
-            </div>
-          ))}
+      {/* Welcome screen or chat messages */}
+      {config.quickQuestions && config.quickQuestions.length > 0 && !hasSessionStarted ? (
+        <WelcomeScreen
+          config={config}
+          onQuestionClick={async (question) => {
+            await sendMessage(question)
+          }}
+          onSendMessage={sendMessage}
+          isLoading={isLoading}
+        />
+      ) : (
+        <>
+          <Conversation style={{ flex: 1 }}>
+            <ConversationContent>
+              {messages.map(message => (
+                <div
+                  key={message.id}
+                  style={{
+                    display: 'flex',
+                    marginBottom: '12px',
+                    justifyContent: message.role === 'user' ? 'flex-end' : 'flex-start',
+                    alignItems: 'flex-start',
+                    gap: '8px'
+                  }}
+                >
+                  {message.role === 'assistant' && config.agentImage && (
+                    <AgentAvatar
+                      src={config.agentImage}
+                      alt={config.chatName || "Agent"}
+                      $size="28px"
+                    />
+                  )}
+                  <ChatMessage $isUser={message.role === 'user'}>
+                    {message.role === 'assistant' ? (
+                      <MarkdownRenderer content={message.content} />
+                    ) : (
+                      message.content
+                    )}
+                  </ChatMessage>
+                </div>
+              ))}
 
           {isLoading && (
             <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start', gap: '8px', marginBottom: '12px' }}>
@@ -109,31 +116,33 @@ export function InlineChat({ config, chat }: InlineChatProps) {
             </div>
           )}
 
-          {error && (
-            <ErrorMessage>
-              {error}
-            </ErrorMessage>
-          )}
-        </ConversationContent>
-      </Conversation>
+              {error && (
+                <ErrorMessage>
+                  {error}
+                </ErrorMessage>
+              )}
+            </ConversationContent>
+          </Conversation>
 
-      {/* Chat input */}
-      <ChatInput>
-        <ProfessionalInput
-          ref={inputRef}
-          value={inputValue}
-          onChange={setInputValue}
-          onKeyDown={handleKeyPress}
-          placeholder={config.placeholder}
-          disabled={isLoading}
-        />
-        <SendButton
-          onClick={handleSendMessage}
-          disabled={isLoading || !inputValue.trim()}
-        >
-          <Send size={16} />
-        </SendButton>
-      </ChatInput>
+          {/* Chat input */}
+          <ChatInput>
+            <ProfessionalInput
+              ref={inputRef}
+              value={inputValue}
+              onChange={setInputValue}
+              onKeyDown={handleKeyPress}
+              placeholder={config.placeholder}
+              disabled={isLoading}
+            />
+            <SendButton
+              onClick={handleSendMessage}
+              disabled={isLoading || !inputValue.trim()}
+            >
+              <Send size={16} />
+            </SendButton>
+          </ChatInput>
+        </>
+      )}
     </ChatWidget>
   )
 }

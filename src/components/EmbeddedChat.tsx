@@ -1,7 +1,7 @@
 import { MarkdownRenderer } from '@/components/MarkdownRenderer'
 import { ProfessionalInput } from '@/components/ProfessionalInput'
+import { WelcomeScreen } from '@/components/WelcomeScreen'
 import { OrdifyConfig, UseOrdifyChatReturn } from '@/types'
-import { formatTime } from '@/utils'
 import { Send } from 'lucide-react'
 import React from 'react'
 import { Conversation, ConversationContent } from './Conversation'
@@ -12,8 +12,7 @@ import {
   ChatWidget,
   ErrorMessage,
   LoadingDots,
-  SendButton,
-  Timestamp
+  SendButton
 } from './styled/ChatComponents'
 
 interface EmbeddedChatProps {
@@ -22,7 +21,7 @@ interface EmbeddedChatProps {
 }
 
 export function EmbeddedChat({ config, chat }: EmbeddedChatProps) {
-  const { messages, sendMessage, isLoading, error } = chat
+  const { messages, sendMessage, isLoading, error, hasSessionStarted } = chat
   const [inputValue, setInputValue] = React.useState('')
   const [isDarkMode, setIsDarkMode] = React.useState(false)
   const inputRef = React.useRef<HTMLTextAreaElement>(null)
@@ -91,39 +90,47 @@ export function EmbeddedChat({ config, chat }: EmbeddedChatProps) {
       data-theme={getThemeValue()}
       style={heightStyle}
     >
-      {/* Chat messages */}
-      <Conversation style={{ flex: 1 }}>
-        <ConversationContent>
-          {messages.map(message => (
-            <div
-              key={message.id}
-              style={{
-                display: 'flex',
-                marginBottom: '16px',
-                justifyContent: message.role === 'user' ? 'flex-end' : 'flex-start',
-                alignItems: 'flex-start',
-                gap: '8px'
-              }}
-            >
-              {message.role === 'assistant' && config.agentImage && (
-                <AgentAvatar
-                  src={config.agentImage}
-                  alt={config.chatName || "Agent"}
-                  $size="28px"
-                />
-              )}
-              <ChatMessage $isUser={message.role === 'user'}>
-                {message.role === 'assistant' ? (
-                  <MarkdownRenderer content={message.content} />
-                ) : (
-                  message.content
-                )}
-                <Timestamp $isUser={message.role === 'user'}>
-                  {formatTime(message.timestamp)}
-                </Timestamp>
-              </ChatMessage>
-            </div>
-          ))}
+      {/* Welcome screen or chat messages */}
+      {config.quickQuestions && config.quickQuestions.length > 0 && !hasSessionStarted ? (
+        <WelcomeScreen
+          config={config}
+          onQuestionClick={async (question) => {
+            await sendMessage(question)
+          }}
+          onSendMessage={sendMessage}
+          isLoading={isLoading}
+        />
+      ) : (
+        <>
+          <Conversation style={{ flex: 1 }}>
+            <ConversationContent>
+              {messages.map(message => (
+                <div
+                  key={message.id}
+                  style={{
+                    display: 'flex',
+                    marginBottom: '16px',
+                    justifyContent: message.role === 'user' ? 'flex-end' : 'flex-start',
+                    alignItems: 'flex-start',
+                    gap: '8px'
+                  }}
+                >
+                  {message.role === 'assistant' && config.agentImage && (
+                    <AgentAvatar
+                      src={config.agentImage}
+                      alt={config.chatName || "Agent"}
+                      $size="28px"
+                    />
+                  )}
+                  <ChatMessage $isUser={message.role === 'user'}>
+                    {message.role === 'assistant' ? (
+                      <MarkdownRenderer content={message.content} />
+                    ) : (
+                      message.content
+                    )}
+                  </ChatMessage>
+                </div>
+              ))}
 
           {isLoading && (
             <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start', gap: '8px', marginBottom: '16px' }}>
@@ -144,31 +151,33 @@ export function EmbeddedChat({ config, chat }: EmbeddedChatProps) {
             </div>
           )}
 
-          {error && (
-            <ErrorMessage>
-              {error}
-            </ErrorMessage>
-          )}
-        </ConversationContent>
-      </Conversation>
+              {error && (
+                <ErrorMessage>
+                  {error}
+                </ErrorMessage>
+              )}
+            </ConversationContent>
+          </Conversation>
 
-      {/* Chat input */}
-      <ChatInput>
-        <ProfessionalInput
-          ref={inputRef}
-          value={inputValue}
-          onChange={setInputValue}
-          onKeyDown={handleKeyPress}
-          placeholder={config.placeholder}
-          disabled={isLoading}
-        />
-        <SendButton
-          onClick={handleSendMessage}
-          disabled={isLoading || !inputValue.trim()}
-        >
-          <Send size={16} />
-        </SendButton>
-      </ChatInput>
+          {/* Chat input */}
+          <ChatInput>
+            <ProfessionalInput
+              ref={inputRef}
+              value={inputValue}
+              onChange={setInputValue}
+              onKeyDown={handleKeyPress}
+              placeholder={config.placeholder}
+              disabled={isLoading}
+            />
+            <SendButton
+              onClick={handleSendMessage}
+              disabled={isLoading || !inputValue.trim()}
+            >
+              <Send size={16} />
+            </SendButton>
+          </ChatInput>
+        </>
+      )}
     </ChatWidget>
   )
 }

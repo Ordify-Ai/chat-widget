@@ -39,7 +39,10 @@ export function useOrdifyConfig(config: OrdifyConfig) {
       onSessionCreated: config.onSessionCreated,
       initialMessage: config.initialMessage,
       initialContext: config.initialContext,
-      sessionId: config.sessionId
+      sessionId: config.sessionId,
+      quickQuestions: config.quickQuestions,
+      welcomeMessage: config.welcomeMessage,
+      welcomeImage: config.welcomeImage
     }
   }, [config])
 }
