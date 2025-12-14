@@ -108,6 +108,19 @@ export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
         return
       }
 
+      // If this is an internally created session and we already have messages, skip loading
+      // This prevents loading history right after we create a session and send a message
+      const isInternalSession = internallyCreatedSessionsRef.current.has(currentSessionId)
+      if (isInternalSession && messages.length > 0 && !historyLoadedRef.current) {
+        // #region agent log
+        fetch('http://127.0.0.1:7242/ingest/27b72337-a56f-4ea6-889c-aa35e4d8f72f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'useOrdifyChat.ts:78',message:'Skipping history load - internal session with existing messages',data:{currentSessionId,messagesCount:messages.length,isInternalSession},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
+        // #endregion
+        historyLoadedRef.current = true
+        lastLoadedSessionIdRef.current = currentSessionId
+        setIsLoadingHistory(false)
+        return
+      }
+
       // Mark that we're attempting to load this session
       lastLoadedSessionIdRef.current = currentSessionId
 
@@ -138,15 +151,30 @@ export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
             // If we have existing messages, merge them with loaded messages
             if (prev.length > 0) {
               const messageMap = new Map<string, Message>()
+              const contentMap = new Map<string, Message>() // Track by content+role to prevent duplicates
               
               // First add existing messages (these are the most recent, like the user's question)
               prev.forEach(msg => {
                 messageMap.set(msg.id, msg)
+                // Also track by content+role to detect duplicates with different IDs
+                const contentKey = `${msg.role}:${msg.content.trim()}`
+                if (!contentMap.has(contentKey)) {
+                  contentMap.set(contentKey, msg)
+                }
               })
               
               // Then add/update with loaded messages from server
               formattedMessages.forEach(msg => {
-                messageMap.set(msg.id, msg)
+                const contentKey = `${msg.role}:${msg.content.trim()}`
+                // Only add if we don't already have this message by ID or by content
+                if (!messageMap.has(msg.id) && !contentMap.has(contentKey)) {
+                  messageMap.set(msg.id, msg)
+                  contentMap.set(contentKey, msg)
+                } else if (messageMap.has(msg.id)) {
+                  // Update existing message if IDs match
+                  messageMap.set(msg.id, msg)
+                }
+                // If content matches but ID is different, skip to prevent duplicates
               })
               
               // Convert back to array and sort by timestamp
