@@ -49,9 +49,10 @@ jobs:
         CURRENT_VERSION=$(node -p "require('./package.json').version")
         echo "Current version: $CURRENT_VERSION"
         
-        # Check if version exists, if yes, bump patch version
-        if npm view ordify-chat-widget@$CURRENT_VERSION version >/dev/null 2>&1; then
-          echo "Version $CURRENT_VERSION already exists on NPM, bumping patch version..."
+        # Always bump patch version for main branch pushes (unless it's a tag release)
+        # Skip bumping if this is triggered by a tag (v*)
+        if [[ "${{ github.event_name }}" == "push" && "${{ github.ref }}" != refs/tags/* ]]; then
+          echo "Bumping patch version for main branch push..."
           npm version patch --no-git-tag-version
           NEW_VERSION=$(node -p "require('./package.json').version")
           echo "Bumped to version: $NEW_VERSION"
@@ -63,9 +64,24 @@ jobs:
           git commit -m "chore: auto-bump version to $NEW_VERSION [skip ci]" || exit 0
           git push || echo "Push failed, continuing..."
         else
-          echo "Version $CURRENT_VERSION is new on NPM, using it"
-          echo "version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
-          echo "bumped=false" >> $GITHUB_OUTPUT
+          # For tag releases, check if version exists and bump if needed
+          if npm view ordify-chat-widget@$CURRENT_VERSION version >/dev/null 2>&1; then
+            echo "Version $CURRENT_VERSION already exists on NPM, bumping patch version..."
+            npm version patch --no-git-tag-version
+            NEW_VERSION=$(node -p "require('./package.json').version")
+            echo "Bumped to version: $NEW_VERSION"
+            echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+            echo "bumped=true" >> $GITHUB_OUTPUT
+            
+            # Commit version bump
+            git add package.json
+            git commit -m "chore: auto-bump version to $NEW_VERSION [skip ci]" || exit 0
+            git push || echo "Push failed, continuing..."
+          else
+            echo "Version $CURRENT_VERSION is new on NPM, using it"
+            echo "version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+            echo "bumped=false" >> $GITHUB_OUTPUT
+          fi
         fi
         
     - name: Publish to NPM
