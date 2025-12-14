@@ -1,0 +1,102 @@
+name: Test Publish Configuration (No Actual Publish)
+
+on:
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+  push:
+    branches-ignore:
+      - main
+      - 'release/**'
+    # Runs on any branch except main and release branches
+
+jobs:
+  test-publish-config:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write  # Required for OIDC (even for testing)
+      
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Prepare package for NPM publishing
+      run: |
+        # Change package name for NPM (unscoped) BEFORE setup-node
+        npm pkg set name="ordify-chat-widget"
+        npm pkg delete publishConfig
+        # Ensure repository field matches GitHub repo exactly for Trusted Publishing
+        npm pkg set repository.type="git"
+        npm pkg set repository.url="git+https://github.com/Ordify-Ai/chat-widget.git"
+        echo "Package name set to: $(node -p "require('./package.json').name")"
+        echo "Repository set to: $(node -p "require('./package.json').repository.url")"
+        
+    - name: Setup Node.js for NPM
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        registry-url: 'https://registry.npmjs.org'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Build package
+      run: npm run build
+      
+    - name: Verify Trusted Publishing configuration
+      run: |
+        echo "=== Package Configuration ==="
+        PKG_NAME=$(node -p "require('./package.json').name")
+        PKG_VERSION=$(node -p "require('./package.json').version")
+        PKG_REPO=$(node -p "require('./package.json').repository.url")
+        echo "Name: $PKG_NAME"
+        echo "Version: $PKG_VERSION"
+        echo "Repository: $PKG_REPO"
+        echo ""
+        echo "=== GitHub Context ==="
+        echo "Repository: ${{ github.repository }}"
+        echo "Workflow: ${{ github.workflow }}"
+        echo ""
+        echo "=== Trusted Publishing Verification ==="
+        echo "Checking if package exists on npm..."
+        if npm view "$PKG_NAME" version >/dev/null 2>&1; then
+          echo "✅ Package $PKG_NAME exists on npm"
+          LATEST_VERSION=$(npm view "$PKG_NAME" version)
+          echo "Latest version on npm: $LATEST_VERSION"
+        else
+          echo "⚠️  Package $PKG_NAME does NOT exist on npm (might be first publish)"
+        fi
+        echo ""
+        echo "=== Trusted Publisher Requirements ==="
+        EXPECTED_REPO="git+https://github.com/Ordify-Ai/chat-widget.git"
+        echo "Expected repository URL: $EXPECTED_REPO"
+        echo "Actual repository URL: $PKG_REPO"
+        if [ "$PKG_REPO" = "$EXPECTED_REPO" ]; then
+          echo "✅ Repository URL matches"
+        else
+          echo "❌ Repository URL MISMATCH!"
+          echo "This will cause 404 error during publish"
+          exit 1
+        fi
+        echo ""
+        echo "=== What to check on npm ==="
+        echo "Go to: https://www.npmjs.com/package/$PKG_NAME/settings"
+        echo "Verify Trusted Publisher shows:"
+        echo "  - Repository: Ordify-Ai/chat-widget"
+        echo "  - Workflow file: publish.yml"
+        echo ""
+        echo "The repository URL in package.json must match what npm expects"
+        
+    - name: Test npm pack (dry-run)
+      run: |
+        echo "=== Testing package creation ==="
+        npm pack --dry-run
+        echo "✅ Package can be created successfully"
+        
+    - name: Test provenance generation (simulated)
+      run: |
+        echo "=== Testing Provenance (OIDC) ==="
+        echo "OIDC token available: ${{ github.event_name != 'pull_request' }}"
+        echo "In PR mode, OIDC might not be fully available"
+        echo "This is just a configuration test - no actual publish"
