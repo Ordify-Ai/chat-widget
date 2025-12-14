@@ -47,19 +47,6 @@ jobs:
         registry-url: 'https://registry.npmjs.org'
         # Trusted Publishing uses OIDC - no token needed
         
-<<<<<<< Updated upstream
-=======
-    - name: Prepare package for NPM publishing
-      run: |
-        # Change package name for NPM (unscoped) BEFORE any npm commands
-        npm pkg set name="ordify-chat-widget"
-        npm pkg delete publishConfig
-        # Ensure repository URL matches GitHub repo exactly (case-sensitive for Trusted Publishing)
-        npm pkg set repository.url="git+https://github.com/Ordify-Ai/chat-widget.git"
-        echo "Package name: $(node -p "require('./package.json').name")"
-        echo "Repository URL: $(node -p "require('./package.json').repository.url")"
-        
->>>>>>> Stashed changes
     - name: Install dependencies
       run: npm ci
         
@@ -96,15 +83,6 @@ jobs:
           echo "bumped=false" >> $GITHUB_OUTPUT
         fi
         
-<<<<<<< Updated upstream
-    - name: Verify package configuration
-      run: |
-        echo "Package name: $(node -p "require('./package.json').name")"
-        echo "Package version: $(node -p "require('./package.json').version")"
-        echo "Repository: $(node -p "require('./package.json').repository.url")"
-        echo "Verifying package exists on npm..."
-        npm view ordify-chat-widget || echo "Package check completed"
-=======
     - name: Verify Trusted Publishing configuration
       run: |
         echo "=== Package Configuration ==="
@@ -121,19 +99,13 @@ jobs:
         echo "  - Repository: Ordify-Ai/chat-widget"
         echo "  - Workflow file: publish.yml"
         echo "  - Package: ordify-chat-widget"
->>>>>>> Stashed changes
         
     - name: Publish to NPM
       if: github.event_name != 'pull_request' && (github.event.inputs.test_mode != 'true')
       run: |
         # Using Trusted Publishing (OIDC) - no token needed
         # --provenance flag generates cryptographic proof of build origin
-<<<<<<< Updated upstream
-        # Note: Trusted Publisher must be configured for this package on npm
-        # Repository URL must match exactly: Ordify-Ai/chat-widget
-=======
         # Repository URL must match Trusted Publisher configuration exactly
->>>>>>> Stashed changes
         npm publish --access public --provenance
         
     - name: Dry-run publish (test mode)
