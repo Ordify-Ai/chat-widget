@@ -7,25 +7,77 @@ interface ChatHeaderProps {
   showMinimizeButton?: boolean
   showCloseButton?: boolean
   onClose?: () => void
-  primaryColor?: string
   agentImage?: string
   className?: string
+  primaryColor?: string
+  showWelcomeScreen?: boolean
 }
 
-const HeaderContainer = styled.div<{ $primaryColor?: string }>`
+const HeaderContainer = styled.div<{ $primaryColor?: string; $showWelcomeScreen?: boolean }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 12px 16px;
   border-radius: 8px 8px 0 0;
-  background: ${props => props.$primaryColor || '#ffffff'};
-  color: ${props => props.$primaryColor ? 'white' : '#111827'};
+  background: ${props => {
+    if (props.$showWelcomeScreen && props.$primaryColor) {
+      return props.$primaryColor;
+    }
+    return '#ffffff';
+  }};
+  color: ${props => {
+    if (props.$showWelcomeScreen && props.$primaryColor) {
+      return 'white';
+    }
+    return '#111827';
+  }};
   border-bottom: none;
+  transition: background-color 0.3s ease, color 0.3s ease;
 
   @media (prefers-color-scheme: dark) {
-    background: ${props => props.$primaryColor || '#1f2937'};
-    color: ${props => props.$primaryColor ? 'white' : '#f9fafb'};
+    background: ${props => {
+      if (props.$showWelcomeScreen && props.$primaryColor) {
+        return props.$primaryColor;
+      }
+      return '#1f2937';
+    }};
+    color: ${props => {
+      if (props.$showWelcomeScreen && props.$primaryColor) {
+        return 'white';
+      }
+      return '#f9fafb';
+    }};
     border-bottom: none;
+  }
+  
+  [data-theme="dark"] & {
+    background: ${props => {
+      if (props.$showWelcomeScreen && props.$primaryColor) {
+        return props.$primaryColor;
+      }
+      return '#1f2937';
+    }};
+    color: ${props => {
+      if (props.$showWelcomeScreen && props.$primaryColor) {
+        return 'white';
+      }
+      return '#f9fafb';
+    }};
+  }
+  
+  [data-theme="light"] & {
+    background: ${props => {
+      if (props.$showWelcomeScreen && props.$primaryColor) {
+        return props.$primaryColor;
+      }
+      return '#ffffff';
+    }};
+    color: ${props => {
+      if (props.$showWelcomeScreen && props.$primaryColor) {
+        return 'white';
+      }
+      return '#111827';
+    }};
   }
 `
 
@@ -95,14 +147,16 @@ export function ChatHeader({
   chatName = "Chat Assistant",
   showCloseButton = true,
   onClose,
-  primaryColor,
   agentImage,
-  className
+  className,
+  primaryColor,
+  showWelcomeScreen = false
 }: ChatHeaderProps) {
   return (
     <HeaderContainer
-      $primaryColor={primaryColor}
       className={className}
+      $primaryColor={primaryColor}
+      $showWelcomeScreen={showWelcomeScreen}
     >
       <HeaderContent>
         {agentImage && (

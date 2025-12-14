@@ -129,10 +129,11 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
       {/* Chat header */}
       {config.showHeader !== false && (
         <ChatHeader
-          primaryColor={config.primaryColor}
           agentImage={config.agentImage}
           chatName={config.chatName}
           onClose={() => setIsOpen(false)}
+          primaryColor={config.primaryColor}
+          showWelcomeScreen={config.quickQuestions && config.quickQuestions.length > 0 && !hasSessionStarted}
         />
       )}
 
