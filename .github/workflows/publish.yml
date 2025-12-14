@@ -86,19 +86,52 @@ jobs:
     - name: Verify Trusted Publishing configuration
       run: |
         echo "=== Package Configuration ==="
-        echo "Name: $(node -p "require('./package.json').name")"
-        echo "Version: $(node -p "require('./package.json').version")"
-        echo "Repository: $(node -p "require('./package.json').repository.url")"
+        PKG_NAME=$(node -p "require('./package.json').name")
+        PKG_VERSION=$(node -p "require('./package.json').version")
+        PKG_REPO=$(node -p "require('./package.json').repository.url")
+        echo "Name: $PKG_NAME"
+        echo "Version: $PKG_VERSION"
+        echo "Repository: $PKG_REPO"
         echo ""
         echo "=== GitHub Context ==="
         echo "Repository: ${{ github.repository }}"
         echo "Workflow: ${{ github.workflow }}"
+        echo "Workflow file: ${{ github.workflow_ref }}"
         echo ""
-        echo "=== Trusted Publishing Check ==="
-        echo "Make sure Trusted Publisher is configured on npm for:"
-        echo "  - Repository: Ordify-Ai/chat-widget"
+        echo "=== Trusted Publishing Verification ==="
+        echo "Checking if package exists on npm..."
+        if npm view "$PKG_NAME" version >/dev/null 2>&1; then
+          echo "✅ Package $PKG_NAME exists on npm"
+          LATEST_VERSION=$(npm view "$PKG_NAME" version)
+          echo "Latest version on npm: $LATEST_VERSION"
+        else
+          echo "❌ Package $PKG_NAME does NOT exist on npm"
+          echo "This might be the first publish, or package name is incorrect"
+        fi
+        echo ""
+        echo "=== Trusted Publisher Requirements ==="
+        echo "On npm, Trusted Publisher must be configured with:"
+        echo "  - Repository: Ordify-Ai/chat-widget (exact case)"
         echo "  - Workflow file: publish.yml"
-        echo "  - Package: ordify-chat-widget"
+        echo "  - Package repository URL must match: $PKG_REPO"
+        echo ""
+        echo "Current package.json repository: $PKG_REPO"
+        echo "Expected: git+https://github.com/Ordify-Ai/chat-widget.git"
+        if [ "$PKG_REPO" = "git+https://github.com/Ordify-Ai/chat-widget.git" ]; then
+          echo "✅ Repository URL matches"
+        else
+          echo "❌ Repository URL MISMATCH - This will cause 404 error!"
+          exit 1
+        fi
+        
+    - name: Test npm authentication (dry-run)
+      run: |
+        echo "=== Testing npm authentication ==="
+        echo "Running npm whoami to check authentication..."
+        npm whoami || echo "Not authenticated (expected for Trusted Publishing)"
+        echo ""
+        echo "Attempting dry-run publish to verify Trusted Publishing..."
+        npm publish --dry-run --access public --provenance || echo "Dry-run completed"
         
     - name: Publish to NPM
       if: github.event_name != 'pull_request' && (github.event.inputs.test_mode != 'true')
@@ -106,6 +139,7 @@ jobs:
         # Using Trusted Publishing (OIDC) - no token needed
         # --provenance flag generates cryptographic proof of build origin
         # Repository URL must match Trusted Publisher configuration exactly
+        echo "Publishing $PKG_NAME@$PKG_VERSION to npm..."
         npm publish --access public --provenance
         
     - name: Dry-run publish (test mode)
