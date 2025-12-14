@@ -135,11 +135,15 @@ GitHub Packages serves as a mirror of the NPM package. If you need to use it, co
 | `position` | string | "bottom-right" | Floating button position |
 | `resizable` | boolean | true | Allow user to resize chat |
 | `showHeader` | boolean | true | Show/hide chat header |
-| `height` | number | 400 | Initial chat height (px) |
+| `height` | number | 600 | Initial chat height (px) |
 | `width` | string | "320px" | Chat width |
 | `onSessionCreated` | function | - | **Optional** - Callback when a new session is created with session ID |
 | `initialMessage` | string | - | **Optional** - Message to automatically send when chat loads |
 | `initialContext` | string | - | **Optional** - Hidden system context sent to backend (user ID, page info, etc.) |
+| `agentImage` | string | - | **Optional** - URL to agent avatar image (shown in header and next to assistant messages) |
+| `quickQuestions` | string[] | - | **Optional** - Array of quick action questions displayed as buttons in welcome screen |
+| `welcomeMessage` | string | "Hi there 👋 How can we help?" | **Optional** - Custom greeting message shown in welcome screen when quickQuestions are provided |
+| `welcomeImage` | string | - | **Optional** - URL to image/graphic displayed in welcome screen |
 
 ## 🎯 Advanced Features
 
@@ -198,6 +202,40 @@ The `initialContext` prop allows you to send hidden system information to your A
   initialMessage="Hello!"
 />
 ```
+
+### Welcome Screen with Quick Questions
+
+The `quickQuestions` prop enables a welcome screen that displays before the chat session starts. This provides a guided experience with pre-filled question buttons while still allowing users to type custom messages.
+
+**Key Features**:
+- **Quick Action Buttons**: Display common questions as clickable buttons
+- **Customizable Greeting**: Set a custom welcome message (defaults to "Hi there 👋 How can we help?")
+- **Welcome Image**: Add a custom image or graphic to the welcome screen
+- **Gradient Background**: Beautiful gradient that starts with your primary color and fades to the theme background
+- **Flexible Input**: Users can click a quick question or type their own custom message
+- **Dynamic Header**: Header uses primary color during welcome screen, switches to theme colors once chat starts
+
+**Usage**:
+```tsx
+<OrdifyChat
+  agentId="your-agent-id"
+  apiKey="your-api-key"
+  apiBaseUrl="https://r.ordify.ai"
+  mode="floating"
+  quickQuestions={[
+    "I want to schedule an appointment",
+    "I want to find a location near me",
+    "I want a Free hearing screening",
+    "Please contact me"
+  ]}
+  welcomeMessage="Hi there, how can we help?"
+  welcomeImage="https://example.com/welcome-graphic.png"
+  primaryColor="#3b82f6"
+  agentImage="https://example.com/agent-avatar.png"
+/>
+```
+
+**Note**: When `quickQuestions` are provided, the welcome screen is displayed before the session starts. Users must select a question or type a custom message to begin chatting. The `initialMessage` prop is automatically skipped when `quickQuestions` are present.
 
 ### Theme-Aware Defaults
 
@@ -341,6 +379,40 @@ export function ChatWithContext() {
           userId: user?.id,
           page: router.pathname
         })
+      }}
+    />
+  )
+}
+```
+
+#### Welcome Screen with Quick Questions
+```tsx
+// components/ChatWithWelcomeScreen.tsx
+import { OrdifyChat } from 'ordify-chat-widget'
+
+export function ChatWithWelcomeScreen() {
+  return (
+    <OrdifyChat
+      agentId="your-agent-id"
+      apiKey="your-api-key"
+      apiBaseUrl="https://r.ordify.ai"
+      mode="floating"
+      buttonText="Chat with us"
+      chatName="Support Assistant"
+      agentImage="https://example.com/agent-avatar.png"
+      quickQuestions={[
+        "I want to schedule an appointment",
+        "I want to find a location near me",
+        "I want a Free hearing screening",
+        "Please contact me",
+        "Tell me more about your products and services"
+      ]}
+      welcomeMessage="Hi there, how can we help?"
+      welcomeImage="https://example.com/welcome-graphic.png"
+      primaryColor="#3b82f6"
+      onSessionCreated={(sessionId) => {
+        console.log('Session started:', sessionId)
+        // Track user engagement
       }}
     />
   )
