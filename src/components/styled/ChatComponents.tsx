@@ -502,16 +502,6 @@ export const AgentAvatar = styled.img<{ $size?: string }>`
 `
 
 // Helper function to convert hex to rgba with opacity
-const hexToRgba = (hex: string, opacity: number): string => {
-  if (!hex || !hex.startsWith('#')) {
-    return hex || 'transparent'
-  }
-  const r = parseInt(hex.slice(1, 3), 16)
-  const g = parseInt(hex.slice(3, 5), 16)
-  const b = parseInt(hex.slice(5, 7), 16)
-  return `rgba(${r}, ${g}, ${b}, ${opacity})`
-}
-
 // Welcome screen container
 export const WelcomeScreenContainer = styled.div<{ $primaryColor?: string }>`
   display: flex;
