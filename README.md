@@ -93,6 +93,104 @@ GitHub Packages serves as a mirror of the NPM package. If you need to use it, co
 
 > **Note**: We recommend using the NPM version (`ordify-chat-widget`) as it's the primary registry and source of truth.
 
+## WordPress and script-tag installation
+
+You can add the chat widget to **any site without React** (WordPress, static HTML, Local WP, etc.) by loading the standalone script and calling the global `mount` API or using a single script tag with data attributes.
+
+### Option 1: Script tag + mount (recommended)
+
+Load the standalone script from a CDN (use a version number to pin; replace `1.0.38` with your desired version), then call `OrdifyChatWidget.mount()` with your config. Place this in your site header or footer (e.g. in WordPress: Theme → Theme File Editor, or a plugin like "Insert Headers and Footers").
+
+**unpkg:**
+```html
+<script src="https://unpkg.com/ordify-chat-widget@1.0.38/dist/ordify-chat-widget.standalone.js"></script>
+<script>
+  OrdifyChatWidget.mount(null, {
+    agentId: "your-agent-id",
+    apiKey: "your-api-key",
+    apiBaseUrl: "https://r.ordify.ai",
+    mode: "floating",
+    position: "bottom-right",
+    buttonText: "Chat with us",
+    chatName: "AI Assistant"
+  });
+</script>
+```
+
+**jsDelivr:**
+```html
+<script src="https://cdn.jsdelivr.net/npm/ordify-chat-widget@1.0.38/dist/ordify-chat-widget.standalone.js"></script>
+<script>
+  OrdifyChatWidget.mount(null, {
+    agentId: "your-agent-id",
+    apiKey: "your-api-key",
+    apiBaseUrl: "https://r.ordify.ai",
+    buttonText: "Chat with us"
+  });
+</script>
+```
+
+- Pass `null` as the first argument to mount the widget on `document.body` (typical for a floating button). To mount inside a specific element, pass the DOM node: `OrdifyChatWidget.mount(document.getElementById('my-container'), { ... })`.
+- All [configuration options](#-configuration-options) (e.g. `quickQuestions`, `welcomeMessage`, `primaryColor`, `onSessionCreated`) are supported in the config object.
+
+### Option 2: One-tag install (data attributes)
+
+Add a single script tag with `data-ordify-widget` and the required/optional data attributes. The widget auto-mounts when the script loads. No inline script needed.
+
+```html
+<script
+  src="https://unpkg.com/ordify-chat-widget@1.0.38/dist/ordify-chat-widget.standalone.js"
+  data-ordify-widget
+  data-ordify-agent-id="your-agent-id"
+  data-ordify-api-key="your-api-key"
+  data-ordify-api-base-url="https://r.ordify.ai"
+  data-ordify-button-text="Chat with us"
+  data-ordify-chat-name="AI Assistant"
+  data-ordify-position="bottom-right"
+></script>
+```
+
+**Supported data attributes (all optional except agent-id and api-key):**
+
+| Attribute | Description |
+|-----------|-------------|
+| `data-ordify-agent-id` | **Required.** Your Ordify agent ID. |
+| `data-ordify-api-key` | **Required.** Your API key. |
+| `data-ordify-api-base-url` | API base URL (default: `https://r.ordify.ai`). |
+| `data-ordify-button-text` | Floating button label. |
+| `data-ordify-chat-name` | Chat header title. |
+| `data-ordify-mode` | `floating` or `embedded`. |
+| `data-ordify-position` | `bottom-right`, `bottom-left`, `top-right`, `top-left`. |
+| `data-ordify-primary-color` | Header/theme color (e.g. `#3b82f6`). |
+| `data-ordify-agent-image` | URL for agent avatar. |
+| `data-ordify-welcome-message` | Welcome screen text. |
+| `data-ordify-welcome-image` | URL for welcome screen image. |
+| `data-ordify-quick-questions` | JSON array of strings, or comma-separated list (e.g. `["Question 1","Question 2"]` or `Question 1, Question 2`). |
+| `data-ordify-container-id` | ID of the element to mount into; if omitted, mounts to `document.body`. |
+
+### WordPress and Local WP
+
+- **WordPress:** Add the script (and optional inline `OrdifyChatWidget.mount(...)`) in **Appearance → Theme File Editor** (footer or header), or use a plugin such as **Insert Headers and Footers** to paste the snippet site-wide.
+- **Local WP:** Same as any WordPress site: use Theme File Editor or an "Insert Headers and Footers"–style plugin. No extra steps.
+- **Version pinning:** Use a specific version in the script URL (e.g. `@1.0.38`) so updates are intentional. Check [releases](https://github.com/ordify-ai/chat-widget/releases) or npm for the latest version.
+
+**Where to put your API key and Agent ID**
+
+The widget does **not** use a separate config file. You put the Agent ID and API key in the same place as the script:
+
+- **Option 1 (script + mount):** In the inline snippet, replace `"your-agent-id"` and `"your-api-key"` with your real values. That snippet lives wherever you add it (theme header/footer or a plugin’s “custom code” field).
+- **Option 2 (data attributes):** In the script tag, set `data-ordify-agent-id="your-agent-id"` and `data-ordify-api-key="your-api-key"` (and optionally `data-ordify-api-base-url`). Again, that tag is added via theme or plugin.
+
+So the “config” is the snippet or script tag you paste; the credentials are inside it.
+
+**Best practice (how others do it)**
+
+- **Avoid theme files for secrets.** If you use **Theme File Editor** and paste the snippet into `footer.php` or `header.php`, your credentials are in the theme. Theme updates can overwrite those files, and credentials are in version control if you ever export the theme. Prefer storing the snippet elsewhere.
+- **Use a “header/footer” plugin.** Plugins like **Insert Headers and Footers**, **WPCode**, or **Code Snippets** store your snippet in the database (e.g. `wp_options`). You paste the script + config once in the plugin’s UI; credentials are not in theme files and survive theme updates. This is the same pattern used by Intercom, Crisp, Drift, and similar widgets: one snippet (with your site/key) added via a plugin or dashboard.
+- **Optional: dedicated plugin.** For maximum control, a small WordPress plugin can provide a settings page (Agent ID, API Key, API Base URL), save them in the database, and enqueue the widget script with that config. Credentials stay in the DB and are easy to change without editing code. The widget itself does not require this; it only needs the script and config in the page (however you inject it).
+
+**Test page:** After running `npm run build`, you can serve the repo (e.g. `npx serve .`) and open [static/wordpress-demo.html](static/wordpress-demo.html) to try the script-tag install locally. Replace the placeholder `agentId` and `apiKey` with your own.
+
 ## 🎨 Chat Modes
 
 ### Floating Chat (Recommended for websites)
