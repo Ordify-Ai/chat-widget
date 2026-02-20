@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ordify Chat Widget – WordPress / script-tag test</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 640px; margin: 2rem auto; padding: 0 1rem; }
+    h1 { font-size: 1.25rem; }
+    .note { background: #f0f4ff; border: 1px solid #b8d4ff; border-radius: 6px; padding: 0.75rem 1rem; margin-bottom: 1.5rem; font-size: 0.875rem; }
+    .note strong { display: block; margin-bottom: 0.25rem; }
+    .config { margin-bottom: 1.5rem; padding: 1.25rem; border: 2px solid #e0e0e0; border-radius: 8px; background: #fff; }
+    .config h2 { margin-top: 0; font-size: 1.1rem; }
+    .config-desc { color: #666; font-size: 0.875rem; margin-bottom: 1rem; }
+    .config label { display: block; margin-bottom: 0.25rem; font-weight: 600; }
+    .config input { width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+    .config .field { margin-bottom: 1rem; }
+    .config button { padding: 0.5rem 1rem; background: #2563eb; color: #fff; border: none; border-radius: 4px; font-weight: 600; cursor: pointer; }
+    .config button:hover { background: #1d4ed8; }
+  </style>
+</head>
+<body>
+  <h1>Ordify Chat Widget – WordPress / script-tag test</h1>
+  <p class="note">
+    <strong>How to run this page</strong>
+    From the repo root run <code>npm run build</code>, then serve the repo (e.g. <code>npx serve .</code>) and open <code>/static/wordpress-demo.html</code>.
+  </p>
+
+  <div class="config">
+    <h2>Configuration</h2>
+    <p class="config-desc">Enter your Ordify credentials to test the chat widget. Your configuration will be saved locally in your browser.</p>
+    <div class="field">
+      <label for="agent-id">Agent ID *</label>
+      <input id="agent-id" type="text" placeholder="Enter your Agent ID" />
+    </div>
+    <div class="field">
+      <label for="api-key">API Key *</label>
+      <input id="api-key" type="password" placeholder="Enter your API Key" />
+    </div>
+    <div class="field">
+      <label for="api-base-url">API Base URL *</label>
+      <input id="api-base-url" type="text" placeholder="https://r.ordify.ai or http://localhost:5001" />
+    </div>
+    <button type="button" id="apply-btn">Apply and start chat</button>
+  </div>
+
+  <p>If the widget is configured correctly, a chat button appears in the corner. This page simulates how the widget is loaded on WordPress or any non-React site.</p>
+
+  <script src="../dist/ordify-chat-widget.standalone.js"></script>
+  <script>
+    var STORAGE_KEY = 'ordify-wp-demo-config';
+    var ROOT_ID = 'ordify-chat-widget-root';
+
+    function getConfig() {
+      var agentId = document.getElementById('agent-id').value.trim();
+      var apiKey = document.getElementById('api-key').value.trim();
+      var apiBaseUrl = document.getElementById('api-base-url').value.trim() || 'https://r.ordify.ai';
+      return { agentId: agentId, apiKey: apiKey, apiBaseUrl: apiBaseUrl };
+    }
+
+    function loadSaved() {
+      try {
+        var saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          var c = JSON.parse(saved);
+          document.getElementById('agent-id').value = c.agentId || '';
+          document.getElementById('api-key').value = c.apiKey || '';
+          document.getElementById('api-base-url').value = c.apiBaseUrl || 'https://r.ordify.ai';
+          return c;
+        }
+      } catch (e) {}
+      return null;
+    }
+
+    function saveConfig(config) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
+    }
+
+    function mountWidget(config) {
+      if (!config.agentId || !config.apiKey) return;
+      var existing = document.getElementById(ROOT_ID);
+      if (existing) existing.remove();
+      OrdifyChatWidget.mount(null, {
+        agentId: config.agentId,
+        apiKey: config.apiKey,
+        apiBaseUrl: config.apiBaseUrl || 'https://r.ordify.ai',
+        mode: 'floating',
+        position: 'bottom-right',
+        buttonText: 'Chat with us',
+        chatName: 'AI Assistant'
+      });
+    }
+
+    function onApply() {
+      var config = getConfig();
+      if (!config.agentId || !config.apiKey) {
+        alert('Please enter Agent ID and API Key.');
+        return;
+      }
+      saveConfig(config);
+      mountWidget(config);
+    }
+
+    loadSaved();
+    var saved = getConfig();
+    if (saved && saved.agentId && saved.apiKey) mountWidget(saved);
+
+    document.getElementById('apply-btn').addEventListener('click', onApply);
+  </script>
+</body>
+</html>
