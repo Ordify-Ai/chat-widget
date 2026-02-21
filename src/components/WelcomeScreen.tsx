@@ -1,6 +1,6 @@
 import { OrdifyConfig } from '@/types'
 import { ProfessionalInput } from '@/components/ProfessionalInput'
-import { Send } from 'lucide-react'
+import { SendIcon } from './SendIcon'
 import React from 'react'
 import {
   WelcomeScreenContainer,
@@ -76,7 +76,7 @@ export function WelcomeScreen({ config, onQuestionClick, onSendMessage, isLoadin
           onClick={handleSendMessage}
           disabled={isLoading || !inputValue.trim()}
         >
-          <Send size={16} />
+          <SendIcon size={16} />
         </SendButton>
       </WelcomeInputContainer>
     </WelcomeScreenContainer>

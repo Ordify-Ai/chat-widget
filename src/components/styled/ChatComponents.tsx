@@ -178,6 +178,33 @@ export const SendButton = styled.button`
   svg {
     width: 16px;
     height: 16px;
+    color: inherit;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    border-color: #60a5fa;
+    color: #60a5fa;
+    &:hover:not(:disabled) {
+      background: #2563eb;
+      color: white;
+    }
+    &:disabled {
+      border-color: #6b7280;
+      color: #6b7280;
+    }
+  }
+
+  [data-theme="dark"] & {
+    border-color: #60a5fa;
+    color: #60a5fa;
+    &:hover:not(:disabled) {
+      background: #2563eb;
+      color: white;
+    }
+    &:disabled {
+      border-color: #6b7280;
+      color: #6b7280;
+    }
   }
 `
 
