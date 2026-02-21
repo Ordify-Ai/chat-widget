@@ -3,7 +3,8 @@ import { MarkdownRenderer } from '@/components/MarkdownRenderer'
 import { ProfessionalInput } from '@/components/ProfessionalInput'
 import { WelcomeScreen } from '@/components/WelcomeScreen'
 import { OrdifyConfig, UseOrdifyChatReturn } from '@/types'
-import { MessageSquare, Send } from 'lucide-react'
+import { MessageSquareIcon } from './Icons'
+import { SendIcon } from './SendIcon'
 import React from 'react'
 import { ChatHeader } from './ChatHeader'
 import {
@@ -82,7 +83,7 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
         aria-label="Open chat"
       >
         <div className="icon-container">
-          <MessageSquare size={16} />
+          <MessageSquareIcon size={16} />
         </div>
         <span>
           {config.buttonText || config.chatName || "AI Chat"}
@@ -220,7 +221,7 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
               onClick={handleSendMessage}
               disabled={isLoading || !inputValue.trim()}
             >
-              <Send size={16} />
+              <SendIcon size={16} />
             </SendButton>
           </ChatInput>
         </>

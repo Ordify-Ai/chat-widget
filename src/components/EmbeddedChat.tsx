@@ -2,7 +2,7 @@ import { MarkdownRenderer } from '@/components/MarkdownRenderer'
 import { ProfessionalInput } from '@/components/ProfessionalInput'
 import { WelcomeScreen } from '@/components/WelcomeScreen'
 import { OrdifyConfig, UseOrdifyChatReturn } from '@/types'
-import { Send } from 'lucide-react'
+import { SendIcon } from './SendIcon'
 import React from 'react'
 import { Conversation, ConversationContent } from './Conversation'
 import {
@@ -173,7 +173,7 @@ export function EmbeddedChat({ config, chat }: EmbeddedChatProps) {
               onClick={handleSendMessage}
               disabled={isLoading || !inputValue.trim()}
             >
-              <Send size={16} />
+              <SendIcon size={16} />
             </SendButton>
           </ChatInput>
         </>

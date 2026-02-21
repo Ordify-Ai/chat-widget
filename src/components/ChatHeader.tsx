@@ -1,5 +1,5 @@
-import { X } from 'lucide-react'
 import styled from 'styled-components'
+import { CloseIcon } from './Icons'
 import { AgentAvatar } from './styled/ChatComponents'
 
 interface ChatHeaderProps {
@@ -178,7 +178,7 @@ export function ChatHeader({
             onClick={onClose}
             aria-label="Close"
           >
-            <X />
+            <CloseIcon size={16} />
           </CloseButton>
         )}
       </HeaderActions>

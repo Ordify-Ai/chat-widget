@@ -1,5 +1,5 @@
-import { ArrowDown } from 'lucide-react'
 import React from 'react'
+import { ArrowDownIcon } from './Icons'
 import styled from 'styled-components'
 import { StickToBottom, useStickToBottomContext } from 'use-stick-to-bottom'
 
@@ -107,7 +107,7 @@ export function ConversationScrollButton({ className }: ConversationScrollButton
         onClick={handleScrollToBottom}
         type="button"
       >
-        <ArrowDown />
+        <ArrowDownIcon size={16} />
       </ScrollButton>
     )
   )
