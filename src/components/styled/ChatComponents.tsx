@@ -176,9 +176,20 @@ export const SendButton = styled.button`
   }
   
   svg {
-    width: 16px;
-    height: 16px;
+    width: 16px !important;
+    height: 16px !important;
+    min-width: 16px !important;
+    min-height: 16px !important;
     color: inherit;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    flex-shrink: 0;
+  }
+  svg path {
+    stroke: currentColor !important;
+    fill: none !important;
+    visibility: visible !important;
   }
 
   @media (prefers-color-scheme: dark) {
