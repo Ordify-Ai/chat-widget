@@ -6,6 +6,26 @@ export const ChatWidget = styled.div`
   background-color: white;
   border: 1px solid #e5e7eb;
   min-height: 0;
+
+  /* Scoped CSS reset to prevent host page style leakage */
+  & button,
+  & input,
+  & textarea,
+  & select {
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: none;
+    box-sizing: border-box;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: normal;
+    line-height: normal;
+    color: inherit;
+    text-shadow: none;
+    -webkit-appearance: none;
+    appearance: none;
+  }
   
   /* Try both media query approaches */
   @media (prefers-color-scheme: dark) {
@@ -152,6 +172,9 @@ export const SendButton = styled.button`
   height: 32px;
   min-width: 32px;
   min-height: 32px;
+  padding: 0;
+  box-sizing: border-box;
+  line-height: normal;
   background: transparent;
   border: 2px solid #3b82f6;
   border-radius: 50%;
@@ -238,6 +261,8 @@ export const FloatingButton = styled.button<{ $position?: string; $primaryColor?
   z-index: 50;
   height: 48px;
   padding: 0 16px;
+  box-sizing: border-box;
+  line-height: normal;
   background: ${props => {
     if (props.$primaryColor) {
       const darker = darkenColor(props.$primaryColor, 0.1)
@@ -363,6 +388,9 @@ export const ChatHeader = styled.div<{ primaryColor?: string }>`
 export const CloseButton = styled.button`
   width: 24px;
   height: 24px;
+  padding: 0;
+  box-sizing: border-box;
+  line-height: normal;
   background: transparent;
   border: none;
   color: white;
@@ -622,6 +650,8 @@ export const WelcomeQuestionsContainer = styled.div`
 export const QuestionButton = styled.button<{ $primaryColor?: string }>`
   width: 100%;
   padding: 12px 16px;
+  box-sizing: border-box;
+  line-height: normal;
   text-align: left;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
