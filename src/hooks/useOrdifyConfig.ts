@@ -5,6 +5,7 @@ export function useOrdifyConfig(config: OrdifyConfig) {
   return useMemo(() => {
     // Get configuration from props or environment variables
     const agentId = config.agentId || process.env.ORDIFY_AGENT_ID
+    const publishableKey = config.publishableKey || process.env.ORDIFY_PUBLISHABLE_KEY
     const apiKey = config.apiKey || process.env.ORDIFY_API_KEY
     const apiBaseUrl = config.apiBaseUrl || process.env.ORDIFY_API_BASE_URL || 'https://r.ordify.ai'
 
@@ -12,12 +13,15 @@ export function useOrdifyConfig(config: OrdifyConfig) {
       throw new Error('Ordify agent ID is required. Provide agentId prop or set ORDIFY_AGENT_ID environment variable.')
     }
 
-    if (!apiKey) {
-      throw new Error('Ordify API key is required. Provide apiKey prop or set ORDIFY_API_KEY environment variable.')
+    if (!publishableKey && !apiKey) {
+      throw new Error(
+        'Ordify credentials are required. Provide publishableKey (recommended) or apiKey.'
+      )
     }
 
     return {
       agentId,
+      publishableKey,
       apiKey,
       apiBaseUrl,
       mode: config.mode || 'floating',

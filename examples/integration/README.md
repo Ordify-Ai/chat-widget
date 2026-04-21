@@ -21,7 +21,7 @@ This directory contains code snippets showing how to integrate the Ordify Chat W
 
 3. **Replace the configuration** with your actual values:
    - `agentId` - Your Ordify agent ID
-   - `apiKey` - Your API key
+   - `publishableKey` - Your publishable key (`pk_live_...`)
    - `apiBaseUrl` - API endpoint URL (defaults to https://r.ordify.ai)
 
 4. **Customize** the chat appearance and behavior as needed
@@ -42,7 +42,7 @@ For production, use environment variables:
 ```bash
 # .env.local
 NEXT_PUBLIC_ORDIFY_AGENT_ID=your-agent-id
-NEXT_PUBLIC_ORDIFY_API_KEY=your-api-key
+NEXT_PUBLIC_ORDIFY_PUBLISHABLE_KEY=pk_live_...
 NEXT_PUBLIC_ORDIFY_API_URL=https://r.ordify.ai
 ```
 

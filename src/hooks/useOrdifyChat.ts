@@ -22,6 +22,7 @@ export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
   // Initialize API client
   if (!apiClientRef.current) {
     apiClientRef.current = new OrdifyApiClient({
+      publishableKey: config.publishableKey,
       apiKey: config.apiKey,
       apiBaseUrl: config.apiBaseUrl || 'https://api.ordify.ai',
       agentId: config.agentId

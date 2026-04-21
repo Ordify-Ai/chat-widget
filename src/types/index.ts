@@ -44,7 +44,8 @@ export interface Agent {
 
 export interface OrdifyConfig {
   agentId: string
-  apiKey: string
+  apiKey?: string
+  publishableKey?: string
   apiBaseUrl?: string
   mode?: 'floating' | 'embedded'
   position?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left'
@@ -116,7 +117,8 @@ export interface ApiError {
 }
 
 export interface OrdifyApiClientConfig {
-  apiKey: string
+  apiKey?: string
+  publishableKey?: string
   apiBaseUrl: string
   agentId: string
 }

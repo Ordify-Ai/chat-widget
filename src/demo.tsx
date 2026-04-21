@@ -7,6 +7,7 @@ const SESSION_STORAGE_KEY = 'ordify-demo-sessions'
 
 function DemoApp() {
   const [agentId, setAgentId] = useState("")
+  const [publishableKey, setPublishableKey] = useState("")
   const [apiKey, setApiKey] = useState("")
   const [apiBaseUrl, setApiBaseUrl] = useState("http://localhost:5001")
   const [chatName, setChatName] = useState("Chat Assistant")
@@ -27,6 +28,7 @@ function DemoApp() {
       try {
         const config = JSON.parse(saved)
         setAgentId(config.agentId || "")
+        setPublishableKey(config.publishableKey || "")
         setApiKey(config.apiKey || "")
         setApiBaseUrl(config.apiBaseUrl || "http://localhost:5001")
         setChatName(config.chatName || "Chat Assistant")
@@ -58,6 +60,7 @@ function DemoApp() {
   useEffect(() => {
     const config = {
       agentId,
+      publishableKey,
       apiKey,
       apiBaseUrl,
       chatName,
@@ -71,7 +74,7 @@ function DemoApp() {
       position
     }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(config))
-  }, [agentId, apiKey, apiBaseUrl, chatName, buttonText, primaryColor, agentImage, quickQuestions, welcomeMessage, welcomeImage, theme, position])
+  }, [agentId, publishableKey, apiKey, apiBaseUrl, chatName, buttonText, primaryColor, agentImage, quickQuestions, welcomeMessage, welcomeImage, theme, position])
 
   // State for dynamic testing
   const [initialMessage, setInitialMessage] = useState("Hi")
@@ -192,7 +195,25 @@ function DemoApp() {
 
           <div>
             <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-              API Key *
+              Publishable Key (recommended)
+            </label>
+            <input
+              type="password"
+              value={publishableKey}
+              onChange={(e) => setPublishableKey(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '8px',
+                border: '1px solid #ccc',
+                borderRadius: '4px'
+              }}
+              placeholder="Enter your pk_live_..."
+            />
+          </div>
+
+          <div>
+            <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
+              API Key (legacy)
             </label>
             <input
               type="password"
@@ -625,6 +646,7 @@ function DemoApp() {
           <OrdifyChat
             key={`floating-${testKey}`}
             agentId={agentId}
+            publishableKey={publishableKey}
             apiKey={apiKey}
             apiBaseUrl={apiBaseUrl}
             mode="floating"
@@ -788,6 +810,7 @@ function DemoApp() {
               <OrdifyChat
                 key={`embedded-${testKey}`}
                 agentId={agentId}
+                publishableKey={publishableKey}
                 apiKey={apiKey}
                 apiBaseUrl={apiBaseUrl}
                 mode="embedded"

@@ -16,12 +16,14 @@ Before integrating the chat widget, ensure you have:
 
 - **Node.js**: 18.0.0 or higher
 - **npm**: 9.0.0 or higher  
-- **API Key**: Available in your Ordify dashboard (Account → Settings → API)
+- **Publishable Key (`pk_live_...`)**: Create in Ordify dashboard (Settings → Publishable Keys)
 - **Agent ID**: Found in your agent configuration panel within the Ordify application
 - **React Application**: Compatible with React 18+ and modern build tools
 
 
 > **🚀 Try it live!** Visit [app.ordify.ai/widget-demo](https://app.ordify.ai/widget-demo) to see all chat modes in action.
+
+> **Production Security:** Use `publishableKey`/`data-ordify-publishable-key` with allowed origins. Keep account `apiKey` for server-side use only.
 
 ## ✨ Features
 
@@ -65,7 +67,7 @@ function App() {
   return (
     <OrdifyChat
       agentId="your-agent-id"
-      apiKey="your-api-key"
+      publishableKey="pk_live_..."
       apiBaseUrl="https://r.ordify.ai"
       chatName="AI Assistant"
       buttonText="Chat with us"
@@ -107,7 +109,7 @@ Load the standalone script from a CDN (use a version number to pin; replace `1.0
 <script>
   OrdifyChatWidget.mount(null, {
     agentId: "your-agent-id",
-    apiKey: "your-api-key",
+    publishableKey: "pk_live_...",
     apiBaseUrl: "https://r.ordify.ai",
     mode: "floating",
     position: "bottom-right",
@@ -123,7 +125,7 @@ Load the standalone script from a CDN (use a version number to pin; replace `1.0
 <script>
   OrdifyChatWidget.mount(null, {
     agentId: "your-agent-id",
-    apiKey: "your-api-key",
+    publishableKey: "pk_live_...",
     apiBaseUrl: "https://r.ordify.ai",
     buttonText: "Chat with us"
   });
@@ -142,7 +144,7 @@ Add a single script tag with `data-ordify-widget` and the required/optional data
   src="https://unpkg.com/ordify-chat-widget@1.0.38/dist/ordify-chat-widget.standalone.js"
   data-ordify-widget
   data-ordify-agent-id="your-agent-id"
-  data-ordify-api-key="your-api-key"
+  data-ordify-publishable-key="pk_live_..."
   data-ordify-api-base-url="https://r.ordify.ai"
   data-ordify-button-text="Chat with us"
   data-ordify-chat-name="AI Assistant"
@@ -150,12 +152,13 @@ Add a single script tag with `data-ordify-widget` and the required/optional data
 ></script>
 ```
 
-**Supported data attributes (all optional except agent-id and api-key):**
+**Supported data attributes (all optional except agent-id and one credential):**
 
 | Attribute | Description |
 |-----------|-------------|
 | `data-ordify-agent-id` | **Required.** Your Ordify agent ID. |
-| `data-ordify-api-key` | **Required.** Your API key. |
+| `data-ordify-publishable-key` | Recommended. Your publishable key (`pk_live_...`) for browser embeds. |
+| `data-ordify-api-key` | Legacy/deprecated for browser embeds. Prefer publishable key. |
 | `data-ordify-api-base-url` | API base URL (default: `https://r.ordify.ai`). |
 | `data-ordify-button-text` | Floating button label. |
 | `data-ordify-chat-name` | Chat header title. |
@@ -176,10 +179,10 @@ Add a single script tag with `data-ordify-widget` and the required/optional data
 
 **Where to put your API key and Agent ID**
 
-The widget does **not** use a separate config file. You put the Agent ID and API key in the same place as the script:
+The widget does **not** use a separate config file. You put the Agent ID and credential in the same place as the script:
 
-- **Option 1 (script + mount):** In the inline snippet, replace `"your-agent-id"` and `"your-api-key"` with your real values. That snippet lives wherever you add it (theme header/footer or a plugin’s “custom code” field).
-- **Option 2 (data attributes):** In the script tag, set `data-ordify-agent-id="your-agent-id"` and `data-ordify-api-key="your-api-key"` (and optionally `data-ordify-api-base-url`). Again, that tag is added via theme or plugin.
+- **Option 1 (script + mount):** In the inline snippet, replace `"your-agent-id"` and `"pk_live_..."` with your real values.
+- **Option 2 (data attributes):** In the script tag, set `data-ordify-agent-id="your-agent-id"` and `data-ordify-publishable-key="pk_live_..."` (and optionally `data-ordify-api-base-url`).
 
 So the “config” is the snippet or script tag you paste; the credentials are inside it.
 
@@ -197,7 +200,7 @@ So the “config” is the snippet or script tag you paste; the credentials are 
 ```tsx
 <OrdifyChat
   agentId="your-agent-id"
-  apiKey="your-api-key"
+  publishableKey="pk_live_..."
   mode="floating"
   position="bottom-right"
   buttonText="AI Chat"
@@ -208,7 +211,7 @@ So the “config” is the snippet or script tag you paste; the credentials are 
 ```tsx
 <OrdifyChat
   agentId="your-agent-id"
-  apiKey="your-api-key"
+  publishableKey="pk_live_..."
   mode="embedded"
   height="500px"
   chatName="Support Assistant"
@@ -223,7 +226,8 @@ So the “config” is the snippet or script tag you paste; the credentials are 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | `agentId` | string | - | **Required** - Your Ordify agent ID |
-| `apiKey` | string | - | **Required** - Your API key |
+| `publishableKey` | string | - | Recommended for browser embeds (`pk_live_...`) |
+| `apiKey` | string | - | Legacy browser credential (supported for migration) |
 | `apiBaseUrl` | string | - | **Required** - API endpoint URL |
 | `chatName` | string | "Chat Assistant" | Title text in chat header |
 | `buttonText` | string | "AI Chat" | Text on floating button |

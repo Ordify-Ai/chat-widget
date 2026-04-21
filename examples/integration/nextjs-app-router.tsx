@@ -10,7 +10,7 @@ export default function ChatPage() {
       <h1 className="text-2xl font-bold mb-4">Chat with AI</h1>
       <OrdifyChat 
         agentId={process.env.NEXT_PUBLIC_ORDIFY_AGENT_ID!}
-        apiKey={process.env.NEXT_PUBLIC_ORDIFY_API_KEY!}
+        publishableKey={process.env.NEXT_PUBLIC_ORDIFY_PUBLISHABLE_KEY!}
         apiBaseUrl="https://r.ordify.ai"
         mode="embedded"
         height="500px"
