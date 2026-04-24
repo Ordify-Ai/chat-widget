@@ -125,6 +125,7 @@ export interface ChatRequest {
   message: string
   sessionId?: string
   context?: string
+  enableMemory?: boolean
 }
 
 export interface ChatResponse {

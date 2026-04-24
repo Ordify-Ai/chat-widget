@@ -225,7 +225,7 @@ export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
 
       // Send message and handle streaming response
       isStreamingRef.current = true
-      const stream = await apiClientRef.current!.sendMessage(content.trim(), currentSessionId, context)
+      const stream = await apiClientRef.current!.sendMessage(content.trim(), currentSessionId, context, false)
       const reader = stream.getReader()
       const decoder = new TextDecoder()
 
