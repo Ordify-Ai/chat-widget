@@ -15,9 +15,17 @@ export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
   const [hasSessionStarted, setHasSessionStarted] = useState(false)
 
   const apiClientRef = useRef<OrdifyApiClient | null>(null)
+  const credFingerprintRef = useRef<string>('')
   const initialMessageSentRef = useRef(false)
   const historyLoadedRef = useRef(false)
   const isStreamingRef = useRef(false)
+
+  // Reset API client when credentials or endpoint change so stale clients are never used
+  const credFingerprint = `${config.publishableKey ?? ''}|${config.apiKey ?? ''}|${config.apiBaseUrl ?? ''}|${config.agentId}`
+  if (credFingerprintRef.current !== credFingerprint) {
+    apiClientRef.current = null
+    credFingerprintRef.current = credFingerprint
+  }
 
   // Initialize API client
   if (!apiClientRef.current) {

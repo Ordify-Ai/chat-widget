@@ -1,4 +1,4 @@
-import { ApiError, ChatRequest, Message, OrdifyApiClientConfig, Session, StreamingResponse } from '@/types'
+import { Agent, ApiError, ChatRequest, Message, OrdifyApiClientConfig, Session, StreamingResponse } from '@/types'
 
 export class OrdifyApiClient {
   private config: OrdifyApiClientConfig
@@ -108,6 +108,47 @@ export class OrdifyApiClient {
     const response = await fetch(url, {
       method: 'GET',
       headers: this.getAuthHeaders()
+    })
+
+    if (!response.ok) {
+      const error: ApiError = await response.json()
+      throw new Error(`API Error: ${error.detail}`)
+    }
+
+    return response.json()
+  }
+
+  /** @deprecated Use the Ordify dashboard to list agents. Will be removed in a future major version. */
+  async getAgents(): Promise<Agent[]> {
+    if (!this.config.apiKey) {
+      throw new Error('[Ordify] getAgents() requires apiKey and is not supported with publishableKey.')
+    }
+    const url = `${this.config.apiBaseUrl}/chat/agents`
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: { 'api-key': this.config.apiKey, 'accept': 'application/json' }
+    })
+
+    if (!response.ok) {
+      const error: ApiError = await response.json()
+      throw new Error(`API Error: ${error.detail}`)
+    }
+
+    const data = await response.json()
+    return data.agents || []
+  }
+
+  /** @deprecated Use sessionId prop to load sessions. Will be removed in a future major version. */
+  async getSessions(): Promise<Session[]> {
+    if (!this.config.apiKey) {
+      throw new Error('[Ordify] getSessions() requires apiKey and is not supported with publishableKey.')
+    }
+    const url = `${this.config.apiBaseUrl}/sessions`
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: { 'api-key': this.config.apiKey, 'accept': 'application/json' }
     })
 
     if (!response.ok) {
