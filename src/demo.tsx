@@ -19,6 +19,10 @@ function DemoApp() {
   const [welcomeImage, setWelcomeImage] = useState("")
   const [theme, setTheme] = useState<'light' | 'dark' | 'auto'>('auto')
   const [position, setPosition] = useState<'bottom-right' | 'bottom-left' | 'top-right' | 'top-left'>('bottom-right')
+  const [enableAttachments, setEnableAttachments] = useState(true)
+  const [maxAttachmentSizeMB, setMaxAttachmentSizeMB] = useState(10)
+  const [maxAttachments, setMaxAttachments] = useState(3)
+  const [allowedAttachmentTypesRaw, setAllowedAttachmentTypesRaw] = useState('')
   const [floatingSessionId, setFloatingSessionId] = useState<string | null>(null)
   const [embeddedSessionId, setEmbeddedSessionId] = useState<string | null>(null)
 
@@ -40,6 +44,20 @@ function DemoApp() {
         setWelcomeImage(config.welcomeImage || "")
         setTheme(config.theme || 'auto')
         setPosition(config.position || 'bottom-right')
+        setEnableAttachments(config.enableAttachments !== false)
+        setMaxAttachmentSizeMB(
+          typeof config.maxAttachmentSizeMB === 'number' && config.maxAttachmentSizeMB > 0
+            ? config.maxAttachmentSizeMB
+            : 10
+        )
+        setMaxAttachments(
+          typeof config.maxAttachments === 'number' && config.maxAttachments > 0
+            ? config.maxAttachments
+            : 3
+        )
+        setAllowedAttachmentTypesRaw(
+          typeof config.allowedAttachmentTypesRaw === 'string' ? config.allowedAttachmentTypesRaw : ''
+        )
       } catch (e) {
         console.error('Failed to load saved configuration:', e)
       }
@@ -71,10 +89,14 @@ function DemoApp() {
       welcomeMessage,
       welcomeImage,
       theme,
-      position
+      position,
+      enableAttachments,
+      maxAttachmentSizeMB,
+      maxAttachments,
+      allowedAttachmentTypesRaw
     }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(config))
-  }, [agentId, publishableKey, apiKey, apiBaseUrl, chatName, buttonText, primaryColor, agentImage, quickQuestions, welcomeMessage, welcomeImage, theme, position])
+  }, [agentId, publishableKey, apiKey, apiBaseUrl, chatName, buttonText, primaryColor, agentImage, quickQuestions, welcomeMessage, welcomeImage, theme, position, enableAttachments, maxAttachmentSizeMB, maxAttachments, allowedAttachmentTypesRaw])
 
   // State for dynamic testing
   const [initialMessage, setInitialMessage] = useState("Hi")
@@ -156,10 +178,27 @@ function DemoApp() {
     setWidgetsMounted(true)
   }
 
+  const allowedAttachmentTypesParsed = allowedAttachmentTypesRaw
+    .split(/[\n,]+/)
+    .map((s) => s.trim())
+    .filter(Boolean)
+
+  const attachmentProps = {
+    enableAttachments,
+    maxAttachmentSizeMB,
+    maxAttachments,
+    ...(allowedAttachmentTypesParsed.length > 0
+      ? { allowedAttachmentTypes: allowedAttachmentTypesParsed }
+      : {}),
+  }
+
   return (
     <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
       <h1>Ordify Chat Widget Test</h1>
-      <p>Testing the initialContext feature, button configurability, and auto-scroll</p>
+      <p>
+        Testing the initialContext feature, button configurability, auto-scroll, and optional file
+        attachments (publishable key + backend <code>/widget/attachments</code>).
+      </p>
 
       {/* Configuration Section */}
       <div style={{
@@ -410,6 +449,107 @@ function DemoApp() {
             </div>
           </div>
 
+          <div
+            style={{
+              borderTop: '1px solid #e8e8e8',
+              marginTop: '18px',
+              paddingTop: '18px',
+            }}
+          >
+            <h4 style={{ margin: '0 0 8px 0' }}>Attachments</h4>
+            <p style={{ fontSize: '13px', color: '#666', margin: '0 0 14px 0' }}>
+              Uploads use <strong>POST /widget/attachments</strong> with your publishable key. Without a key, the
+              paperclip stays disabled even if this is checked.
+            </p>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+                gap: '15px',
+                alignItems: 'start',
+              }}
+            >
+              <label
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  cursor: 'pointer',
+                  fontWeight: 'bold',
+                }}
+              >
+                <input
+                  type="checkbox"
+                  checked={enableAttachments}
+                  onChange={(e) => setEnableAttachments(e.target.checked)}
+                />
+                Enable attachments
+              </label>
+              <div>
+                <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
+                  Max file size (MB)
+                </label>
+                <input
+                  type="number"
+                  min={1}
+                  max={100}
+                  value={maxAttachmentSizeMB}
+                  onChange={(e) => setMaxAttachmentSizeMB(Math.max(1, Number(e.target.value) || 1))}
+                  style={{
+                    width: '100%',
+                    maxWidth: '140px',
+                    padding: '8px',
+                    border: '1px solid #ccc',
+                    borderRadius: '4px',
+                  }}
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
+                  Max files per message
+                </label>
+                <input
+                  type="number"
+                  min={1}
+                  max={20}
+                  value={maxAttachments}
+                  onChange={(e) => setMaxAttachments(Math.min(20, Math.max(1, Number(e.target.value) || 1)))}
+                  style={{
+                    width: '100%',
+                    maxWidth: '140px',
+                    padding: '8px',
+                    border: '1px solid #ccc',
+                    borderRadius: '4px',
+                  }}
+                />
+              </div>
+              <div style={{ gridColumn: '1 / -1' }}>
+                <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
+                  Allowed MIME types (optional, one per line or comma-separated)
+                </label>
+                <textarea
+                  value={allowedAttachmentTypesRaw}
+                  onChange={(e) => setAllowedAttachmentTypesRaw(e.target.value)}
+                  style={{
+                    width: '100%',
+                    maxWidth: '560px',
+                    padding: '8px',
+                    border: '1px solid #ccc',
+                    borderRadius: '4px',
+                    minHeight: '72px',
+                    resize: 'vertical',
+                    fontFamily: 'monospace',
+                    fontSize: '12px',
+                  }}
+                  placeholder={'application/pdf\nimage/png,image/jpeg'}
+                />
+                <p style={{ fontSize: '12px', color: '#666', marginTop: '6px', marginBottom: 0 }}>
+                  Leave empty to rely on the widget defaults and server-side checks.
+                </p>
+              </div>
+            </div>
+          </div>
+
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '15px' }}>
             <div>
               <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
@@ -580,7 +720,13 @@ function DemoApp() {
           Context: "{initialContext}"<br /><br />
           <strong>Active Settings:</strong><br />
           Message: "{activeMessage}"<br />
-          Context: "{activeContext}"
+          Context: "{activeContext}"<br /><br />
+          <strong>Attachment settings (saved with Configuration):</strong><br />
+          Enabled: {enableAttachments ? 'yes' : 'no'} · Max size: {maxAttachmentSizeMB} MB · Max files:{' '}
+          {maxAttachments}
+          <br />
+          Allowed MIME:{' '}
+          {allowedAttachmentTypesParsed.length > 0 ? allowedAttachmentTypesParsed.join(', ') : '(defaults)'}
         </div>
       </div>
 
@@ -673,6 +819,7 @@ function DemoApp() {
             onError={(error) => {
               console.error('❌ Floating chat error:', error)
             }}
+            {...attachmentProps}
           />
 
           <div style={{ marginTop: '40px', marginBottom: '20px' }}>
@@ -836,6 +983,7 @@ function DemoApp() {
                 onError={(error) => {
                   console.error('❌ Embedded chat error:', error)
                 }}
+                {...attachmentProps}
               />
             </div>
           </div>
