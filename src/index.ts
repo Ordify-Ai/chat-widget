@@ -12,10 +12,21 @@ export { MarkdownRenderer } from './components/MarkdownRenderer'
 // Hooks
 export { useOrdifyChat } from './hooks/useOrdifyChat'
 export { useOrdifyConfig } from './hooks/useOrdifyConfig'
+export { useWidgetAttachmentStaging } from './hooks/useWidgetAttachmentStaging'
 
 // Types
 export type {
-    Agent, ApiError, ChatRequest, Message, OrdifyApiClientConfig, OrdifyConfig, Session, StreamingResponse, UseOrdifyChatReturn
+    Agent,
+    ApiError,
+    AttachmentItem,
+    AttachmentWire,
+    ChatRequest,
+    Message,
+    OrdifyApiClientConfig,
+    OrdifyConfig,
+    Session,
+    StreamingResponse,
+    UseOrdifyChatReturn
 } from './types'
 
 // Utils

@@ -1,4 +1,27 @@
-import { Agent, ApiError, ChatRequest, Message, OrdifyApiClientConfig, Session, StreamingResponse } from '@/types'
+import {
+  Agent,
+  ApiError,
+  AttachmentItem,
+  AttachmentWire,
+  ChatRequest,
+  Message,
+  OrdifyApiClientConfig,
+  Session,
+  StreamingResponse
+} from '@/types'
+
+function toAttachmentWire(a: AttachmentItem): AttachmentWire {
+  return {
+    id: a.id,
+    name: a.name,
+    url: a.url,
+    content_type: a.content_type,
+    type: a.type,
+    size: a.size ?? null,
+    preview: null,
+    oauth_token: null
+  }
+}
 
 export class OrdifyApiClient {
   private config: OrdifyApiClientConfig
@@ -45,16 +68,31 @@ export class OrdifyApiClient {
     }
   }
 
-  async sendMessage(content: string, sessionId?: string, context?: string): Promise<ReadableStream<Uint8Array>> {
+  async sendMessage(
+    content: string,
+    sessionId?: string,
+    context?: string,
+    attachments?: AttachmentItem[]
+  ): Promise<ReadableStream<Uint8Array>> {
     const path = this.usePublishableKey()
       ? `/widget/chat/${this.config.agentId}`
       : `/chat/agents/${this.config.agentId}`
     const url = `${this.config.apiBaseUrl}${path}`
 
+    const wires = attachments?.length ? attachments.map(toAttachmentWire) : undefined
+
     const requestBody: ChatRequest = {
       message: content,
       sessionId: sessionId,
       context: context
+    }
+    if (wires?.length) {
+      requestBody.attachments = wires
+      requestBody.use_document_understanding = wires.some(
+        (w) =>
+          w.type === 'document' ||
+          (!w.type && !String(w.content_type || '').startsWith('image/'))
+      )
     }
 
     const response = await fetch(url, {
@@ -73,6 +111,49 @@ export class OrdifyApiClient {
     }
 
     return response.body
+  }
+
+  /**
+   * Upload a file for widget chat. Requires publishableKey (browser-safe auth).
+   */
+  async uploadAttachment(file: File): Promise<AttachmentItem> {
+    if (!this.usePublishableKey()) {
+      throw new Error('[Ordify] uploadAttachment requires publishableKey.')
+    }
+    const url = `${this.config.apiBaseUrl}/widget/attachments`
+    const formData = new FormData()
+    formData.append('file', file)
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: this.getAuthHeaders(false),
+      body: formData
+    })
+
+    if (!response.ok) {
+      let detail = `HTTP ${response.status}`
+      try {
+        const err: ApiError = await response.json()
+        detail = err.detail || detail
+      } catch {
+        /* ignore */
+      }
+      throw new Error(`API Error: ${detail}`)
+    }
+
+    const data = (await response.json()) as AttachmentItem
+    if (!data?.url || !data?.content_type || !data?.name) {
+      throw new Error('Invalid attachment response from server')
+    }
+    return {
+      id: data.id,
+      name: data.name,
+      type: data.type === 'image' ? 'image' : 'document',
+      url: data.url,
+      content_type: data.content_type,
+      size: data.size,
+      preview: data.preview
+    }
   }
 
   async createSession(): Promise<Session> {

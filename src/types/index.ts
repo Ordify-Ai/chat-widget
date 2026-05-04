@@ -1,11 +1,23 @@
 import { CSSProperties } from 'react'
 
+export interface AttachmentItem {
+  id: string
+  name: string
+  type: 'image' | 'document'
+  url: string
+  content_type: string
+  size?: number
+  /** Local data URL preview for images before upload completes */
+  preview?: string
+}
+
 export interface Message {
   id: string
   content: string
   role: 'user' | 'assistant'
   timestamp: Date
   sessionId?: string
+  attachments?: AttachmentItem[]
 }
 
 export interface Session {
@@ -87,11 +99,18 @@ export interface OrdifyConfig {
   quickQuestions?: string[]
   welcomeMessage?: string
   welcomeImage?: string
+  /** File attachments (requires publishableKey; uploads go to POST /widget/attachments) */
+  enableAttachments?: boolean
+  maxAttachmentSizeMB?: number
+  maxAttachments?: number
+  /** MIME types allowed client-side (server enforces its own list) */
+  allowedAttachmentTypes?: string[]
 }
 
 export interface UseOrdifyChatReturn {
   messages: Message[]
-  sendMessage: (content: string) => Promise<void>
+  sendMessage: (content: string, context?: string, attachments?: AttachmentItem[]) => Promise<void>
+  uploadAttachment: (file: File) => Promise<AttachmentItem>
   isLoading: boolean
   error: string | null
   clearError: () => void
@@ -127,6 +146,20 @@ export interface ChatRequest {
   message: string
   sessionId?: string
   context?: string
+  attachments?: AttachmentWire[]
+  use_document_understanding?: boolean
+}
+
+/** Wire shape for FastAPI AttachmentInfo (snake_case fields) */
+export interface AttachmentWire {
+  id?: string
+  name: string
+  url?: string | null
+  content_type: string
+  oauth_token?: string | null
+  size?: number | null
+  type?: string | null
+  preview?: string | null
 }
 
 export interface ChatResponse {

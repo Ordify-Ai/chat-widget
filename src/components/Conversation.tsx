@@ -7,6 +7,9 @@ interface ConversationProps {
   className?: string
   children: React.ReactNode
   style?: React.CSSProperties
+  onDragOver?: React.DragEventHandler<HTMLDivElement>
+  onDragLeave?: React.DragEventHandler<HTMLDivElement>
+  onDrop?: React.DragEventHandler<HTMLDivElement>
 }
 
 interface ConversationContentProps {
@@ -71,7 +74,14 @@ const ScrollButton = styled.button`
   }
 `
 
-export function Conversation({ className, children, style }: ConversationProps) {
+export function Conversation({
+  className,
+  children,
+  style,
+  onDragOver,
+  onDragLeave,
+  onDrop
+}: ConversationProps) {
   return (
     <StyledStickToBottom
       className={className}
@@ -79,6 +89,9 @@ export function Conversation({ className, children, style }: ConversationProps) 
       initial="smooth"
       resize="smooth"
       role="log"
+      onDragOver={onDragOver}
+      onDragLeave={onDragLeave}
+      onDrop={onDrop}
     >
       {children}
     </StyledStickToBottom>

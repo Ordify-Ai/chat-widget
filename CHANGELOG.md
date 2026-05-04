@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.45] - 2026-05-04
+
+### Added
+- **Widget attachments**: Optional `enableAttachments`, `maxAttachmentSizeMB`, `maxAttachments`, and `allowedAttachmentTypes` on `OrdifyConfig`. When enabled with a **publishable key**, users can attach documents and images (paperclip + drag/drop). Files upload to `POST /widget/attachments` and are sent as `attachments` on chat.
+- **`uploadAttachment` on `useOrdifyChat`**: Programmatic upload using the same auth as the widget.
+- **`Message.attachments`**: User bubbles can show attachment chips; history hydration maps server `attachments` when present.
+
+### Notes
+- Embeds using **API key only** cannot use widget upload (picker stays off); use a publishable key for browser uploads.
+- Configure a GCS lifecycle rule on the `widget_attachments/` prefix in your bucket for retention (ops).
+
 ## [1.0.27] - 2024-12-19
 
 ### Added

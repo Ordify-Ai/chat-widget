@@ -46,7 +46,11 @@ export function useOrdifyConfig(config: OrdifyConfig) {
       sessionId: config.sessionId,
       quickQuestions: config.quickQuestions,
       welcomeMessage: config.welcomeMessage,
-      welcomeImage: config.welcomeImage
+      welcomeImage: config.welcomeImage,
+      enableAttachments: config.enableAttachments,
+      maxAttachmentSizeMB: config.maxAttachmentSizeMB,
+      maxAttachments: config.maxAttachments,
+      allowedAttachmentTypes: config.allowedAttachmentTypes
     }
   }, [config])
 }
