@@ -21,7 +21,7 @@ const IconButton = styled.button`
   color: #374151;
   cursor: pointer;
   flex-shrink: 0;
-  transition: background 0.15s ease, border-color 0.15s ease;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 
   &:hover:not(:disabled) {
     background: #f3f4f6;
@@ -40,8 +40,54 @@ const IconButton = styled.button`
   }
 `
 
+const IntegratedAttachButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  min-height: 28px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #64748b;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.2s ease, color 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background: rgba(15, 23, 42, 0.06);
+    color: #334155;
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    color: #94a3b8;
+
+    &:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.08);
+      color: #e2e8f0;
+    }
+  }
+
+  [data-theme='dark'] & {
+    color: #94a3b8;
+
+    &:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.08);
+      color: #e2e8f0;
+    }
+  }
+`
+
 interface AttachmentPickerProps {
   disabled?: boolean
+  integrated?: boolean
   maxFileBytes: number
   maxFiles: number
   allowedMime?: readonly string[]
@@ -53,6 +99,7 @@ interface AttachmentPickerProps {
 
 export function AttachmentPicker({
   disabled,
+  integrated = false,
   maxFileBytes,
   maxFiles,
   allowedMime = DEFAULT_WIDGET_ALLOWED_MIMES,
@@ -113,6 +160,7 @@ export function AttachmentPicker({
 
   const atLimit = currentCount >= maxFiles
   const isDisabled = Boolean(disabled || busy || atLimit)
+  const Btn = integrated ? IntegratedAttachButton : IconButton
 
   return (
     <>
@@ -124,15 +172,15 @@ export function AttachmentPicker({
         style={{ display: 'none' }}
         onChange={onInputChange}
       />
-      <IconButton
+      <Btn
         type="button"
         disabled={isDisabled}
         aria-label="Attach file"
         title="Attach file"
         onClick={() => inputRef.current?.click()}
       >
-        <Paperclip size={18} />
-      </IconButton>
+        <Paperclip size={16} strokeWidth={2} />
+      </Btn>
     </>
   )
 }

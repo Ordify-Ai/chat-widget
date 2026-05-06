@@ -26,6 +26,51 @@ const StyledStickToBottom = styled(StickToBottom)`
   flex: 1;
   overflow-y: auto;
   scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148, 163, 184, 0.55) transparent;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(148, 163, 184, 0.45);
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(100, 116, 139, 0.55);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    scrollbar-color: rgba(71, 85, 105, 0.75) transparent;
+
+    &::-webkit-scrollbar-thumb {
+      background-color: rgba(71, 85, 105, 0.65);
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background-color: rgba(100, 116, 139, 0.75);
+    }
+  }
+
+  [data-theme='dark'] & {
+    scrollbar-color: rgba(71, 85, 105, 0.75) transparent;
+
+    &::-webkit-scrollbar-thumb {
+      background-color: rgba(71, 85, 105, 0.65);
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background-color: rgba(100, 116, 139, 0.75);
+    }
+  }
 `
 
 const StyledStickToBottomContent = styled(StickToBottom.Content)`
