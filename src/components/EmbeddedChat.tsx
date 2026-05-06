@@ -1,7 +1,11 @@
+import { AttachmentChips } from '@/components/AttachmentChips'
+import { AttachmentPicker } from '@/components/AttachmentPicker'
 import { MarkdownRenderer } from '@/components/MarkdownRenderer'
 import { ProfessionalInput } from '@/components/ProfessionalInput'
 import { WelcomeScreen } from '@/components/WelcomeScreen'
+import { useWidgetAttachmentStaging } from '@/hooks/useWidgetAttachmentStaging'
 import { OrdifyConfig, UseOrdifyChatReturn } from '@/types'
+import { filesFromDataTransfer } from '@/utils/attachments'
 import { SendIcon } from './SendIcon'
 import React from 'react'
 import { Conversation, ConversationContent } from './Conversation'
@@ -21,10 +25,24 @@ interface EmbeddedChatProps {
 }
 
 export function EmbeddedChat({ config, chat }: EmbeddedChatProps) {
-  const { messages, sendMessage, isLoading, error, hasSessionStarted } = chat
+  const { messages, sendMessage, uploadAttachment, isLoading, error, hasSessionStarted } = chat
   const [inputValue, setInputValue] = React.useState('')
   const [isDarkMode, setIsDarkMode] = React.useState(false)
   const inputRef = React.useRef<HTMLTextAreaElement>(null)
+
+  const {
+    enabled: attachmentsEnabled,
+    staged: stagedAttachments,
+    attachmentError,
+    setAttachmentError,
+    addFiles,
+    appendStaged,
+    removeStaged,
+    clearStaged,
+    maxFiles,
+    maxBytes,
+    allowed
+  } = useWidgetAttachmentStaging(config, uploadAttachment)
 
   const getThemeValue = () => {
     if (config.theme === 'dark') return 'dark'
@@ -49,10 +67,12 @@ export function EmbeddedChat({ config, chat }: EmbeddedChatProps) {
   }, [config.theme])
 
   const handleSendMessage = async () => {
-    if (!inputValue.trim() || isLoading) return
+    const trimmed = inputValue.trim()
+    if ((!trimmed && stagedAttachments.length === 0) || isLoading) return
 
-    await sendMessage(inputValue.trim())
+    await sendMessage(trimmed, undefined, stagedAttachments.length ? stagedAttachments : undefined)
     setInputValue('')
+    clearStaged()
 
     // Auto-focus input after sending
     setTimeout(() => {
@@ -85,6 +105,19 @@ export function EmbeddedChat({ config, chat }: EmbeddedChatProps) {
     }
   }, [config.height])
 
+  const onDragOver = (e: React.DragEvent) => {
+    if (!attachmentsEnabled) return
+    e.preventDefault()
+    e.dataTransfer.dropEffect = 'copy'
+  }
+
+  const onDrop = async (e: React.DragEvent) => {
+    if (!attachmentsEnabled) return
+    e.preventDefault()
+    const files = await filesFromDataTransfer(e.dataTransfer)
+    if (files.length) await addFiles(files)
+  }
+
   return (
     <ChatWidget
       data-theme={getThemeValue()}
@@ -102,7 +135,7 @@ export function EmbeddedChat({ config, chat }: EmbeddedChatProps) {
         />
       ) : (
         <>
-          <Conversation style={{ flex: 1 }}>
+          <Conversation style={{ flex: 1 }} onDragOver={onDragOver} onDrop={onDrop}>
             <ConversationContent>
               {messages.map(message => (
                 <div
@@ -126,7 +159,12 @@ export function EmbeddedChat({ config, chat }: EmbeddedChatProps) {
                     {message.role === 'assistant' ? (
                       <MarkdownRenderer content={message.content} />
                     ) : (
-                      message.content
+                      <>
+                        {message.attachments && message.attachments.length > 0 && (
+                          <AttachmentChips attachments={message.attachments} readOnly />
+                        )}
+                        {message.content ? message.content : null}
+                      </>
                     )}
                   </ChatMessage>
                 </div>
@@ -160,21 +198,45 @@ export function EmbeddedChat({ config, chat }: EmbeddedChatProps) {
           </Conversation>
 
           {/* Chat input */}
-          <ChatInput>
-            <ProfessionalInput
-              ref={inputRef}
-              value={inputValue}
-              onChange={setInputValue}
-              onKeyDown={handleKeyPress}
-              placeholder={config.placeholder}
-              disabled={isLoading}
-            />
-            <SendButton
-              onClick={handleSendMessage}
-              disabled={isLoading || !inputValue.trim()}
-            >
-              <SendIcon size={16} />
-            </SendButton>
+          <ChatInput style={{ flexDirection: 'column', alignItems: 'stretch', gap: 0 }}>
+            {(attachmentError || (attachmentsEnabled && stagedAttachments.length > 0)) && (
+              <div style={{ paddingBottom: 8 }}>
+                {attachmentError && (
+                  <div style={{ fontSize: 12, color: '#dc2626', marginBottom: 4 }}>{attachmentError}</div>
+                )}
+                {attachmentsEnabled && stagedAttachments.length > 0 && (
+                  <AttachmentChips attachments={stagedAttachments} onRemove={removeStaged} />
+                )}
+              </div>
+            )}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%' }}>
+              {attachmentsEnabled && (
+                <AttachmentPicker
+                  disabled={isLoading}
+                  maxFileBytes={maxBytes}
+                  maxFiles={maxFiles}
+                  allowedMime={allowed}
+                  currentCount={stagedAttachments.length}
+                  uploadAttachment={uploadAttachment}
+                  onUploaded={appendStaged}
+                  onError={setAttachmentError}
+                />
+              )}
+              <ProfessionalInput
+                ref={inputRef}
+                value={inputValue}
+                onChange={setInputValue}
+                onKeyDown={handleKeyPress}
+                placeholder={config.placeholder}
+                disabled={isLoading}
+              />
+              <SendButton
+                onClick={handleSendMessage}
+                disabled={isLoading || (!inputValue.trim() && stagedAttachments.length === 0)}
+              >
+                <SendIcon size={16} />
+              </SendButton>
+            </div>
           </ChatInput>
         </>
       )}

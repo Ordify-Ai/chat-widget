@@ -1,7 +1,32 @@
-import { Message, OrdifyConfig, UseOrdifyChatReturn } from '@/types'
+import { AttachmentItem, Message, OrdifyConfig, UseOrdifyChatReturn } from '@/types'
 import { generateId } from '@/utils'
 import { OrdifyApiClient, parseStreamingResponse } from '@/utils/api'
 import { useCallback, useEffect, useRef, useState } from 'react'
+
+function messageMergeKey(msg: Message): string {
+  const att = (msg.attachments || []).map((a) => a.id).join('|')
+  return `${msg.role}:${msg.content.trim()}:${att}`
+}
+
+function mapAttachmentsFromHistory(msg: any): AttachmentItem[] | undefined {
+  const raw = msg.attachments
+  if (!raw || !Array.isArray(raw) || raw.length === 0) return undefined
+  const mapped: AttachmentItem[] = []
+  for (const a of raw) {
+    const url = a.url || ''
+    if (!url) continue
+    mapped.push({
+      id: a.id || generateId(),
+      name: String(a.name || 'attachment'),
+      type: a.type === 'image' ? 'image' : 'document',
+      url,
+      content_type: String(a.content_type || a.contentType || 'application/octet-stream'),
+      size: a.size,
+      preview: a.preview
+    })
+  }
+  return mapped.length ? mapped : undefined
+}
 
 export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
   const [messages, setMessages] = useState<Message[]>([])
@@ -115,7 +140,8 @@ export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
             content: msg.content || '',
             role: msg.role === 'assistant' ? 'assistant' : 'user',
             timestamp: msg.timestamp ? new Date(msg.timestamp) : new Date(),
-            sessionId: currentSessionId
+            sessionId: currentSessionId,
+            attachments: mapAttachmentsFromHistory(msg)
           }))
           // Merge with existing messages to preserve any messages added before history loaded
           // (e.g., user's quick question that was just sent)
@@ -128,8 +154,8 @@ export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
               // First add existing messages (these are the most recent, like the user's question)
               prev.forEach(msg => {
                 messageMap.set(msg.id, msg)
-                // Also track by content+role to detect duplicates with different IDs
-                const contentKey = `${msg.role}:${msg.content.trim()}`
+                // Also track by content+role+attachments to detect duplicates with different IDs
+                const contentKey = messageMergeKey(msg)
                 if (!contentMap.has(contentKey)) {
                   contentMap.set(contentKey, msg)
                 }
@@ -137,7 +163,7 @@ export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
 
               // Then add/update with loaded messages from server
               formattedMessages.forEach(msg => {
-                const contentKey = `${msg.role}:${msg.content.trim()}`
+                const contentKey = messageMergeKey(msg)
                 // Only add if we don't already have this message by ID or by content
                 if (!messageMap.has(msg.id) && !contentMap.has(contentKey)) {
                   messageMap.set(msg.id, msg)
@@ -183,21 +209,36 @@ export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
     setError(null)
   }, [])
 
-  const sendMessage = useCallback(async (content: string, context?: string) => {
-    if (!content.trim() || isLoading) return
+  const uploadAttachment = useCallback(async (file: File) => {
+    if (!apiClientRef.current) {
+      throw new Error('API client not initialized')
+    }
+    return apiClientRef.current.uploadAttachment(file)
+  }, [])
+
+  const sendMessage = useCallback(
+    async (content: string, context?: string, attachments?: AttachmentItem[]) => {
+    const trimmed = content.trim()
+    const hasAttachments = Boolean(attachments && attachments.length > 0)
+    if ((!trimmed && !hasAttachments) || isLoading) return
 
     setIsLoading(true)
     setError(null)
 
     try {
+      const attachmentSnapshot = attachments?.length
+        ? attachments.map((a) => ({ ...a }))
+        : undefined
+
       // Add user message immediately - do this before setting hasSessionStarted
       // so the message is visible when the welcome screen disappears
       const userMessage: Message = {
         id: generateId(),
-        content: content.trim(),
+        content: trimmed,
         role: 'user',
         timestamp: new Date(),
-        sessionId: sessionId || undefined
+        sessionId: sessionId || undefined,
+        attachments: attachmentSnapshot
       }
 
 
@@ -234,7 +275,12 @@ export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
 
       // Send message and handle streaming response
       isStreamingRef.current = true
-      const stream = await apiClientRef.current!.sendMessage(content.trim(), currentSessionId, context)
+      const stream = await apiClientRef.current!.sendMessage(
+        trimmed || '(see attachments)',
+        currentSessionId,
+        context,
+        attachmentSnapshot
+      )
       const reader = stream.getReader()
       const decoder = new TextDecoder()
 
@@ -303,7 +349,9 @@ export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
       isStreamingRef.current = false
       setIsLoading(false)
     }
-  }, [config.onSessionCreated, config.onMessage, config.onError, isLoading, sessionId])
+  },
+  [config.onSessionCreated, config.onMessage, config.onError, config.sessionId, isLoading, sessionId]
+  )
 
   // Auto-send initial message on mount (only if no existing session or empty session)
   // Skip if quickQuestions are provided (user must select a question or type custom message)
@@ -354,6 +402,7 @@ export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
   return {
     messages,
     sendMessage,
+    uploadAttachment,
     isLoading,
     error,
     clearError,
