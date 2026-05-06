@@ -14,9 +14,11 @@ import {
   ChatInput,
   ChatMessage,
   ChatWidget,
+  ComposerShell,
+  ComposerToolbar,
   ErrorMessage,
-  LoadingDots,
-  SendButton
+  ComposerSendButton,
+  LoadingDots
 } from './styled/ChatComponents'
 
 interface InlineChatProps {
@@ -174,33 +176,43 @@ export function InlineChat({ config, chat }: InlineChatProps) {
                 )}
               </div>
             )}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%' }}>
-              {attachmentsEnabled && (
-                <AttachmentPicker
+            <div style={{ width: '100%' }}>
+              <ComposerShell>
+                <ProfessionalInput
+                  ref={inputRef}
+                  variant="composer"
+                  value={inputValue}
+                  onChange={setInputValue}
+                  onKeyDown={handleKeyPress}
+                  placeholder={config.placeholder}
                   disabled={isLoading}
-                  maxFileBytes={maxBytes}
-                  maxFiles={maxFiles}
-                  allowedMime={allowed}
-                  currentCount={stagedAttachments.length}
-                  uploadAttachment={uploadAttachment}
-                  onUploaded={appendStaged}
-                  onError={setAttachmentError}
                 />
-              )}
-              <ProfessionalInput
-                ref={inputRef}
-                value={inputValue}
-                onChange={setInputValue}
-                onKeyDown={handleKeyPress}
-                placeholder={config.placeholder}
-                disabled={isLoading}
-              />
-              <SendButton
-                onClick={handleSendMessage}
-                disabled={isLoading || (!inputValue.trim() && stagedAttachments.length === 0)}
-              >
-                <SendIcon size={16} />
-              </SendButton>
+                <ComposerToolbar>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, minWidth: 0 }}>
+                    {attachmentsEnabled && (
+                      <AttachmentPicker
+                        integrated
+                        disabled={isLoading}
+                        maxFileBytes={maxBytes}
+                        maxFiles={maxFiles}
+                        allowedMime={allowed}
+                        currentCount={stagedAttachments.length}
+                        uploadAttachment={uploadAttachment}
+                        onUploaded={appendStaged}
+                        onError={setAttachmentError}
+                      />
+                    )}
+                  </div>
+                  <ComposerSendButton
+                    type="button"
+                    onClick={handleSendMessage}
+                    disabled={isLoading || (!inputValue.trim() && stagedAttachments.length === 0)}
+                    aria-label="Send message"
+                  >
+                    <SendIcon size={13} />
+                  </ComposerSendButton>
+                </ComposerToolbar>
+              </ComposerShell>
             </div>
           </ChatInput>
         </>

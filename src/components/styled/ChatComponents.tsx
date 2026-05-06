@@ -84,12 +84,114 @@ export const ChatMessage = styled.div<{ $isUser: boolean }>`
   }
 `
 
+export const ComposerShell = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  background-color: #ffffff;
+  overflow: hidden;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:focus-within {
+    border-color: #9ca3af;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    background-color: #18181b;
+    border-color: rgba(255, 255, 255, 0.1);
+
+    &:focus-within {
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+  }
+
+  [data-theme='dark'] & {
+    background-color: #18181b;
+    border-color: rgba(255, 255, 255, 0.1);
+
+    &:focus-within {
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+  }
+`
+
+export const ComposerToolbar = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  flex-shrink: 0;
+  padding: 6px 10px;
+  border-top: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+
+  @media (prefers-color-scheme: dark) {
+    border-top-color: #52525b;
+    background-color: #3f3f46;
+  }
+
+  [data-theme='dark'] & {
+    border-top-color: #52525b;
+    background-color: #3f3f46;
+  }
+`
+
+export const ComposerInnerInput = styled.textarea`
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: 42px;
+  max-height: 96px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 0;
+  background-color: transparent;
+  color: #1f2937;
+  font-size: 14px;
+  line-height: 1.5;
+  font-family: inherit;
+  resize: none;
+  outline: none;
+  transition: color 0.2s ease;
+  box-sizing: border-box;
+  overflow-y: auto;
+
+  &::placeholder {
+    color: #6b7280;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    color: #f9fafb;
+
+    &::placeholder {
+      color: #9ca3af;
+    }
+  }
+
+  [data-theme='dark'] & {
+    color: #f9fafb;
+
+    &::placeholder {
+      color: #9ca3af;
+    }
+  }
+`
+
 // Chat input container
 export const ChatInput = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 12px;
+  padding: 8px 12px 10px;
   border-top: 1px solid #e5e7eb;
   background-color: #ffffff;
   
@@ -235,6 +337,103 @@ export const SendButton = styled.button`
       background: #2563eb;
       color: white;
     }
+    &:disabled {
+      border-color: #6b7280;
+      color: #6b7280;
+    }
+  }
+`
+
+export const ComposerSendButton = styled.button`
+  width: 26px;
+  height: 26px;
+  min-width: 26px;
+  min-height: 26px;
+  padding: 0;
+  box-sizing: border-box;
+  line-height: normal;
+  background: transparent;
+  border: 1px solid #3b82f6;
+  border-radius: 8px;
+  color: #3b82f6;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease,
+    box-shadow 0.2s ease;
+  flex-shrink: 0;
+
+  &:hover:not(:disabled) {
+    background: rgba(59, 130, 246, 0.12);
+    color: #2563eb;
+    border-color: #2563eb;
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px rgba(59, 130, 246, 0.45);
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    border-color: #9ca3af;
+    color: #9ca3af;
+  }
+
+  svg {
+    width: 13px !important;
+    height: 13px !important;
+    min-width: 13px !important;
+    min-height: 13px !important;
+    color: inherit;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    flex-shrink: 0;
+  }
+
+  svg path {
+    stroke: currentColor !important;
+    fill: none !important;
+    visibility: visible !important;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    border-color: #60a5fa;
+    color: #60a5fa;
+
+    &:hover:not(:disabled) {
+      background: rgba(96, 165, 250, 0.14);
+      color: #93c5fd;
+      border-color: #93c5fd;
+    }
+
+    &:focus-visible {
+      box-shadow: 0 0 0 2px #18181b, 0 0 0 4px rgba(96, 165, 250, 0.45);
+    }
+
+    &:disabled {
+      border-color: #6b7280;
+      color: #6b7280;
+    }
+  }
+
+  [data-theme='dark'] & {
+    border-color: #60a5fa;
+    color: #60a5fa;
+
+    &:hover:not(:disabled) {
+      background: rgba(96, 165, 250, 0.14);
+      color: #93c5fd;
+      border-color: #93c5fd;
+    }
+
+    &:focus-visible {
+      box-shadow: 0 0 0 2px #18181b, 0 0 0 4px rgba(96, 165, 250, 0.45);
+    }
+
     &:disabled {
       border-color: #6b7280;
       color: #6b7280;

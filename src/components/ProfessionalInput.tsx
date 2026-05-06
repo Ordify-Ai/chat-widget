@@ -1,5 +1,8 @@
 import React from 'react'
-import { ProfessionalInput as StyledProfessionalInput } from './styled/ChatComponents'
+import {
+  ComposerInnerInput,
+  ProfessionalInput as StyledProfessionalInput,
+} from './styled/ChatComponents'
 
 interface ProfessionalInputProps {
   value: string
@@ -9,6 +12,7 @@ interface ProfessionalInputProps {
   disabled?: boolean
   className?: string
   maxLength?: number
+  variant?: 'default' | 'composer'
 }
 
 export const ProfessionalInput = React.forwardRef<HTMLTextAreaElement, ProfessionalInputProps>(function ProfessionalInput({
@@ -18,7 +22,8 @@ export const ProfessionalInput = React.forwardRef<HTMLTextAreaElement, Professio
   placeholder = "Type a message...",
   disabled = false,
   className,
-  maxLength = 2000
+  maxLength = 2000,
+  variant = 'default',
 }, ref) {
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     onChange(e.target.value)
@@ -34,8 +39,10 @@ export const ProfessionalInput = React.forwardRef<HTMLTextAreaElement, Professio
     }
   }
 
+  const InputEl = variant === 'composer' ? ComposerInnerInput : StyledProfessionalInput
+
   return (
-    <StyledProfessionalInput
+    <InputEl
       ref={ref}
       value={value}
       onChange={handleChange}
@@ -47,7 +54,8 @@ export const ProfessionalInput = React.forwardRef<HTMLTextAreaElement, Professio
       onInput={(e) => {
         const target = e.target as HTMLTextAreaElement
         target.style.height = 'auto'
-        target.style.height = `${Math.min(target.scrollHeight, 120)}px`
+        const cap = variant === 'composer' ? 96 : 120
+        target.style.height = `${Math.min(target.scrollHeight, cap)}px`
       }}
     />
   )
