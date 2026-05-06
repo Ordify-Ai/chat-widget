@@ -101,8 +101,12 @@
       <input id="agent-id" type="text" placeholder="Enter your Agent ID" />
     </div>
     <div class="field">
-      <label for="api-key">API Key *</label>
-      <input id="api-key" type="password" placeholder="Enter your API Key" />
+      <label for="publishable-key">Publishable Key *</label>
+      <input id="publishable-key" type="password" placeholder="Enter your pk_live_..." />
+    </div>
+    <div class="field">
+      <label for="api-key">API Key (legacy)</label>
+      <input id="api-key" type="password" placeholder="Optional legacy API key" />
     </div>
     <div class="field">
       <label for="api-base-url">API Base URL *</label>
@@ -121,9 +125,10 @@
 
     function getConfig() {
       var agentId = document.getElementById('agent-id').value.trim();
+      var publishableKey = document.getElementById('publishable-key').value.trim();
       var apiKey = document.getElementById('api-key').value.trim();
       var apiBaseUrl = document.getElementById('api-base-url').value.trim() || 'https://r.ordify.ai';
-      return { agentId: agentId, apiKey: apiKey, apiBaseUrl: apiBaseUrl };
+      return { agentId: agentId, publishableKey: publishableKey, apiKey: apiKey, apiBaseUrl: apiBaseUrl };
     }
 
     function loadSaved() {
@@ -132,6 +137,7 @@
         if (saved) {
           var c = JSON.parse(saved);
           document.getElementById('agent-id').value = c.agentId || '';
+          document.getElementById('publishable-key').value = c.publishableKey || '';
           document.getElementById('api-key').value = c.apiKey || '';
           document.getElementById('api-base-url').value = c.apiBaseUrl || 'https://r.ordify.ai';
           return c;
@@ -145,11 +151,12 @@
     }
 
     function mountWidget(config) {
-      if (!config.agentId || !config.apiKey) return;
+      if (!config.agentId || (!config.publishableKey && !config.apiKey)) return;
       var existing = document.getElementById(ROOT_ID);
       if (existing) existing.remove();
       OrdifyChatWidget.mount(null, {
         agentId: config.agentId,
+        publishableKey: config.publishableKey,
         apiKey: config.apiKey,
         apiBaseUrl: config.apiBaseUrl || 'https://r.ordify.ai',
         mode: 'floating',
@@ -161,8 +168,8 @@
 
     function onApply() {
       var config = getConfig();
-      if (!config.agentId || !config.apiKey) {
-        alert('Please enter Agent ID and API Key.');
+      if (!config.agentId || (!config.publishableKey && !config.apiKey)) {
+        alert('Please enter Agent ID and a Publishable Key (or legacy API Key).');
         return;
       }
       saveConfig(config);
@@ -171,7 +178,7 @@
 
     loadSaved();
     var saved = getConfig();
-    if (saved && saved.agentId && saved.apiKey) mountWidget(saved);
+    if (saved && saved.agentId && (saved.publishableKey || saved.apiKey)) mountWidget(saved);
 
     document.getElementById('apply-btn').addEventListener('click', onApply);
   </script>

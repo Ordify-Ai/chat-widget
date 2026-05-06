@@ -6,7 +6,7 @@ export function ChatWidget() {
   return (
     <OrdifyChat
       agentId="your-agent-id"
-      apiKey="your-api-key"
+      publishableKey="pk_live_..."
       apiBaseUrl="https://api.ordify.ai"
       mode="floating"
       position="bottom-right"

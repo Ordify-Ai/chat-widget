@@ -34,7 +34,7 @@ export default function SupportPage() {
             
             <OrdifyChat
               agentId="your-agent-id"
-              apiKey="your-api-key"
+              publishableKey="pk_live_..."
               apiBaseUrl="https://r.ordify.ai"
               mode="embedded"
               height="400px"

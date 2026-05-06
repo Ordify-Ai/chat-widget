@@ -10,6 +10,7 @@ function getDataConfig(script: HTMLScriptElement): Partial<OrdifyConfig> {
   const get = (key: string) => script.getAttribute(DATA_PREFIX + key)
   const config: Partial<OrdifyConfig> = {
     agentId: get('agent-id') ?? undefined,
+    publishableKey: get('publishable-key') ?? undefined,
     apiKey: get('api-key') ?? undefined,
     apiBaseUrl: get('api-base-url') ?? 'https://r.ordify.ai',
     mode: (get('mode') as OrdifyConfig['mode']) ?? 'floating',
@@ -41,9 +42,15 @@ function getDataConfig(script: HTMLScriptElement): Partial<OrdifyConfig> {
 }
 
 function mount(container: HTMLElement | null | undefined, config: OrdifyConfig): void {
-  if (!config.agentId || !config.apiKey) {
-    console.error('Ordify Chat Widget: agentId and apiKey are required.')
+  const hasCredential = Boolean(config.publishableKey || config.apiKey)
+  if (!config.agentId || !hasCredential) {
+    console.error('Ordify Chat Widget: agentId and publishableKey (or legacy apiKey) are required.')
     return
+  }
+  if (!config.publishableKey && config.apiKey) {
+    console.warn(
+      '[Ordify] Using legacy data-ordify-api-key. For production embeds, use data-ordify-publishable-key.'
+    )
   }
   const rootEl = container ?? (() => {
     const div = document.createElement('div')
@@ -59,8 +66,10 @@ function autoMount(): void {
   const scripts = document.querySelectorAll<HTMLScriptElement>(SCRIPT_SELECTOR)
   scripts.forEach((script) => {
     const config = getDataConfig(script)
-    if (!config.agentId || !config.apiKey) {
-      console.warn('Ordify Chat Widget: script tag missing data-ordify-agent-id or data-ordify-api-key. Skip auto-mount.')
+    if (!config.agentId || (!config.publishableKey && !config.apiKey)) {
+      console.warn(
+        'Ordify Chat Widget: script tag missing data-ordify-agent-id or credentials (data-ordify-publishable-key / data-ordify-api-key). Skip auto-mount.'
+      )
       return
     }
     const containerId = script.getAttribute(DATA_PREFIX + 'container-id')

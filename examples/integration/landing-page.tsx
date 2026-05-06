@@ -26,7 +26,7 @@ export default function HomePage() {
       {/* Add floating chat widget */}
       <OrdifyChat
         agentId="your-agent-id"
-        apiKey="your-api-key"
+        publishableKey="pk_live_..."
         apiBaseUrl="https://r.ordify.ai"
         mode="floating"
         position="bottom-right"
