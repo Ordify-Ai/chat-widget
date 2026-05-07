@@ -1,5 +1,6 @@
 import { AttachmentItem, Message, OrdifyConfig, UseOrdifyChatReturn } from '@/types'
 import { generateId } from '@/utils'
+import { isAdkToolHistoryPayload, stripAdkToolStatusParagraphsFromAssistantText } from '@/utils/adkAssistantText'
 import { OrdifyApiClient, parseStreamingResponse } from '@/utils/api'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
@@ -135,14 +136,23 @@ export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
       try {
         const response = await apiClientRef.current!.getSessionWithMessages(currentSessionId)
         if (response.messages && response.messages.length > 0) {
-          const formattedMessages: Message[] = response.messages.map((msg: any) => ({
-            id: msg.id || generateId(),
-            content: msg.content || '',
-            role: msg.role === 'assistant' ? 'assistant' : 'user',
-            timestamp: msg.timestamp ? new Date(msg.timestamp) : new Date(),
-            sessionId: currentSessionId,
-            attachments: mapAttachmentsFromHistory(msg)
-          }))
+          const formattedMessages: Message[] = (response.messages as unknown as Array<{ type?: string | null } & Record<string, unknown>>)
+            .filter(msg => !isAdkToolHistoryPayload(msg))
+            .map((msg: any) => {
+              const role = msg.role === 'assistant' ? 'assistant' : 'user'
+              const raw = String(msg.content || '')
+              return {
+                id: msg.id || generateId(),
+                content:
+                  role === 'assistant'
+                    ? stripAdkToolStatusParagraphsFromAssistantText(raw)
+                    : raw,
+                role,
+                timestamp: msg.timestamp ? new Date(msg.timestamp) : new Date(),
+                sessionId: currentSessionId,
+                attachments: mapAttachmentsFromHistory(msg)
+              }
+            })
           // Merge with existing messages to preserve any messages added before history loaded
           // (e.g., user's quick question that was just sent)
           setMessages(prev => {
@@ -308,7 +318,9 @@ export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
 
           if (response) {
             if (response.type === 'stream' && response.text) {
-              assistantMessage.content += response.text
+              assistantMessage.content = stripAdkToolStatusParagraphsFromAssistantText(
+                assistantMessage.content + response.text
+              )
 
               setMessages(prev => {
                 const found = prev.find(msg => msg.id === assistantMessage.id)

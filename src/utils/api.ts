@@ -248,11 +248,18 @@ export function parseStreamingResponse(chunk: string): StreamingResponse | null 
       if (data === '[DONE]' || data === '') {
         return { text: '', sessionId: '', type: 'done' }
       }
-      const parsed = JSON.parse(data)
+      const parsed = JSON.parse(data) as Record<string, unknown>
       if (parsed.done) {
-        return { text: '', sessionId: parsed.sessionId || '', type: 'done' }
+        return { text: '', sessionId: (parsed.sessionId as string) || '', type: 'done' }
       }
-      return parsed
+      if (
+        parsed.type === 'adk_tool' ||
+        parsed.type === 'turn_complete' ||
+        parsed.type === 'image'
+      ) {
+        return null
+      }
+      return parsed as unknown as StreamingResponse
     }
   } catch (error) {
     console.warn('Failed to parse streaming response:', error)
