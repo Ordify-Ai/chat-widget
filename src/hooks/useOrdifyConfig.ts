@@ -1,13 +1,21 @@
 import { OrdifyConfig } from '@/types'
 import { useMemo } from 'react'
 
+function readOrdifyEnv(name: string): string | undefined {
+  if (typeof process === 'undefined' || !process.env) {
+    return undefined
+  }
+  const v = (process.env as Record<string, string | undefined>)[name]
+  return typeof v === 'string' && v.length > 0 ? v : undefined
+}
+
 export function useOrdifyConfig(config: OrdifyConfig) {
   return useMemo(() => {
-    // Get configuration from props or environment variables
-    const agentId = config.agentId || process.env.ORDIFY_AGENT_ID
-    const publishableKey = config.publishableKey || process.env.ORDIFY_PUBLISHABLE_KEY
-    const apiKey = config.apiKey || process.env.ORDIFY_API_KEY
-    const apiBaseUrl = config.apiBaseUrl || process.env.ORDIFY_API_BASE_URL || 'https://r.ordify.ai'
+    const agentId = config.agentId || readOrdifyEnv('ORDIFY_AGENT_ID')
+    const publishableKey = config.publishableKey || readOrdifyEnv('ORDIFY_PUBLISHABLE_KEY')
+    const apiKey = config.apiKey || readOrdifyEnv('ORDIFY_API_KEY')
+    const apiBaseUrl =
+      config.apiBaseUrl || readOrdifyEnv('ORDIFY_API_BASE_URL') || 'https://r.ordify.ai'
 
     if (!agentId) {
       throw new Error('Ordify agent ID is required. Provide agentId prop or set ORDIFY_AGENT_ID environment variable.')
