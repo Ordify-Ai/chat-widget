@@ -226,6 +226,13 @@ export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
     return apiClientRef.current.uploadAttachment(file)
   }, [])
 
+  const exportMessagePdf = useCallback(async (content: string, filename?: string) => {
+    if (!apiClientRef.current) {
+      throw new Error('API client not initialized')
+    }
+    await apiClientRef.current.exportMessagePdf(content, filename)
+  }, [])
+
   const sendMessage = useCallback(
     async (content: string, context?: string, attachments?: AttachmentItem[]) => {
     const trimmed = content.trim()
@@ -415,6 +422,7 @@ export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
     messages,
     sendMessage,
     uploadAttachment,
+    exportMessagePdf,
     isLoading,
     error,
     clearError,

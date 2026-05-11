@@ -1,3 +1,4 @@
+import { AssistantMessageActions } from '@/components/AssistantMessageActions'
 import { AttachmentChips } from '@/components/AttachmentChips'
 import { AttachmentPicker } from '@/components/AttachmentPicker'
 import { MarkdownRenderer } from '@/components/MarkdownRenderer'
@@ -5,6 +6,7 @@ import { ProfessionalInput } from '@/components/ProfessionalInput'
 import { WelcomeScreen } from '@/components/WelcomeScreen'
 import { useWidgetAttachmentStaging } from '@/hooks/useWidgetAttachmentStaging'
 import { OrdifyConfig, UseOrdifyChatReturn } from '@/types'
+import { shouldShowAssistantActions } from '@/utils/assistantMessageActions'
 import { filesFromDataTransfer } from '@/utils/attachments'
 import { SendIcon } from './SendIcon'
 import React from 'react'
@@ -27,7 +29,15 @@ interface EmbeddedChatProps {
 }
 
 export function EmbeddedChat({ config, chat }: EmbeddedChatProps) {
-  const { messages, sendMessage, uploadAttachment, isLoading, error, hasSessionStarted } = chat
+  const {
+    messages,
+    sendMessage,
+    uploadAttachment,
+    exportMessagePdf,
+    isLoading,
+    error,
+    hasSessionStarted
+  } = chat
   const [inputValue, setInputValue] = React.useState('')
   const [isDarkMode, setIsDarkMode] = React.useState(false)
   const inputRef = React.useRef<HTMLTextAreaElement>(null)
@@ -157,18 +167,36 @@ export function EmbeddedChat({ config, chat }: EmbeddedChatProps) {
                       $size="28px"
                     />
                   )}
-                  <ChatMessage $isUser={message.role === 'user'}>
-                    {message.role === 'assistant' ? (
-                      <MarkdownRenderer content={message.content} />
-                    ) : (
+                  {message.role === 'assistant' ? (
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'flex-start',
+                        maxWidth: '80%'
+                      }}
+                    >
+                      <ChatMessage $isUser={false}>
+                        <MarkdownRenderer content={message.content} />
+                      </ChatMessage>
+                      {shouldShowAssistantActions(message, messages, isLoading) && (
+                        <AssistantMessageActions
+                          content={message.content}
+                          disabled={isLoading}
+                          onExportPdf={(c) => exportMessagePdf(c)}
+                        />
+                      )}
+                    </div>
+                  ) : (
+                    <ChatMessage $isUser={true}>
                       <>
                         {message.attachments && message.attachments.length > 0 && (
                           <AttachmentChips attachments={message.attachments} readOnly />
                         )}
                         {message.content ? message.content : null}
                       </>
-                    )}
-                  </ChatMessage>
+                    </ChatMessage>
+                  )}
                 </div>
               ))}
 
