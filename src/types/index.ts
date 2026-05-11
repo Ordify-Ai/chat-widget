@@ -111,6 +111,7 @@ export interface UseOrdifyChatReturn {
   messages: Message[]
   sendMessage: (content: string, context?: string, attachments?: AttachmentItem[]) => Promise<void>
   uploadAttachment: (file: File) => Promise<AttachmentItem>
+  exportMessagePdf: (content: string, filename?: string) => Promise<void>
   isLoading: boolean
   error: string | null
   clearError: () => void

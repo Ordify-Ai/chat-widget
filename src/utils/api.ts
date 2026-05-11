@@ -9,7 +9,6 @@ import {
   Session,
   StreamingResponse
 } from '@/types'
-
 function toAttachmentWire(a: AttachmentItem): AttachmentWire {
   return {
     id: a.id,
@@ -51,7 +50,7 @@ export class OrdifyApiClient {
     )
   }
 
-  private getAuthHeaders(includeContentType = false): HeadersInit {
+  private getAuthHeaders(includeContentType = false): Record<string, string> {
     if (this.usePublishableKey()) {
       return {
         ...(includeContentType ? { 'Content-Type': 'application/json' } : {}),
@@ -66,6 +65,83 @@ export class OrdifyApiClient {
       'api-key': this.config.apiKey as string,
       'accept': 'application/json'
     }
+  }
+
+  private getAuthHeadersForPdfExport(): Record<string, string> {
+    if (this.usePublishableKey()) {
+      return {
+        'Content-Type': 'application/json',
+        'x-ordify-publishable-key': this.config.publishableKey as string,
+        accept: 'application/pdf'
+      }
+    }
+    this.maybeWarnLegacyApiKey()
+    return {
+      'Content-Type': 'application/json',
+      'api-key': this.config.apiKey as string,
+      accept: 'application/pdf'
+    }
+  }
+
+  /**
+   * Export message content as PDF via POST /document-conversion/pdf (publishable or api-key auth).
+   */
+  async exportMessagePdf(content: string, filename?: string): Promise<void> {
+    const url = `${this.config.apiBaseUrl}/document-conversion/pdf`
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: this.getAuthHeadersForPdfExport(),
+      body: JSON.stringify({
+        content,
+        filename: filename ?? undefined,
+        format: 'A4',
+        margin_top: '1cm',
+        margin_bottom: '1cm',
+        margin_left: '1cm',
+        margin_right: '1cm',
+        print_background: true,
+        display_header_footer: false
+      })
+    })
+
+    if (!response.ok) {
+      let detail = `HTTP ${response.status}`
+      try {
+        const err = (await response.json()) as ApiError
+        detail = typeof err.detail === 'string' ? err.detail : detail
+      } catch {
+        try {
+          const t = await response.text()
+          if (t) detail = t.slice(0, 500)
+        } catch {
+          /* ignore */
+        }
+      }
+      throw new Error(`PDF export failed: ${detail}`)
+    }
+
+    const blob = await response.blob()
+    const dispo = response.headers.get('Content-Disposition')
+    let downloadName = filename?.endsWith('.pdf') ? filename : `${filename ?? 'document'}.pdf`
+    const m = /filename\*?=(?:UTF-8''|")?([^";\n]+)/i.exec(dispo ?? '')
+    if (m?.[1]) {
+      try {
+        downloadName = decodeURIComponent(m[1].replace(/^"|"$/g, '').trim())
+      } catch {
+        downloadName = m[1].replace(/^"|"$/g, '').trim()
+      }
+    }
+    if (!downloadName.endsWith('.pdf')) downloadName += '.pdf'
+
+    const objectUrl = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = objectUrl
+    a.download = downloadName
+    a.rel = 'noopener noreferrer'
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(objectUrl)
   }
 
   async sendMessage(

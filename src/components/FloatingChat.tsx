@@ -1,3 +1,4 @@
+import { AssistantMessageActions } from '@/components/AssistantMessageActions'
 import { AttachmentChips } from '@/components/AttachmentChips'
 import { AttachmentPicker } from '@/components/AttachmentPicker'
 import { Conversation, ConversationContent } from '@/components/Conversation'
@@ -6,6 +7,7 @@ import { ProfessionalInput } from '@/components/ProfessionalInput'
 import { WelcomeScreen } from '@/components/WelcomeScreen'
 import { useWidgetAttachmentStaging } from '@/hooks/useWidgetAttachmentStaging'
 import { OrdifyConfig, UseOrdifyChatReturn } from '@/types'
+import { shouldShowAssistantActions } from '@/utils/assistantMessageActions'
 import { filesFromDataTransfer } from '@/utils/attachments'
 import { MessageSquareIcon } from './Icons'
 import { SendIcon } from './SendIcon'
@@ -31,7 +33,17 @@ interface FloatingChatProps {
 }
 
 export function FloatingChat({ config, chat }: FloatingChatProps) {
-  const { messages, sendMessage, uploadAttachment, isLoading, error, isOpen, setIsOpen, hasSessionStarted } = chat
+  const {
+    messages,
+    sendMessage,
+    uploadAttachment,
+    exportMessagePdf,
+    isLoading,
+    error,
+    isOpen,
+    setIsOpen,
+    hasSessionStarted
+  } = chat
   const [inputValue, setInputValue] = React.useState('')
   const [chatHeight, setChatHeight] = React.useState<number | string>(config.height || 600)
   const [isDarkMode, setIsDarkMode] = React.useState(false)
@@ -204,18 +216,36 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
                       $size="28px"
                     />
                   )}
-                   <ChatMessage $isUser={message.role === 'user'}>
-                    {message.role === 'assistant' ? (
-                      <MarkdownRenderer content={message.content} />
-                    ) : (
+                  {message.role === 'assistant' ? (
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'flex-start',
+                        maxWidth: '80%'
+                      }}
+                    >
+                      <ChatMessage $isUser={false}>
+                        <MarkdownRenderer content={message.content} />
+                      </ChatMessage>
+                      {shouldShowAssistantActions(message, messages, isLoading) && (
+                        <AssistantMessageActions
+                          content={message.content}
+                          disabled={isLoading}
+                          onExportPdf={(c) => exportMessagePdf(c)}
+                        />
+                      )}
+                    </div>
+                  ) : (
+                    <ChatMessage $isUser={true}>
                       <>
                         {message.attachments && message.attachments.length > 0 && (
                           <AttachmentChips attachments={message.attachments} readOnly />
                         )}
                         {message.content ? message.content : null}
                       </>
-                    )}
-                  </ChatMessage>
+                    </ChatMessage>
+                  )}
                 </div>
               ))}
 

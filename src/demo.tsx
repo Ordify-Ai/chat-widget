@@ -1,9 +1,20 @@
+/* eslint-disable react-refresh/only-export-components -- Vite demo entry */
 import { useEffect, useState } from 'react'
 import ReactDOM from 'react-dom/client'
 import { OrdifyChat } from './components/OrdifyChat'
+import { OrdifyApiClient } from '@/utils/api'
 
 const STORAGE_KEY = 'ordify-demo-config'
 const SESSION_STORAGE_KEY = 'ordify-demo-sessions'
+
+const PDF_MARKDOWN_SAMPLE = `# PDF sample
+
+- First item
+- Second item
+
+**Bold** and \`inline code\`.`
+
+const PDF_HTML_SAMPLE = `<!DOCTYPE html><html><body><p>PDF HTML sample</p><ul><li>A</li><li>B</li></ul></body></html>`
 
 function DemoApp() {
   const [agentId, setAgentId] = useState("")
@@ -111,6 +122,10 @@ function DemoApp() {
     typeof window !== 'undefined' ? Math.max(400, window.innerHeight * 0.6) : 600
   )
 
+  const [pdfSampleContent, setPdfSampleContent] = useState(PDF_MARKDOWN_SAMPLE)
+  const [pdfBusy, setPdfBusy] = useState(false)
+  const [pdfStatus, setPdfStatus] = useState<string | null>(null)
+
   useEffect(() => {
     if (useDynamicHeight && typeof window !== 'undefined') {
       const updateHeight = () => {
@@ -192,12 +207,46 @@ function DemoApp() {
       : {}),
   }
 
+  const runPdfSmokeTest = async () => {
+    if (!publishableKey && !apiKey) {
+      setPdfStatus('Add a publishable key or API key in Configuration.')
+      return
+    }
+    if (!agentId.trim()) {
+      setPdfStatus('Agent ID is required.')
+      return
+    }
+    if (!pdfSampleContent.trim()) {
+      setPdfStatus('Paste content or load a sample.')
+      return
+    }
+    setPdfBusy(true)
+    setPdfStatus(null)
+    try {
+      const client = new OrdifyApiClient({
+        agentId,
+        apiBaseUrl,
+        publishableKey: publishableKey || undefined,
+        apiKey: apiKey || undefined
+      })
+      await client.exportMessagePdf(pdfSampleContent.trim(), 'ordify-demo-export.pdf')
+      setPdfStatus('PDF download started. Check your downloads folder.')
+    } catch (e) {
+      setPdfStatus(e instanceof Error ? e.message : 'PDF export failed.')
+    } finally {
+      setPdfBusy(false)
+    }
+  }
+
   return (
     <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
       <h1>Ordify Chat Widget Test</h1>
       <p>
-        Testing the initialContext feature, button configurability, auto-scroll, and optional file
-        attachments (publishable key + backend <code>/widget/attachments</code>).
+        Tests initial context, button options, auto-scroll, attachments (<code>/widget/attachments</code>),
+        assistant message <strong>Copy</strong> and <strong>PDF</strong> actions, and{' '}
+        <code>POST /document-conversion/pdf</code> via the smoke test below. Run the API on{' '}
+        <strong>API Base URL</strong> (for example <code>http://localhost:5001</code>) with widget-compatible
+        CORS for this origin.
       </p>
 
       {/* Configuration Section */}
@@ -597,6 +646,99 @@ function DemoApp() {
         </div>
       </div>
 
+      <div
+        style={{
+          marginBottom: '30px',
+          padding: '20px',
+          border: '2px solid #e0e0e0',
+          borderRadius: '8px',
+          backgroundColor: '#ffffff'
+        }}
+      >
+        <h2 style={{ marginTop: 0 }}>Copy and PDF export</h2>
+        <p style={{ color: '#666', fontSize: '14px', marginBottom: '12px' }}>
+          <strong>In the widgets:</strong> After the assistant finishes a reply, use Copy or PDF under the
+          message (hidden while the reply is still streaming).
+        </p>
+        <p style={{ color: '#666', fontSize: '14px', marginBottom: '16px' }}>
+          <strong>API smoke test:</strong> Calls <code>POST /document-conversion/pdf</code> with your saved
+          keys. The server chooses markdown vs HTML from the payload (<code>input_format: auto</code> default).
+        </p>
+        <label style={{ display: 'block', marginBottom: '6px', fontWeight: 'bold' }}>
+          Sample assistant content
+        </label>
+        <textarea
+          value={pdfSampleContent}
+          onChange={(e) => setPdfSampleContent(e.target.value)}
+          style={{
+            width: '100%',
+            maxWidth: '720px',
+            minHeight: '140px',
+            padding: '8px',
+            border: '1px solid #ccc',
+            borderRadius: '4px',
+            fontFamily: 'monospace',
+            fontSize: '13px',
+            resize: 'vertical'
+          }}
+          spellCheck={false}
+        />
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', alignItems: 'center', marginTop: '12px' }}>
+          <button
+            type="button"
+            onClick={() => {
+              setPdfSampleContent(PDF_MARKDOWN_SAMPLE)
+              setPdfStatus(null)
+            }}
+            style={{
+              padding: '8px 14px',
+              backgroundColor: '#0f766e',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer'
+            }}
+          >
+            Load markdown sample
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setPdfSampleContent(PDF_HTML_SAMPLE)
+              setPdfStatus(null)
+            }}
+            style={{
+              padding: '8px 14px',
+              backgroundColor: '#0369a1',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer'
+            }}
+          >
+            Load HTML sample
+          </button>
+          <button
+            type="button"
+            onClick={() => void runPdfSmokeTest()}
+            disabled={pdfBusy || (!publishableKey && !apiKey)}
+            style={{
+              padding: '8px 14px',
+              backgroundColor: pdfBusy || (!publishableKey && !apiKey) ? '#94a3b8' : '#7c3aed',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: pdfBusy || (!publishableKey && !apiKey) ? 'not-allowed' : 'pointer'
+            }}
+          >
+            {pdfBusy ? 'Downloading…' : 'Download PDF (API smoke test)'}
+          </button>
+        </div>
+        {pdfStatus && (
+          <p style={{ marginTop: '12px', fontSize: '14px', color: '#334155' }}>{pdfStatus}</p>
+        )}
+      </div>
+
       {/* Interactive Testing Controls */}
       <div style={{
         marginBottom: '30px',
@@ -605,7 +747,7 @@ function DemoApp() {
         borderRadius: '8px',
         backgroundColor: '#f9f9f9'
       }}>
-        <h2>🧪 Interactive Testing Controls</h2>
+        <h2>Interactive testing controls</h2>
 
         <div style={{ marginBottom: '15px' }}>
           <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
@@ -752,6 +894,9 @@ function DemoApp() {
                 <h2 style={{ margin: 0 }}>Test 1: Floating Widget</h2>
                 <p style={{ margin: '5px 0' }}>Button should show: "?"</p>
                 <p style={{ margin: '5px 0' }}>Auto-scroll should work when new messages arrive</p>
+                <p style={{ margin: '5px 0', fontSize: '13px', color: '#444' }}>
+                  After an assistant reply completes, Copy and PDF appear under that message.
+                </p>
               </div>
               {floatingSessionId && (
                 <div style={{
@@ -828,6 +973,9 @@ function DemoApp() {
                 <h2 style={{ margin: 0 }}>Test 2: Embedded Chat</h2>
                 <p style={{ margin: '5px 0' }}>Auto-scroll should work when new messages arrive</p>
                 <p style={{ margin: '5px 0' }}>Widget should be embedded as a full-page chat interface</p>
+                <p style={{ margin: '5px 0', fontSize: '13px', color: '#444' }}>
+                  Same Copy and PDF actions under assistant messages when not streaming.
+                </p>
               </div>
               {embeddedSessionId && (
                 <div style={{
