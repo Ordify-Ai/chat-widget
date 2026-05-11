@@ -34,6 +34,7 @@ function DemoApp() {
   const [maxAttachmentSizeMB, setMaxAttachmentSizeMB] = useState(10)
   const [maxAttachments, setMaxAttachments] = useState(3)
   const [allowedAttachmentTypesRaw, setAllowedAttachmentTypesRaw] = useState('')
+  const [useThinking, setUseThinking] = useState(false)
   const [floatingSessionId, setFloatingSessionId] = useState<string | null>(null)
   const [embeddedSessionId, setEmbeddedSessionId] = useState<string | null>(null)
 
@@ -69,6 +70,7 @@ function DemoApp() {
         setAllowedAttachmentTypesRaw(
           typeof config.allowedAttachmentTypesRaw === 'string' ? config.allowedAttachmentTypesRaw : ''
         )
+        setUseThinking(Boolean(config.useThinking))
       } catch (e) {
         console.error('Failed to load saved configuration:', e)
       }
@@ -104,10 +106,11 @@ function DemoApp() {
       enableAttachments,
       maxAttachmentSizeMB,
       maxAttachments,
-      allowedAttachmentTypesRaw
+      allowedAttachmentTypesRaw,
+      useThinking
     }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(config))
-  }, [agentId, publishableKey, apiKey, apiBaseUrl, chatName, buttonText, primaryColor, agentImage, quickQuestions, welcomeMessage, welcomeImage, theme, position, enableAttachments, maxAttachmentSizeMB, maxAttachments, allowedAttachmentTypesRaw])
+  }, [agentId, publishableKey, apiKey, apiBaseUrl, chatName, buttonText, primaryColor, agentImage, quickQuestions, welcomeMessage, welcomeImage, theme, position, enableAttachments, maxAttachmentSizeMB, maxAttachments, allowedAttachmentTypesRaw, useThinking])
 
   // State for dynamic testing
   const [initialMessage, setInitialMessage] = useState("Hi")
@@ -242,7 +245,8 @@ function DemoApp() {
     <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
       <h1>Ordify Chat Widget Test</h1>
       <p>
-        Tests initial context, button options, auto-scroll, attachments (<code>/widget/attachments</code>),
+        Tests initial context, button options, auto-scroll, <strong>thinking mode</strong> (
+        <code>use_thinking</code> on chat requests), attachments (<code>/widget/attachments</code>),
         assistant message <strong>Copy</strong> and <strong>PDF</strong> actions, and{' '}
         <code>POST /document-conversion/pdf</code> via the smoke test below. Run the API on{' '}
         <strong>API Base URL</strong> (for example <code>http://localhost:5001</code>) with widget-compatible
@@ -496,6 +500,39 @@ function DemoApp() {
                 Optional image/graphic to display in welcome screen
               </p>
             </div>
+          </div>
+
+          <div
+            style={{
+              borderTop: '1px solid #e8e8e8',
+              marginTop: '18px',
+              paddingTop: '18px',
+            }}
+          >
+            <h4 style={{ margin: '0 0 8px 0' }}>Thinking mode</h4>
+            <p style={{ fontSize: '13px', color: '#666', margin: '0 0 12px 0' }}>
+              When enabled, chat requests include <code>use_thinking: true</code> (backend thinking path).
+              Toggle and click <strong>Apply Custom Settings</strong> (or a scenario) to remount widgets.
+            </p>
+            <label
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                cursor: 'pointer',
+                fontWeight: 'bold',
+              }}
+            >
+              <input
+                type="checkbox"
+                checked={useThinking}
+                onChange={(e) => {
+                  setUseThinking(e.target.checked)
+                  if (widgetsMounted) setTestKey((k) => k + 1)
+                }}
+              />
+              useThinking (slower, deeper replies when the API supports it)
+            </label>
           </div>
 
           <div
@@ -863,6 +900,7 @@ function DemoApp() {
           <strong>Active Settings:</strong><br />
           Message: "{activeMessage}"<br />
           Context: "{activeContext}"<br /><br />
+          <strong>Thinking:</strong> {useThinking ? 'on (use_thinking: true)' : 'off'}<br /><br />
           <strong>Attachment settings (saved with Configuration):</strong><br />
           Enabled: {enableAttachments ? 'yes' : 'no'} · Max size: {maxAttachmentSizeMB} MB · Max files:{' '}
           {maxAttachments}
@@ -964,6 +1002,7 @@ function DemoApp() {
             onError={(error) => {
               console.error('❌ Floating chat error:', error)
             }}
+            useThinking={useThinking}
             {...attachmentProps}
           />
 
@@ -1131,6 +1170,7 @@ function DemoApp() {
                 onError={(error) => {
                   console.error('❌ Embedded chat error:', error)
                 }}
+                useThinking={useThinking}
                 {...attachmentProps}
               />
             </div>

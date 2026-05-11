@@ -146,7 +146,7 @@ export const ComposerInnerInput = styled.textarea`
   min-width: 0;
   min-height: 42px;
   max-height: 96px;
-  padding: 8px 12px;
+  padding: 10px 16px;
   border: none;
   border-radius: 0;
   background-color: transparent;

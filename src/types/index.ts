@@ -105,6 +105,11 @@ export interface OrdifyConfig {
   maxAttachments?: number
   /** MIME types allowed client-side (server enforces its own list) */
   allowedAttachmentTypes?: string[]
+  /**
+   * When true, sends `use_thinking: true` on chat requests so the backend uses
+   * the thinking model path (slower, deeper). Default is false (standard path).
+   */
+  useThinking?: boolean
 }
 
 export interface UseOrdifyChatReturn {
@@ -141,6 +146,7 @@ export interface OrdifyApiClientConfig {
   publishableKey?: string
   apiBaseUrl: string
   agentId: string
+  useThinking?: boolean
 }
 
 export interface ChatRequest {
@@ -149,6 +155,7 @@ export interface ChatRequest {
   context?: string
   attachments?: AttachmentWire[]
   use_document_understanding?: boolean
+  use_thinking?: boolean
 }
 
 /** Wire shape for FastAPI AttachmentInfo (snake_case fields) */

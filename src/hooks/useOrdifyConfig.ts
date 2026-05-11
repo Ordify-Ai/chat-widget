@@ -58,7 +58,8 @@ export function useOrdifyConfig(config: OrdifyConfig) {
       enableAttachments: config.enableAttachments,
       maxAttachmentSizeMB: config.maxAttachmentSizeMB,
       maxAttachments: config.maxAttachments,
-      allowedAttachmentTypes: config.allowedAttachmentTypes
+      allowedAttachmentTypes: config.allowedAttachmentTypes,
+      useThinking: config.useThinking === true
     }
   }, [config])
 }

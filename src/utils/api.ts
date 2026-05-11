@@ -160,7 +160,8 @@ export class OrdifyApiClient {
     const requestBody: ChatRequest = {
       message: content,
       sessionId: sessionId,
-      context: context
+      context: context,
+      use_thinking: Boolean(this.config.useThinking)
     }
     if (wires?.length) {
       requestBody.attachments = wires
