@@ -7,10 +7,12 @@ export const ChatWidget = styled.div`
   border: 1px solid #e5e7eb;
   min-height: 0;
 
-  /* Scoped CSS reset to prevent host page style leakage */
+  /* Scoped CSS reset to prevent host page style leakage.
+   * Do not include textarea in this selector: it zeroed padding and beat our
+   * composer/welcome textarea styles in embedded mode (ChatWidget), while floating
+   * (ChatWindow) looked fine. Textareas are styled via ComposerInnerInput / ProfessionalInput. */
   & button,
   & input,
-  & textarea,
   & select {
     margin: 0;
     padding: 0;
@@ -123,9 +125,9 @@ export const ComposerToolbar = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 6px;
+  gap: 8px;
   flex-shrink: 0;
-  padding: 6px 10px;
+  padding: 8px 16px 10px;
   border-top: 1px solid #e5e7eb;
   background-color: #f9fafb;
 
@@ -144,9 +146,10 @@ export const ComposerInnerInput = styled.textarea`
   display: block;
   width: 100%;
   min-width: 0;
+  margin: 0;
   min-height: 42px;
   max-height: 96px;
-  padding: 10px 16px;
+  padding: 12px 18px;
   border: none;
   border-radius: 0;
   background-color: transparent;
@@ -191,7 +194,7 @@ export const ChatInput = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 12px 10px;
+  padding: 10px 16px 12px;
   border-top: 1px solid #e5e7eb;
   background-color: #ffffff;
   
@@ -210,6 +213,7 @@ export const ChatInput = styled.div`
 export const ProfessionalInput = styled.textarea`
   flex: 1;
   width: 100%;
+  margin: 0;
   min-height: 40px;
   max-height: 120px;
   padding: 8px 12px;
