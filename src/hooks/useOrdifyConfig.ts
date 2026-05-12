@@ -60,7 +60,7 @@ export function useOrdifyConfig(config: OrdifyConfig) {
       maxAttachments: config.maxAttachments,
       allowedAttachmentTypes: config.allowedAttachmentTypes,
       useThinking: config.useThinking === true,
-      enableImageGeneration: config.enableImageGeneration === true
+      enableImageGeneration: config.enableImageGeneration
     }
   }, [config])
 }

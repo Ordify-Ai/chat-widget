@@ -12,10 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Empty assistant bubbles on tool-heavy turns**: SSE `adk_tool` events with a `content` string are now folded into the streamed assistant text so status lines (e.g. tool progress) still appear when the model does not emit a separate text chunk.
 
 ### Added
-- **`enableImageGeneration` on `OrdifyConfig`**: optional boolean (default off); use with your own UI when the publishable key allows image generation. Standalone installs can set `data-ordify-enable-image-generation="true"`.
+- **`enableImageGeneration` on `OrdifyConfig`**: optional boolean for publishable-key embeds. When **`true`**, the widget sends `enable_image_generation: true` and the API allows image generation only if the publishable key also allows it. When **`false`**, the widget sends `enable_image_generation: false` and image generation is blocked on that embed even if the key allows it. When **omitted**, the widget does not send the field (server defaults to key-only behavior for backward compatibility). Standalone: set `data-ordify-enable-image-generation="true"` or `"false"`; omit for key-only.
 
 ### Notes
-- **Backend**: widget chat uses the publishable key field `allow_image_generation` (default `false` for existing keys). Enable per key in the **Ordify app → Settings → Publishable Keys** (or via the publishable-keys API). The widget route always registers the image tool and enforces this flag inside the tool so blocked requests get a clear tool message instead of silent mis-routing.
+- **Backend**: `POST /widget/chat/...` sets effective image permission as **publishable key `allow_image_generation` AND** request body `enable_image_generation` (default `true` when omitted). The image tool stays registered; blocked calls return a clear tool message.
 - **Ordify web app**: Publishable Keys now includes **Allow image generation** when creating a key and a per-key toggle for existing keys.
 
 ## [1.0.45] - 2026-05-04

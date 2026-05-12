@@ -547,10 +547,11 @@ function DemoApp() {
           >
             <h4 style={{ margin: '0 0 8px 0' }}>Embed: enableImageGeneration</h4>
             <p style={{ fontSize: '13px', color: '#666', margin: '0 0 12px 0' }}>
-              Check this to include <code>enableImageGeneration</code> in saved config and in the widget so your
-              site can align UI (e.g. image-related hints). <strong>Server rule:</strong> the publishable key must
-              allow image generation — configure that in the Ordify app under <strong>Settings → Publishable Keys</strong>{' '}
-              (allow when creating a key, or &quot;Allow image generation&quot; on an existing key).
+              When checked, the widget sends <code>enable_image_generation: true</code> on each chat request (publishable key only).
+              The API allows image generation only when <strong>both</strong> this is on and the publishable key has{' '}
+              <strong>Allow image generation</strong> (Ordify app → Settings → Publishable Keys). When unchecked, the
+              widget sends <code>false</code> and images are blocked on this embed even if the key allows them. Omit
+              this prop in your own app if you want key-only behavior (omit = server default allows when the key allows).
             </p>
             <label
               style={{
@@ -569,7 +570,7 @@ function DemoApp() {
                   if (widgetsMounted) setTestKey((k) => k + 1)
                 }}
               />
-              Include enableImageGeneration in widget props (embed / UI hint; key must still allow images in dashboard)
+              Send enableImageGeneration: true on chat (off = send false; requires key + this for images)
             </label>
           </div>
 

@@ -171,7 +171,7 @@ Add a single script tag with `data-ordify-widget` and the required/optional data
 | `data-ordify-quick-questions` | JSON array of strings, or comma-separated list (e.g. `["Question 1","Question 2"]` or `Question 1, Question 2`). |
 | `data-ordify-container-id` | ID of the element to mount into; if omitted, mounts to `document.body`. |
 | `data-ordify-use-thinking` | `true` / `1` to enable thinking path (`use_thinking` on chat requests). |
-| `data-ordify-enable-image-generation` | `true` / `1` sets `enableImageGeneration` on the widget; use with UI that depends on image features. The publishable key must still allow image generation (**Settings → Publishable Keys** in the Ordify app). |
+| `data-ordify-enable-image-generation` | `true` / `1` sends `enable_image_generation: true` on widget chat. Omit the attribute to leave the choice to the publishable key only. `false` / `0` blocks images even when the key allows generation. |
 
 ### WordPress and Local WP
 
@@ -253,7 +253,7 @@ So the “config” is the snippet or script tag you paste; the credentials are 
 | `maxAttachmentSizeMB` | number | `10` | **Optional** - Client-side max attachment size. |
 | `maxAttachments` | number | `3` | **Optional** - Max attachments per message. |
 | `allowedAttachmentTypes` | string[] | (widget defaults) | **Optional** - Client MIME allow list. |
-| `enableImageGeneration` | boolean | `false` | **Optional** — set so your app can show image-related UI; the publishable key must allow image generation (**Ordify app → Settings → Publishable Keys**). |
+| `enableImageGeneration` | boolean | undefined | **Optional** (publishable key only) — `true` enables image generation when the key allows it. `false` blocks it on this embed. If omitted, the widget does not send the field and the API allows images whenever the publishable key allows them. |
 
 ## 🎯 Advanced Features
 

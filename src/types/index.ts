@@ -111,9 +111,10 @@ export interface OrdifyConfig {
    */
   useThinking?: boolean
   /**
-   * When true, your app can treat the embed as “image features enabled” (e.g. show
-   * related UI). The API still requires the publishable key to allow image generation
-   * (Settings → Publishable Keys in the Ordify app, or the publishable-keys API).
+   * When true, the widget sends `enable_image_generation: true` on widget chat requests.
+   * The API allows image generation only when **both** this flag and the publishable key's
+   * **Allow image generation** are enabled. Default is false (omit / false blocks generation
+   * even if the key allows it).
    */
   enableImageGeneration?: boolean
 }
@@ -153,6 +154,8 @@ export interface OrdifyApiClientConfig {
   apiBaseUrl: string
   agentId: string
   useThinking?: boolean
+  /** Publishable-key chat only; sent as `enable_image_generation` (server ANDs with key setting). */
+  enableImageGeneration?: boolean
 }
 
 export interface ChatRequest {
@@ -162,6 +165,8 @@ export interface ChatRequest {
   attachments?: AttachmentWire[]
   use_document_understanding?: boolean
   use_thinking?: boolean
+  /** Widget: server requires this true and the publishable key to allow image generation. */
+  enable_image_generation?: boolean
 }
 
 /** Wire shape for FastAPI AttachmentInfo (snake_case fields) */
