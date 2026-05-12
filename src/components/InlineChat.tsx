@@ -1,6 +1,6 @@
+import { AssistantMessageContent } from '@/components/AssistantMessageContent'
 import { AttachmentChips } from '@/components/AttachmentChips'
 import { AttachmentPicker } from '@/components/AttachmentPicker'
-import { MarkdownRenderer } from '@/components/MarkdownRenderer'
 import { ProfessionalInput } from '@/components/ProfessionalInput'
 import { WelcomeScreen } from '@/components/WelcomeScreen'
 import { useWidgetAttachmentStaging } from '@/hooks/useWidgetAttachmentStaging'
@@ -124,7 +124,7 @@ export function InlineChat({ config, chat }: InlineChatProps) {
                   )}
                   <ChatMessage $isUser={message.role === 'user'}>
                     {message.role === 'assistant' ? (
-                      <MarkdownRenderer content={message.content} />
+                      <AssistantMessageContent message={message} />
                     ) : (
                       <>
                         {message.attachments && message.attachments.length > 0 && (

@@ -329,11 +329,24 @@ export function parseStreamingResponse(chunk: string): StreamingResponse | null 
       if (parsed.done) {
         return { text: '', sessionId: (parsed.sessionId as string) || '', type: 'done' }
       }
-      if (
-        parsed.type === 'adk_tool' ||
-        parsed.type === 'turn_complete' ||
-        parsed.type === 'image'
-      ) {
+      if (parsed.type === 'adk_tool' || parsed.type === 'turn_complete') {
+        return null
+      }
+      // ADK emits dedicated image events; fold into markdown so MarkdownRenderer shows them.
+      if (parsed.type === 'image') {
+        const url = typeof parsed.url === 'string' ? parsed.url.trim() : ''
+        if (
+          url &&
+          (url.startsWith('https://') ||
+            url.startsWith('http://'))
+        ) {
+          return {
+            type: 'stream',
+            text: `\n\n![Generated image](${url})\n\n`,
+            sessionId: (parsed.sessionId as string) || '',
+            agentName: parsed.agentName as string | undefined,
+          }
+        }
         return null
       }
       return parsed as unknown as StreamingResponse

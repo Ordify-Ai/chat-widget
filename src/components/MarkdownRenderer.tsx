@@ -212,6 +212,19 @@ export function MarkdownRenderer({ content, className }: MarkdownRendererProps) 
                 target: "_blank",
                 rel: "noopener noreferrer"
               }
+            },
+            img: {
+              props: {
+                style: {
+                  maxWidth: '100%',
+                  height: 'auto',
+                  borderRadius: '8px',
+                  display: 'block',
+                  marginBottom: '10px'
+                },
+                loading: 'lazy',
+                decoding: 'async'
+              }
             }
           }
         }}

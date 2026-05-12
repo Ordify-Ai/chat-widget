@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- **Generated images in the widget**: ADK `image` SSE events are no longer dropped during streaming (they appear as markdown images in the assistant bubble). Assistant messages with image **attachments** from history now render inline images plus non-image attachment chips.
+
 ### Added
 - **`enableImageGeneration` on `OrdifyConfig`**: optional boolean (default off); use with your own UI when the publishable key allows image generation. Standalone installs can set `data-ordify-enable-image-generation="true"`.
 
