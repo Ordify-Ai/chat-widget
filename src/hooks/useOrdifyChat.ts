@@ -47,7 +47,7 @@ export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
   const isStreamingRef = useRef(false)
 
   // Reset API client when credentials or endpoint change so stale clients are never used
-  const credFingerprint = `${config.publishableKey ?? ''}|${config.apiKey ?? ''}|${config.apiBaseUrl ?? ''}|${config.agentId}`
+  const credFingerprint = `${config.publishableKey ?? ''}|${config.apiKey ?? ''}|${config.apiBaseUrl ?? ''}|${config.agentId}|${config.useThinking === true ? '1' : '0'}|img:${config.enableImageGeneration === true ? '1' : config.enableImageGeneration === false ? '0' : ''}`
   if (credFingerprintRef.current !== credFingerprint) {
     apiClientRef.current = null
     credFingerprintRef.current = credFingerprint
@@ -59,7 +59,9 @@ export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
       publishableKey: config.publishableKey,
       apiKey: config.apiKey,
       apiBaseUrl: config.apiBaseUrl || 'https://api.ordify.ai',
-      agentId: config.agentId
+      agentId: config.agentId,
+      useThinking: config.useThinking === true,
+      enableImageGeneration: config.enableImageGeneration
     })
   }
 
@@ -369,7 +371,15 @@ export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
       setIsLoading(false)
     }
   },
-  [config.onSessionCreated, config.onMessage, config.onError, config.sessionId, isLoading, sessionId]
+  [
+    config.onSessionCreated,
+    config.onMessage,
+    config.onError,
+    config.sessionId,
+    config.useThinking,
+    isLoading,
+    sessionId
+  ]
   )
 
   // Auto-send initial message on mount (only if no existing session or empty session)

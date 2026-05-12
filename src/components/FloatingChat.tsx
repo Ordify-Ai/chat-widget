@@ -1,8 +1,8 @@
 import { AssistantMessageActions } from '@/components/AssistantMessageActions'
+import { AssistantMessageContent } from '@/components/AssistantMessageContent'
 import { AttachmentChips } from '@/components/AttachmentChips'
 import { AttachmentPicker } from '@/components/AttachmentPicker'
 import { Conversation, ConversationContent } from '@/components/Conversation'
-import { MarkdownRenderer } from '@/components/MarkdownRenderer'
 import { ProfessionalInput } from '@/components/ProfessionalInput'
 import { WelcomeScreen } from '@/components/WelcomeScreen'
 import { useWidgetAttachmentStaging } from '@/hooks/useWidgetAttachmentStaging'
@@ -144,6 +144,8 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
       data-theme={getThemeValue()}
       style={{
         height: chatHeight,
+        ...(config.backgroundColor ? { backgroundColor: config.backgroundColor } : {}),
+        ...(config.textColor ? { color: config.textColor } : {}),
         ...config.chatWindowStyle
       }}
     >
@@ -196,7 +198,7 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
         />
       ) : (
         <>
-          <Conversation onDragOver={onDragOver} onDrop={onDrop}>
+          <Conversation surfaceTheme={getThemeValue()} onDragOver={onDragOver} onDrop={onDrop}>
             <ConversationContent>
               {messages.map(message => (
                 <div
@@ -226,7 +228,7 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
                       }}
                     >
                       <ChatMessage $isUser={false}>
-                        <MarkdownRenderer content={message.content} />
+                        <AssistantMessageContent message={message} />
                       </ChatMessage>
                       {shouldShowAssistantActions(message, messages, isLoading) && (
                         <AssistantMessageActions

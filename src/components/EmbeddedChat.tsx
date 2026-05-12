@@ -1,7 +1,7 @@
 import { AssistantMessageActions } from '@/components/AssistantMessageActions'
+import { AssistantMessageContent } from '@/components/AssistantMessageContent'
 import { AttachmentChips } from '@/components/AttachmentChips'
 import { AttachmentPicker } from '@/components/AttachmentPicker'
-import { MarkdownRenderer } from '@/components/MarkdownRenderer'
 import { ProfessionalInput } from '@/components/ProfessionalInput'
 import { WelcomeScreen } from '@/components/WelcomeScreen'
 import { useWidgetAttachmentStaging } from '@/hooks/useWidgetAttachmentStaging'
@@ -133,7 +133,14 @@ export function EmbeddedChat({ config, chat }: EmbeddedChatProps) {
   return (
     <ChatWidget
       data-theme={getThemeValue()}
-      style={heightStyle}
+      style={{
+        ...heightStyle,
+        ...(config.backgroundColor ? { backgroundColor: config.backgroundColor } : {}),
+        ...(config.textColor ? { color: config.textColor } : {}),
+        ...(config.borderRadius != null && config.borderRadius !== ''
+          ? { borderRadius: config.borderRadius }
+          : {}),
+      }}
     >
       {/* Welcome screen or chat messages */}
       {config.quickQuestions && config.quickQuestions.length > 0 && !hasSessionStarted ? (
@@ -147,7 +154,12 @@ export function EmbeddedChat({ config, chat }: EmbeddedChatProps) {
         />
       ) : (
         <>
-          <Conversation style={{ flex: 1 }} onDragOver={onDragOver} onDrop={onDrop}>
+          <Conversation
+            style={{ flex: 1 }}
+            surfaceTheme={getThemeValue()}
+            onDragOver={onDragOver}
+            onDrop={onDrop}
+          >
             <ConversationContent>
               {messages.map(message => (
                 <div
@@ -177,7 +189,7 @@ export function EmbeddedChat({ config, chat }: EmbeddedChatProps) {
                       }}
                     >
                       <ChatMessage $isUser={false}>
-                        <MarkdownRenderer content={message.content} />
+                        <AssistantMessageContent message={message} />
                       </ChatMessage>
                       {shouldShowAssistantActions(message, messages, isLoading) && (
                         <AssistantMessageActions

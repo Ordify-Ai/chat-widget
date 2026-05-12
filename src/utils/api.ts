@@ -160,7 +160,11 @@ export class OrdifyApiClient {
     const requestBody: ChatRequest = {
       message: content,
       sessionId: sessionId,
-      context: context
+      context: context,
+      use_thinking: Boolean(this.config.useThinking)
+    }
+    if (this.usePublishableKey()) {
+      requestBody.enable_image_generation = this.config.enableImageGeneration === true
     }
     if (wires?.length) {
       requestBody.attachments = wires
@@ -328,11 +332,39 @@ export function parseStreamingResponse(chunk: string): StreamingResponse | null 
       if (parsed.done) {
         return { text: '', sessionId: (parsed.sessionId as string) || '', type: 'done' }
       }
-      if (
-        parsed.type === 'adk_tool' ||
-        parsed.type === 'turn_complete' ||
-        parsed.type === 'image'
-      ) {
+      if (parsed.type === 'turn_complete') {
+        return null
+      }
+      // Tool status updates often have no parallel text chunk; surface `content`
+      // so the bubble is not empty (e.g. MCP / agent-builder tools).
+      if (parsed.type === 'adk_tool') {
+        const content =
+          typeof parsed.content === 'string' ? parsed.content.trim() : ''
+        if (content) {
+          return {
+            type: 'stream',
+            text: `\n\n${content}\n\n`,
+            sessionId: (parsed.sessionId as string) || '',
+            agentName: parsed.agentName as string | undefined
+          }
+        }
+        return null
+      }
+      // ADK emits dedicated image events; fold into markdown so MarkdownRenderer shows them.
+      if (parsed.type === 'image') {
+        const url = typeof parsed.url === 'string' ? parsed.url.trim() : ''
+        if (
+          url &&
+          (url.startsWith('https://') ||
+            url.startsWith('http://'))
+        ) {
+          return {
+            type: 'stream',
+            text: `\n\n![Generated image](${url})\n\n`,
+            sessionId: (parsed.sessionId as string) || '',
+            agentName: parsed.agentName as string | undefined,
+          }
+        }
         return null
       }
       return parsed as unknown as StreamingResponse

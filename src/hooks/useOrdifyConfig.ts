@@ -37,6 +37,9 @@ export function useOrdifyConfig(config: OrdifyConfig) {
       theme: config.theme || 'auto',
       placeholder: config.placeholder || 'Type a message...',
       height: config.height || '500px',
+      backgroundColor: config.backgroundColor,
+      textColor: config.textColor,
+      borderRadius: config.borderRadius,
       className: config.className || '',
       buttonStyle: config.buttonStyle || {},
       chatWindowStyle: config.chatWindowStyle || {},
@@ -58,7 +61,9 @@ export function useOrdifyConfig(config: OrdifyConfig) {
       enableAttachments: config.enableAttachments,
       maxAttachmentSizeMB: config.maxAttachmentSizeMB,
       maxAttachments: config.maxAttachments,
-      allowedAttachmentTypes: config.allowedAttachmentTypes
+      allowedAttachmentTypes: config.allowedAttachmentTypes,
+      useThinking: config.useThinking === true,
+      enableImageGeneration: config.enableImageGeneration
     }
   }, [config])
 }

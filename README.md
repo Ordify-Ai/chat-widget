@@ -170,6 +170,8 @@ Add a single script tag with `data-ordify-widget` and the required/optional data
 | `data-ordify-welcome-image` | URL for welcome screen image. |
 | `data-ordify-quick-questions` | JSON array of strings, or comma-separated list (e.g. `["Question 1","Question 2"]` or `Question 1, Question 2`). |
 | `data-ordify-container-id` | ID of the element to mount into; if omitted, mounts to `document.body`. |
+| `data-ordify-use-thinking` | `true` / `1` to enable thinking path (`use_thinking` on chat requests). |
+| `data-ordify-enable-image-generation` | `true` / `1` sends `enable_image_generation: true` on widget chat. Any other value or omitting the attribute sends **`false`** (images off). |
 
 ### WordPress and Local WP
 
@@ -246,6 +248,12 @@ So the “config” is the snippet or script tag you paste; the credentials are 
 | `quickQuestions` | string[] | - | **Optional** - Array of quick action questions displayed as buttons in welcome screen |
 | `welcomeMessage` | string | "Hi there 👋 How can we help?" | **Optional** - Custom greeting message shown in welcome screen when quickQuestions are provided |
 | `welcomeImage` | string | - | **Optional** - URL to image/graphic displayed in welcome screen |
+| `useThinking` | boolean | `false` | **Optional** - When `true`, sends `use_thinking: true` on chat requests (thinking model path). |
+| `enableAttachments` | boolean | `false` | **Optional** - File attachments (requires `publishableKey`). |
+| `maxAttachmentSizeMB` | number | `10` | **Optional** - Client-side max attachment size. |
+| `maxAttachments` | number | `3` | **Optional** - Max attachments per message. |
+| `allowedAttachmentTypes` | string[] | (widget defaults) | **Optional** - Client MIME allow list. |
+| `enableImageGeneration` | boolean | `false` (sent on each request) | Publishable key only: **`true`** sends `enable_image_generation: true` so the image tool may run; otherwise the widget sends **`false`**. |
 
 ## 🎯 Advanced Features
 

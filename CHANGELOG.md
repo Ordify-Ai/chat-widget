@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+- **Generated images in the widget**: ADK `image` SSE events are no longer dropped during streaming (they appear as markdown images in the assistant bubble). Assistant messages with image **attachments** from history now render inline images plus non-image attachment chips.
+- **Empty assistant bubbles on tool-heavy turns**: SSE `adk_tool` events with a `content` string are now folded into the streamed assistant text so status lines (e.g. tool progress) still appear when the model does not emit a separate text chunk.
+
+### Added
+- **`enableImageGeneration` on `OrdifyConfig`**: for publishable-key chat, the widget sends **`enable_image_generation: true` or `false`** on every request. The API allows the image tool only when **`true`**. Standalone: `data-ordify-enable-image-generation="true"` / `"false"`.
+
+### Changed
+- **Breaking (publishable keys):** image generation is not configured on publishable keys; use the embed **`enableImageGeneration`** / **`enable_image_generation`** flag only.
+- **Widget image generation:** When `enable_image_generation` is false, the API does not attach the real `generate_image` tool; a stub tool with the same name returns user-facing guidance if the model still calls it. When true, the real tool is attached.
+
+### Notes
+- **Backend**: `POST /widget/chat/...` sets **`use_image_generation_tool`** and **`enable_image_generation`** from the embed flag (default off). The real image tool is omitted when off; a stub answers with guidance text. **`POST /images/generate`** remains blocked for widget keys.
+
 ## [1.0.45] - 2026-05-04
 
 ### Added

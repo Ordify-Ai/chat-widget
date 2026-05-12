@@ -1,6 +1,6 @@
+import { AssistantMessageContent } from '@/components/AssistantMessageContent'
 import { AttachmentChips } from '@/components/AttachmentChips'
 import { AttachmentPicker } from '@/components/AttachmentPicker'
-import { MarkdownRenderer } from '@/components/MarkdownRenderer'
 import { ProfessionalInput } from '@/components/ProfessionalInput'
 import { WelcomeScreen } from '@/components/WelcomeScreen'
 import { useWidgetAttachmentStaging } from '@/hooks/useWidgetAttachmentStaging'
@@ -81,6 +81,7 @@ export function InlineChat({ config, chat }: InlineChatProps) {
 
   return (
     <ChatWidget
+      data-theme="light"
       style={{
         height: config.height,
         display: 'flex',
@@ -102,7 +103,7 @@ export function InlineChat({ config, chat }: InlineChatProps) {
         />
       ) : (
         <>
-          <Conversation style={{ flex: 1 }} onDragOver={onDragOver} onDrop={onDrop}>
+          <Conversation style={{ flex: 1 }} surfaceTheme="light" onDragOver={onDragOver} onDrop={onDrop}>
             <ConversationContent>
               {messages.map(message => (
                 <div
@@ -124,7 +125,7 @@ export function InlineChat({ config, chat }: InlineChatProps) {
                   )}
                   <ChatMessage $isUser={message.role === 'user'}>
                     {message.role === 'assistant' ? (
-                      <MarkdownRenderer content={message.content} />
+                      <AssistantMessageContent message={message} />
                     ) : (
                       <>
                         {message.attachments && message.attachments.length > 0 && (

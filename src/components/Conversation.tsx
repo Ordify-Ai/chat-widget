@@ -7,6 +7,8 @@ interface ConversationProps {
   className?: string
   children: React.ReactNode
   style?: React.CSSProperties
+  /** Match ChatWidget / ChatWindow `data-theme` so the scroll area is never transparent on colored host pages */
+  surfaceTheme?: 'light' | 'dark'
   onDragOver?: React.DragEventHandler<HTMLDivElement>
   onDragLeave?: React.DragEventHandler<HTMLDivElement>
   onDrop?: React.DragEventHandler<HTMLDivElement>
@@ -21,13 +23,14 @@ interface ConversationScrollButtonProps {
   className?: string
 }
 
-const StyledStickToBottom = styled(StickToBottom)`
+const StyledStickToBottom = styled(StickToBottom)<{ $surfaceTheme: 'light' | 'dark' }>`
   position: relative;
   flex: 1;
   overflow-y: auto;
   scroll-behavior: smooth;
   scrollbar-width: thin;
   scrollbar-color: rgba(148, 163, 184, 0.55) transparent;
+  background-color: ${(p) => (p.$surfaceTheme === 'dark' ? '#1f2937' : '#ffffff')};
 
   &::-webkit-scrollbar {
     width: 8px;
@@ -123,14 +126,17 @@ export function Conversation({
   className,
   children,
   style,
+  surfaceTheme = 'light',
   onDragOver,
   onDragLeave,
   onDrop
 }: ConversationProps) {
+  const surface: 'light' | 'dark' = surfaceTheme === 'dark' ? 'dark' : 'light'
   return (
     <StyledStickToBottom
       className={className}
       style={style}
+      $surfaceTheme={surface}
       initial="smooth"
       resize="smooth"
       role="log"

@@ -105,6 +105,17 @@ export interface OrdifyConfig {
   maxAttachments?: number
   /** MIME types allowed client-side (server enforces its own list) */
   allowedAttachmentTypes?: string[]
+  /**
+   * When true, sends `use_thinking: true` on chat requests so the backend uses
+   * the thinking model path (slower, deeper). Default is false (standard path).
+   */
+  useThinking?: boolean
+  /**
+   * When true with a publishable key, the widget sends `enable_image_generation: true` on chat requests
+   * so the model may use image generation. When false or omitted, the widget sends `false` and generation
+   * is disabled for that embed.
+   */
+  enableImageGeneration?: boolean
 }
 
 export interface UseOrdifyChatReturn {
@@ -141,6 +152,9 @@ export interface OrdifyApiClientConfig {
   publishableKey?: string
   apiBaseUrl: string
   agentId: string
+  useThinking?: boolean
+  /** Publishable-key chat only; sent as `enable_image_generation` (server uses this alone to allow the image tool). */
+  enableImageGeneration?: boolean
 }
 
 export interface ChatRequest {
@@ -149,6 +163,9 @@ export interface ChatRequest {
   context?: string
   attachments?: AttachmentWire[]
   use_document_understanding?: boolean
+  use_thinking?: boolean
+  /** Widget publishable chat: sent as `enable_image_generation` (server allows the image tool only when true). */
+  enable_image_generation?: boolean
 }
 
 /** Wire shape for FastAPI AttachmentInfo (snake_case fields) */
