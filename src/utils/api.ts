@@ -329,7 +329,22 @@ export function parseStreamingResponse(chunk: string): StreamingResponse | null 
       if (parsed.done) {
         return { text: '', sessionId: (parsed.sessionId as string) || '', type: 'done' }
       }
-      if (parsed.type === 'adk_tool' || parsed.type === 'turn_complete') {
+      if (parsed.type === 'turn_complete') {
+        return null
+      }
+      // Tool status updates often have no parallel text chunk; surface `content`
+      // so the bubble is not empty (e.g. MCP / agent-builder tools).
+      if (parsed.type === 'adk_tool') {
+        const content =
+          typeof parsed.content === 'string' ? parsed.content.trim() : ''
+        if (content) {
+          return {
+            type: 'stream',
+            text: `\n\n${content}\n\n`,
+            sessionId: (parsed.sessionId as string) || '',
+            agentName: parsed.agentName as string | undefined
+          }
+        }
         return null
       }
       // ADK emits dedicated image events; fold into markdown so MarkdownRenderer shows them.

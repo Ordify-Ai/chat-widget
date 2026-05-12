@@ -9,12 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - **Generated images in the widget**: ADK `image` SSE events are no longer dropped during streaming (they appear as markdown images in the assistant bubble). Assistant messages with image **attachments** from history now render inline images plus non-image attachment chips.
+- **Empty assistant bubbles on tool-heavy turns**: SSE `adk_tool` events with a `content` string are now folded into the streamed assistant text so status lines (e.g. tool progress) still appear when the model does not emit a separate text chunk.
 
 ### Added
 - **`enableImageGeneration` on `OrdifyConfig`**: optional boolean (default off); use with your own UI when the publishable key allows image generation. Standalone installs can set `data-ordify-enable-image-generation="true"`.
 
 ### Notes
-- **Backend**: widget chat uses the publishable key field `allow_image_generation` (default `false` for existing keys). Enable per key in the **Ordify app → Settings → Publishable Keys** (or via the publishable-keys API).
+- **Backend**: widget chat uses the publishable key field `allow_image_generation` (default `false` for existing keys). Enable per key in the **Ordify app → Settings → Publishable Keys** (or via the publishable-keys API). The widget route always registers the image tool and enforces this flag inside the tool so blocked requests get a clear tool message instead of silent mis-routing.
 - **Ordify web app**: Publishable Keys now includes **Allow image generation** when creating a key and a per-key toggle for existing keys.
 
 ## [1.0.45] - 2026-05-04
