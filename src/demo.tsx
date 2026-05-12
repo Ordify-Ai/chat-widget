@@ -545,7 +545,7 @@ function DemoApp() {
               paddingTop: '18px',
             }}
           >
-            <h4 style={{ margin: '0 0 8px 0' }}>AI-generated images</h4>
+            <h4 style={{ margin: '0 0 8px 0' }}>Image generation</h4>
             <p style={{ fontSize: '13px', color: '#666', margin: '0 0 12px 0' }}>
               Turn on if you want this test chat to allow picture requests. Off by default.
             </p>
@@ -937,7 +937,7 @@ function DemoApp() {
           Context: "{activeContext}"<br /><br />
           <strong>Thinking:</strong> {useThinking ? 'on' : 'off'}
           <br />
-          <strong>AI images:</strong> {enableImageGeneration ? 'on' : 'off'}
+          <strong>Image generation:</strong> {enableImageGeneration ? 'on' : 'off'}
           <br /><br />
           <strong>Attachment settings (saved with Configuration):</strong><br />
           Enabled: {enableAttachments ? 'yes' : 'no'} · Max size: {maxAttachmentSizeMB} MB · Max files:{' '}
