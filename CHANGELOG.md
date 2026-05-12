@@ -15,10 +15,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **`enableImageGeneration` on `OrdifyConfig`**: for publishable-key chat, the widget sends **`enable_image_generation: true` or `false`** on every request. The API allows the image tool only when **`true`**. Standalone: `data-ordify-enable-image-generation="true"` / `"false"`.
 
 ### Changed
-- **Breaking (publishable keys):** image generation is no longer configured on publishable keys in the Ordify app or API. Control it only via **`enableImageGeneration`** / **`enable_image_generation`** on the embed.
+- **Breaking (publishable keys):** image generation is not configured on publishable keys; use the embed **`enableImageGeneration`** / **`enable_image_generation`** flag only.
+- **Widget image generation:** When `enable_image_generation` is false, the API does not attach the real `generate_image` tool; a stub tool with the same name returns user-facing guidance if the model still calls it. When true, the real tool is attached.
 
 ### Notes
-- **Backend**: `POST /widget/chat/...` sets widget image permission from **`enable_image_generation`** on the request body only (default **`false`** when omitted by non-widget clients; the official widget always sends an explicit boolean).
+- **Backend**: `POST /widget/chat/...` sets **`use_image_generation_tool`** and **`enable_image_generation`** from the embed flag (default off). The real image tool is omitted when off; a stub answers with guidance text. **`POST /images/generate`** remains blocked for widget keys.
 
 ## [1.0.45] - 2026-05-04
 
