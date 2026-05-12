@@ -8,10 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- **`enableImageGeneration` on `OrdifyConfig`**: optional boolean (default off) for future client-side image UI. Standalone installs can set `data-ordify-enable-image-generation="true"`.
+- **`enableImageGeneration` on `OrdifyConfig`**: optional boolean (default off); use with your own UI when the publishable key allows image generation. Standalone installs can set `data-ordify-enable-image-generation="true"`.
 
 ### Notes
-- **Backend**: widget chat uses the publishable key field `allow_image_generation` (default `false` for existing keys). Image generation via the embed requires that flag on the key; the widget prop does not override API enforcement.
+- **Backend**: widget chat uses the publishable key field `allow_image_generation` (default `false` for existing keys). Enable per key in the **Ordify app → Settings → Publishable Keys** (or via the publishable-keys API).
+- **Ordify web app**: Publishable Keys now includes **Allow image generation** when creating a key and a per-key toggle for existing keys.
 
 ## [1.0.45] - 2026-05-04
 

@@ -111,9 +111,9 @@ export interface OrdifyConfig {
    */
   useThinking?: boolean
   /**
-   * Client-side affordance for image-generation UI (if added later). Default false.
-   * The API enforces image generation per publishable key (`allow_image_generation`);
-   * changing this prop alone does not bypass server rules.
+   * When true, your app can treat the embed as “image features enabled” (e.g. show
+   * related UI). The API still requires the publishable key to allow image generation
+   * (Settings → Publishable Keys in the Ordify app, or the publishable-keys API).
    */
   enableImageGeneration?: boolean
 }

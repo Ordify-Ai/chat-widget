@@ -545,10 +545,12 @@ function DemoApp() {
               paddingTop: '18px',
             }}
           >
-            <h4 style={{ margin: '0 0 8px 0' }}>Image generation (client flag)</h4>
+            <h4 style={{ margin: '0 0 8px 0' }}>Embed: enableImageGeneration</h4>
             <p style={{ fontSize: '13px', color: '#666', margin: '0 0 12px 0' }}>
-              Optional embed setting for future UI. The API only allows image generation when your publishable key has{' '}
-              <code>allow_image_generation: true</code> (set via dashboard API); this checkbox does not bypass that.
+              Check this to include <code>enableImageGeneration</code> in saved config and in the widget so your
+              site can align UI (e.g. image-related hints). <strong>Server rule:</strong> the publishable key must
+              allow image generation — configure that in the Ordify app under <strong>Settings → Publishable Keys</strong>{' '}
+              (allow when creating a key, or &quot;Allow image generation&quot; on an existing key).
             </p>
             <label
               style={{
@@ -567,7 +569,7 @@ function DemoApp() {
                   if (widgetsMounted) setTestKey((k) => k + 1)
                 }}
               />
-              enableImageGeneration (client affordance; server enforces on publishable key)
+              Include enableImageGeneration in widget props (embed / UI hint; key must still allow images in dashboard)
             </label>
           </div>
 
