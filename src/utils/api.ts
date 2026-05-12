@@ -164,12 +164,7 @@ export class OrdifyApiClient {
       use_thinking: Boolean(this.config.useThinking)
     }
     if (this.usePublishableKey()) {
-      const eg = this.config.enableImageGeneration
-      if (eg === true) {
-        requestBody.enable_image_generation = true
-      } else if (eg === false) {
-        requestBody.enable_image_generation = false
-      }
+      requestBody.enable_image_generation = this.config.enableImageGeneration === true
     }
     if (wires?.length) {
       requestBody.attachments = wires

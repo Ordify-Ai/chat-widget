@@ -12,11 +12,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Empty assistant bubbles on tool-heavy turns**: SSE `adk_tool` events with a `content` string are now folded into the streamed assistant text so status lines (e.g. tool progress) still appear when the model does not emit a separate text chunk.
 
 ### Added
-- **`enableImageGeneration` on `OrdifyConfig`**: optional boolean for publishable-key embeds. When **`true`**, the widget sends `enable_image_generation: true` and the API allows image generation only if the publishable key also allows it. When **`false`**, the widget sends `enable_image_generation: false` and image generation is blocked on that embed even if the key allows it. When **omitted**, the widget does not send the field (server defaults to key-only behavior for backward compatibility). Standalone: set `data-ordify-enable-image-generation="true"` or `"false"`; omit for key-only.
+- **`enableImageGeneration` on `OrdifyConfig`**: for publishable-key chat, the widget sends **`enable_image_generation: true` or `false`** on every request. The API allows the image tool only when **`true`**. Standalone: `data-ordify-enable-image-generation="true"` / `"false"`.
+
+### Changed
+- **Breaking (publishable keys):** image generation is no longer configured on publishable keys in the Ordify app or API. Control it only via **`enableImageGeneration`** / **`enable_image_generation`** on the embed.
 
 ### Notes
-- **Backend**: `POST /widget/chat/...` sets effective image permission as **publishable key `allow_image_generation` AND** request body `enable_image_generation` (default `true` when omitted). The image tool stays registered; blocked calls return a clear tool message.
-- **Ordify web app**: Publishable Keys now includes **Allow image generation** when creating a key and a per-key toggle for existing keys.
+- **Backend**: `POST /widget/chat/...` sets widget image permission from **`enable_image_generation`** on the request body only (default **`false`** when omitted by non-widget clients; the official widget always sends an explicit boolean).
 
 ## [1.0.45] - 2026-05-04
 

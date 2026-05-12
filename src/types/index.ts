@@ -111,10 +111,9 @@ export interface OrdifyConfig {
    */
   useThinking?: boolean
   /**
-   * When true, the widget sends `enable_image_generation: true` on widget chat requests.
-   * The API allows image generation only when **both** this flag and the publishable key's
-   * **Allow image generation** are enabled. Default is false (omit / false blocks generation
-   * even if the key allows it).
+   * When true with a publishable key, the widget sends `enable_image_generation: true` on chat requests
+   * so the model may use image generation. When false or omitted, the widget sends `false` and generation
+   * is disabled for that embed.
    */
   enableImageGeneration?: boolean
 }
@@ -154,7 +153,7 @@ export interface OrdifyApiClientConfig {
   apiBaseUrl: string
   agentId: string
   useThinking?: boolean
-  /** Publishable-key chat only; sent as `enable_image_generation` (server ANDs with key setting). */
+  /** Publishable-key chat only; sent as `enable_image_generation` (server uses this alone to allow the image tool). */
   enableImageGeneration?: boolean
 }
 
@@ -165,7 +164,7 @@ export interface ChatRequest {
   attachments?: AttachmentWire[]
   use_document_understanding?: boolean
   use_thinking?: boolean
-  /** Widget: server requires this true and the publishable key to allow image generation. */
+  /** Widget publishable chat: sent as `enable_image_generation` (server allows the image tool only when true). */
   enable_image_generation?: boolean
 }
 
