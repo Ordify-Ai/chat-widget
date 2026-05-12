@@ -40,6 +40,13 @@ export const ChatWidget = styled.div`
     background-color: #1f2937;
     border-color: #374151;
   }
+
+  /* Prefer explicit embed theme over OS dark mode so inline/embedded stays readable on colored pages */
+  &[data-theme="light"] {
+    background-color: #ffffff;
+    border-color: #e5e7eb;
+    color: #111827;
+  }
 `
 
 // Chat message base styles
@@ -82,6 +89,16 @@ export const ChatMessage = styled.div<{ $isUser: boolean }>`
     strong, b {
       color: ${props => props.$isUser ? '#ffffff' : '#ffffff'};
       font-weight: 700;
+    }
+  }
+
+  [data-theme="light"] & {
+    background-color: ${props => props.$isUser ? '#3b82f6' : '#f3f4f6'};
+    color: ${props => props.$isUser ? '#ffffff' : '#111827'};
+
+    strong, b {
+      font-weight: 600;
+      color: inherit;
     }
   }
 `
@@ -557,6 +574,12 @@ export const ChatWindow = styled.div<{ $position: string }>`
     background: #1f2937;
     border-color: #374151;
   }
+
+  &[data-theme="light"] {
+    background: #ffffff;
+    border-color: #e5e7eb;
+    color: #111827;
+  }
   
   @media (min-width: 640px) {
     width: 384px;
@@ -789,7 +812,7 @@ export const WelcomeScreenContainer = styled.div<{ $primaryColor?: string }>`
     if (props.$primaryColor) {
       return `linear-gradient(to bottom, ${props.$primaryColor} 0%, ${props.$primaryColor} 20%, rgba(255, 255, 255, 0.3) 45%, rgba(255, 255, 255, 0.7) 65%, rgba(255, 255, 255, 1) 100%)`
     }
-    return 'transparent'
+    return '#ffffff'
   }};
   
   @media (prefers-color-scheme: dark) {
@@ -797,7 +820,7 @@ export const WelcomeScreenContainer = styled.div<{ $primaryColor?: string }>`
       if (props.$primaryColor) {
         return `linear-gradient(to bottom, ${props.$primaryColor} 0%, ${props.$primaryColor} 20%, rgba(31, 41, 55, 0.3) 45%, rgba(31, 41, 55, 0.7) 65%, rgba(31, 41, 55, 1) 100%)`
       }
-      return 'transparent'
+      return '#1f2937'
     }};
   }
   
@@ -806,7 +829,16 @@ export const WelcomeScreenContainer = styled.div<{ $primaryColor?: string }>`
       if (props.$primaryColor) {
         return `linear-gradient(to bottom, ${props.$primaryColor} 0%, ${props.$primaryColor} 20%, rgba(31, 41, 55, 0.3) 45%, rgba(31, 41, 55, 0.7) 65%, rgba(31, 41, 55, 1) 100%)`
       }
-      return 'transparent'
+      return '#1f2937'
+    }};
+  }
+
+  [data-theme="light"] & {
+    background: ${props => {
+      if (props.$primaryColor) {
+        return `linear-gradient(to bottom, ${props.$primaryColor} 0%, ${props.$primaryColor} 20%, rgba(255, 255, 255, 0.3) 45%, rgba(255, 255, 255, 0.7) 65%, rgba(255, 255, 255, 1) 100%)`
+      }
+      return '#ffffff'
     }};
   }
 `
@@ -825,6 +857,10 @@ export const WelcomeGreeting = styled.div`
   
   [data-theme="dark"] & {
     color: #f9fafb;
+  }
+
+  [data-theme="light"] & {
+    color: #111827;
   }
 `
 

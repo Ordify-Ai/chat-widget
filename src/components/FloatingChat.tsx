@@ -144,6 +144,8 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
       data-theme={getThemeValue()}
       style={{
         height: chatHeight,
+        ...(config.backgroundColor ? { backgroundColor: config.backgroundColor } : {}),
+        ...(config.textColor ? { color: config.textColor } : {}),
         ...config.chatWindowStyle
       }}
     >
@@ -196,7 +198,7 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
         />
       ) : (
         <>
-          <Conversation onDragOver={onDragOver} onDrop={onDrop}>
+          <Conversation surfaceTheme={getThemeValue()} onDragOver={onDragOver} onDrop={onDrop}>
             <ConversationContent>
               {messages.map(message => (
                 <div

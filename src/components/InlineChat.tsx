@@ -81,6 +81,7 @@ export function InlineChat({ config, chat }: InlineChatProps) {
 
   return (
     <ChatWidget
+      data-theme="light"
       style={{
         height: config.height,
         display: 'flex',
@@ -102,7 +103,7 @@ export function InlineChat({ config, chat }: InlineChatProps) {
         />
       ) : (
         <>
-          <Conversation style={{ flex: 1 }} onDragOver={onDragOver} onDrop={onDrop}>
+          <Conversation style={{ flex: 1 }} surfaceTheme="light" onDragOver={onDragOver} onDrop={onDrop}>
             <ConversationContent>
               {messages.map(message => (
                 <div
