@@ -40,6 +40,11 @@ function getDataConfig(script: HTMLScriptElement): Partial<OrdifyConfig> {
   if (resizable !== null) config.resizable = resizable !== 'false' && resizable !== '0'
   const useThinking = get('use-thinking')
   if (useThinking !== null) config.useThinking = useThinking === 'true' || useThinking === '1'
+  const enableImageGeneration = get('enable-image-generation')
+  if (enableImageGeneration !== null) {
+    config.enableImageGeneration =
+      enableImageGeneration === 'true' || enableImageGeneration === '1'
+  }
   return config
 }
 

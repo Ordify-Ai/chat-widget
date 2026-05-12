@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- **`enableImageGeneration` on `OrdifyConfig`**: optional boolean (default off) for future client-side image UI. Standalone installs can set `data-ordify-enable-image-generation="true"`.
+
+### Notes
+- **Backend**: widget chat uses the publishable key field `allow_image_generation` (default `false` for existing keys). Image generation via the embed requires that flag on the key; the widget prop does not override API enforcement.
+
 ## [1.0.45] - 2026-05-04
 
 ### Added

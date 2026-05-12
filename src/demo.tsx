@@ -35,6 +35,7 @@ function DemoApp() {
   const [maxAttachments, setMaxAttachments] = useState(3)
   const [allowedAttachmentTypesRaw, setAllowedAttachmentTypesRaw] = useState('')
   const [useThinking, setUseThinking] = useState(false)
+  const [enableImageGeneration, setEnableImageGeneration] = useState(false)
   const [floatingSessionId, setFloatingSessionId] = useState<string | null>(null)
   const [embeddedSessionId, setEmbeddedSessionId] = useState<string | null>(null)
 
@@ -71,6 +72,7 @@ function DemoApp() {
           typeof config.allowedAttachmentTypesRaw === 'string' ? config.allowedAttachmentTypesRaw : ''
         )
         setUseThinking(Boolean(config.useThinking))
+        setEnableImageGeneration(Boolean(config.enableImageGeneration))
       } catch (e) {
         console.error('Failed to load saved configuration:', e)
       }
@@ -107,10 +109,11 @@ function DemoApp() {
       maxAttachmentSizeMB,
       maxAttachments,
       allowedAttachmentTypesRaw,
-      useThinking
+      useThinking,
+      enableImageGeneration
     }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(config))
-  }, [agentId, publishableKey, apiKey, apiBaseUrl, chatName, buttonText, primaryColor, agentImage, quickQuestions, welcomeMessage, welcomeImage, theme, position, enableAttachments, maxAttachmentSizeMB, maxAttachments, allowedAttachmentTypesRaw, useThinking])
+  }, [agentId, publishableKey, apiKey, apiBaseUrl, chatName, buttonText, primaryColor, agentImage, quickQuestions, welcomeMessage, welcomeImage, theme, position, enableAttachments, maxAttachmentSizeMB, maxAttachments, allowedAttachmentTypesRaw, useThinking, enableImageGeneration])
 
   // State for dynamic testing
   const [initialMessage, setInitialMessage] = useState("Hi")
@@ -542,6 +545,39 @@ function DemoApp() {
               paddingTop: '18px',
             }}
           >
+            <h4 style={{ margin: '0 0 8px 0' }}>Image generation (client flag)</h4>
+            <p style={{ fontSize: '13px', color: '#666', margin: '0 0 12px 0' }}>
+              Optional embed setting for future UI. The API only allows image generation when your publishable key has{' '}
+              <code>allow_image_generation: true</code> (set via dashboard API); this checkbox does not bypass that.
+            </p>
+            <label
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                cursor: 'pointer',
+                fontWeight: 'bold',
+              }}
+            >
+              <input
+                type="checkbox"
+                checked={enableImageGeneration}
+                onChange={(e) => {
+                  setEnableImageGeneration(e.target.checked)
+                  if (widgetsMounted) setTestKey((k) => k + 1)
+                }}
+              />
+              enableImageGeneration (client affordance; server enforces on publishable key)
+            </label>
+          </div>
+
+          <div
+            style={{
+              borderTop: '1px solid #e8e8e8',
+              marginTop: '18px',
+              paddingTop: '18px',
+            }}
+          >
             <h4 style={{ margin: '0 0 8px 0' }}>Attachments</h4>
             <p style={{ fontSize: '13px', color: '#666', margin: '0 0 14px 0' }}>
               Uploads use <strong>POST /widget/attachments</strong> with your publishable key. Without a key, the
@@ -900,7 +936,9 @@ function DemoApp() {
           <strong>Active Settings:</strong><br />
           Message: "{activeMessage}"<br />
           Context: "{activeContext}"<br /><br />
-          <strong>Thinking:</strong> {useThinking ? 'on (use_thinking: true)' : 'off'}<br /><br />
+          <strong>Thinking:</strong> {useThinking ? 'on (use_thinking: true)' : 'off'}<br />
+          <strong>enableImageGeneration:</strong> {enableImageGeneration ? 'on' : 'off'}
+          <br /><br />
           <strong>Attachment settings (saved with Configuration):</strong><br />
           Enabled: {enableAttachments ? 'yes' : 'no'} · Max size: {maxAttachmentSizeMB} MB · Max files:{' '}
           {maxAttachments}
@@ -1003,6 +1041,7 @@ function DemoApp() {
               console.error('❌ Floating chat error:', error)
             }}
             useThinking={useThinking}
+            enableImageGeneration={enableImageGeneration}
             {...attachmentProps}
           />
 
@@ -1171,6 +1210,7 @@ function DemoApp() {
                   console.error('❌ Embedded chat error:', error)
                 }}
                 useThinking={useThinking}
+                enableImageGeneration={enableImageGeneration}
                 {...attachmentProps}
               />
             </div>

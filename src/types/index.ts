@@ -110,6 +110,12 @@ export interface OrdifyConfig {
    * the thinking model path (slower, deeper). Default is false (standard path).
    */
   useThinking?: boolean
+  /**
+   * Client-side affordance for image-generation UI (if added later). Default false.
+   * The API enforces image generation per publishable key (`allow_image_generation`);
+   * changing this prop alone does not bypass server rules.
+   */
+  enableImageGeneration?: boolean
 }
 
 export interface UseOrdifyChatReturn {
