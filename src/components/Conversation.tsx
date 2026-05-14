@@ -51,18 +51,6 @@ const StyledStickToBottom = styled(StickToBottom)<{ $surfaceTheme: 'light' | 'da
     background-color: rgba(100, 116, 139, 0.55);
   }
 
-  @media (prefers-color-scheme: dark) {
-    scrollbar-color: rgba(71, 85, 105, 0.75) transparent;
-
-    &::-webkit-scrollbar-thumb {
-      background-color: rgba(71, 85, 105, 0.65);
-    }
-
-    &::-webkit-scrollbar-thumb:hover {
-      background-color: rgba(100, 116, 139, 0.75);
-    }
-  }
-
   [data-theme='dark'] & {
     scrollbar-color: rgba(71, 85, 105, 0.75) transparent;
 
@@ -109,7 +97,7 @@ const ScrollButton = styled.button`
     height: 16px;
   }
 
-  @media (prefers-color-scheme: dark) {
+  [data-theme='dark'] & {
     background: #1f2937;
     border-color: #374151;
     color: #9ca3af;
