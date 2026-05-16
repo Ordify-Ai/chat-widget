@@ -20,7 +20,7 @@ import {
   ComposerToolbar,
   ErrorMessage,
   ComposerSendButton,
-  LoadingDots
+  LoadingDots,
 } from './styled/ChatComponents'
 
 interface EmbeddedChatProps {
@@ -36,7 +36,7 @@ export function EmbeddedChat({ config, chat }: EmbeddedChatProps) {
     exportMessagePdf,
     isLoading,
     error,
-    hasSessionStarted
+    hasSessionStarted,
   } = chat
   const [inputValue, setInputValue] = React.useState('')
   const [isDarkMode, setIsDarkMode] = React.useState(false)
@@ -53,7 +53,7 @@ export function EmbeddedChat({ config, chat }: EmbeddedChatProps) {
     clearStaged,
     maxFiles,
     maxBytes,
-    allowed
+    allowed,
   } = useWidgetAttachmentStaging(config, uploadAttachment)
 
   const getThemeValue = () => {
@@ -82,7 +82,11 @@ export function EmbeddedChat({ config, chat }: EmbeddedChatProps) {
     const trimmed = inputValue.trim()
     if ((!trimmed && stagedAttachments.length === 0) || isLoading) return
 
-    await sendMessage(trimmed, undefined, stagedAttachments.length ? stagedAttachments : undefined)
+    await sendMessage(
+      trimmed,
+      undefined,
+      stagedAttachments.length ? stagedAttachments : undefined
+    )
     setInputValue('')
     clearStaged()
 
@@ -106,14 +110,14 @@ export function EmbeddedChat({ config, chat }: EmbeddedChatProps) {
         minHeight: 0,
         display: 'flex',
         flexDirection: 'column' as const,
-        borderRadius: '8px'
+        borderRadius: '8px',
       }
     }
     return {
       height: config.height,
       display: 'flex',
       flexDirection: 'column' as const,
-      borderRadius: '8px'
+      borderRadius: '8px',
     }
   }, [config.height])
 
@@ -135,7 +139,9 @@ export function EmbeddedChat({ config, chat }: EmbeddedChatProps) {
       data-theme={getThemeValue()}
       style={{
         ...heightStyle,
-        ...(config.backgroundColor ? { backgroundColor: config.backgroundColor } : {}),
+        ...(config.backgroundColor
+          ? { backgroundColor: config.backgroundColor }
+          : {}),
         ...(config.textColor ? { color: config.textColor } : {}),
         ...(config.borderRadius != null && config.borderRadius !== ''
           ? { borderRadius: config.borderRadius }
@@ -143,7 +149,9 @@ export function EmbeddedChat({ config, chat }: EmbeddedChatProps) {
       }}
     >
       {/* Welcome screen or chat messages */}
-      {config.quickQuestions && config.quickQuestions.length > 0 && !hasSessionStarted ? (
+      {config.quickQuestions &&
+      config.quickQuestions.length > 0 &&
+      !hasSessionStarted ? (
         <WelcomeScreen
           config={config}
           onQuestionClick={async (question) => {
@@ -161,21 +169,22 @@ export function EmbeddedChat({ config, chat }: EmbeddedChatProps) {
             onDrop={onDrop}
           >
             <ConversationContent>
-              {messages.map(message => (
+              {messages.map((message) => (
                 <div
                   key={message.id}
                   style={{
                     display: 'flex',
                     marginBottom: '16px',
-                    justifyContent: message.role === 'user' ? 'flex-end' : 'flex-start',
+                    justifyContent:
+                      message.role === 'user' ? 'flex-end' : 'flex-start',
                     alignItems: 'flex-start',
-                    gap: '8px'
+                    gap: '8px',
                   }}
                 >
                   {message.role === 'assistant' && config.agentImage && (
                     <AgentAvatar
                       src={config.agentImage}
-                      alt={config.chatName || "Agent"}
+                      alt={config.chatName || 'Agent'}
                       $size="28px"
                     />
                   )}
@@ -185,13 +194,17 @@ export function EmbeddedChat({ config, chat }: EmbeddedChatProps) {
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'flex-start',
-                        maxWidth: '80%'
+                        maxWidth: '80%',
                       }}
                     >
                       <ChatMessage $isUser={false}>
                         <AssistantMessageContent message={message} />
                       </ChatMessage>
-                      {shouldShowAssistantActions(message, messages, isLoading) && (
+                      {shouldShowAssistantActions(
+                        message,
+                        messages,
+                        isLoading
+                      ) && (
                         <AssistantMessageActions
                           content={message.content}
                           disabled={isLoading}
@@ -202,9 +215,14 @@ export function EmbeddedChat({ config, chat }: EmbeddedChatProps) {
                   ) : (
                     <ChatMessage $isUser={true}>
                       <>
-                        {message.attachments && message.attachments.length > 0 && (
-                          <AttachmentChips attachments={message.attachments} readOnly />
-                        )}
+                        {message.attachments &&
+                          message.attachments.length > 0 && (
+                            <AttachmentChips
+                              attachments={message.attachments}
+                              readOnly
+                              tone="onPrimary"
+                            />
+                          )}
                         {message.content ? message.content : null}
                       </>
                     </ChatMessage>
@@ -212,42 +230,56 @@ export function EmbeddedChat({ config, chat }: EmbeddedChatProps) {
                 </div>
               ))}
 
-          {isLoading && (
-            <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start', gap: '8px', marginBottom: '16px' }}>
-              {config.agentImage && (
-                <AgentAvatar
-                  src={config.agentImage}
-                  alt={config.chatName || "Agent"}
-                  $size="28px"
-                />
+              {isLoading && (
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'flex-start',
+                    alignItems: 'flex-start',
+                    gap: '8px',
+                    marginBottom: '16px',
+                  }}
+                >
+                  {config.agentImage && (
+                    <AgentAvatar
+                      src={config.agentImage}
+                      alt={config.chatName || 'Agent'}
+                      $size="28px"
+                    />
+                  )}
+                  <ChatMessage $isUser={false}>
+                    <LoadingDots>
+                      <div className="dot"></div>
+                      <div className="dot"></div>
+                      <div className="dot"></div>
+                    </LoadingDots>
+                  </ChatMessage>
+                </div>
               )}
-              <ChatMessage $isUser={false}>
-                <LoadingDots>
-                  <div className="dot"></div>
-                  <div className="dot"></div>
-                  <div className="dot"></div>
-                </LoadingDots>
-              </ChatMessage>
-            </div>
-          )}
 
-              {error && (
-                <ErrorMessage>
-                  {error}
-                </ErrorMessage>
-              )}
+              {error && <ErrorMessage>{error}</ErrorMessage>}
             </ConversationContent>
           </Conversation>
 
           {/* Chat input */}
-          <ChatInput style={{ flexDirection: 'column', alignItems: 'stretch', gap: 0 }}>
-            {(attachmentError || (attachmentsEnabled && stagedAttachments.length > 0)) && (
+          <ChatInput
+            style={{ flexDirection: 'column', alignItems: 'stretch', gap: 0 }}
+          >
+            {(attachmentError ||
+              (attachmentsEnabled && stagedAttachments.length > 0)) && (
               <div style={{ paddingBottom: 8 }}>
                 {attachmentError && (
-                  <div style={{ fontSize: 12, color: '#dc2626', marginBottom: 4 }}>{attachmentError}</div>
+                  <div
+                    style={{ fontSize: 12, color: '#dc2626', marginBottom: 4 }}
+                  >
+                    {attachmentError}
+                  </div>
                 )}
                 {attachmentsEnabled && stagedAttachments.length > 0 && (
-                  <AttachmentChips attachments={stagedAttachments} onRemove={removeStaged} />
+                  <AttachmentChips
+                    attachments={stagedAttachments}
+                    onRemove={removeStaged}
+                  />
                 )}
               </div>
             )}
@@ -263,7 +295,15 @@ export function EmbeddedChat({ config, chat }: EmbeddedChatProps) {
                   disabled={isLoading}
                 />
                 <ComposerToolbar>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, minWidth: 0 }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 8,
+                      flex: 1,
+                      minWidth: 0,
+                    }}
+                  >
                     {attachmentsEnabled && (
                       <AttachmentPicker
                         integrated
@@ -281,7 +321,10 @@ export function EmbeddedChat({ config, chat }: EmbeddedChatProps) {
                   <ComposerSendButton
                     type="button"
                     onClick={handleSendMessage}
-                    disabled={isLoading || (!inputValue.trim() && stagedAttachments.length === 0)}
+                    disabled={
+                      isLoading ||
+                      (!inputValue.trim() && stagedAttachments.length === 0)
+                    }
                     aria-label="Send message"
                   >
                     <SendIcon size={13} />

@@ -24,7 +24,7 @@ import {
   FloatingButton,
   ComposerSendButton,
   LoadingDots,
-  ResizeHandle as StyledResizeHandle
+  ResizeHandle as StyledResizeHandle,
 } from './styled/ChatComponents'
 
 interface FloatingChatProps {
@@ -42,10 +42,12 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
     error,
     isOpen,
     setIsOpen,
-    hasSessionStarted
+    hasSessionStarted,
   } = chat
   const [inputValue, setInputValue] = React.useState('')
-  const [chatHeight, setChatHeight] = React.useState<number | string>(config.height || 600)
+  const [chatHeight, setChatHeight] = React.useState<number | string>(
+    config.height || 600
+  )
   const [isDarkMode, setIsDarkMode] = React.useState(false)
   const inputRef = React.useRef<HTMLTextAreaElement>(null)
 
@@ -60,7 +62,7 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
     clearStaged,
     maxFiles,
     maxBytes,
-    allowed
+    allowed,
   } = useWidgetAttachmentStaging(config, uploadAttachment)
 
   const getThemeValue = () => {
@@ -74,11 +76,11 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
       const checkDarkMode = () => {
         setIsDarkMode(window.matchMedia('(prefers-color-scheme: dark)').matches)
       }
-      
+
       checkDarkMode()
       const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
       mediaQuery.addEventListener('change', checkDarkMode)
-      
+
       return () => mediaQuery.removeEventListener('change', checkDarkMode)
     } else {
       setIsDarkMode(config.theme === 'dark')
@@ -89,7 +91,11 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
     const trimmed = inputValue.trim()
     if ((!trimmed && stagedAttachments.length === 0) || isLoading) return
 
-    await sendMessage(trimmed, undefined, stagedAttachments.length ? stagedAttachments : undefined)
+    await sendMessage(
+      trimmed,
+      undefined,
+      stagedAttachments.length ? stagedAttachments : undefined
+    )
     setInputValue('')
     clearStaged()
 
@@ -131,9 +137,7 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
         <div className="icon-container">
           <MessageSquareIcon size={16} />
         </div>
-        <span>
-          {config.buttonText || config.chatName || "AI Chat"}
-        </span>
+        <span>{config.buttonText || config.chatName || 'AI Chat'}</span>
       </FloatingButton>
     )
   }
@@ -144,9 +148,11 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
       data-theme={getThemeValue()}
       style={{
         height: chatHeight,
-        ...(config.backgroundColor ? { backgroundColor: config.backgroundColor } : {}),
+        ...(config.backgroundColor
+          ? { backgroundColor: config.backgroundColor }
+          : {}),
         ...(config.textColor ? { color: config.textColor } : {}),
-        ...config.chatWindowStyle
+        ...config.chatWindowStyle,
       }}
     >
       {/* Resize handle at top */}
@@ -156,7 +162,8 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
           onMouseDown={(e) => {
             e.preventDefault()
             const startY = e.clientY
-            const startHeight = typeof chatHeight === 'number' ? chatHeight : 600
+            const startHeight =
+              typeof chatHeight === 'number' ? chatHeight : 600
 
             const handleMouseMove = (e: MouseEvent) => {
               const deltaY = e.clientY - startY
@@ -182,12 +189,18 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
           chatName={config.chatName}
           onClose={() => setIsOpen(false)}
           primaryColor={config.primaryColor}
-          showWelcomeScreen={config.quickQuestions && config.quickQuestions.length > 0 && !hasSessionStarted}
+          showWelcomeScreen={
+            config.quickQuestions &&
+            config.quickQuestions.length > 0 &&
+            !hasSessionStarted
+          }
         />
       )}
 
       {/* Welcome screen or chat messages */}
-      {config.quickQuestions && config.quickQuestions.length > 0 && !hasSessionStarted ? (
+      {config.quickQuestions &&
+      config.quickQuestions.length > 0 &&
+      !hasSessionStarted ? (
         <WelcomeScreen
           config={config}
           onQuestionClick={async (question) => {
@@ -198,23 +211,28 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
         />
       ) : (
         <>
-          <Conversation surfaceTheme={getThemeValue()} onDragOver={onDragOver} onDrop={onDrop}>
+          <Conversation
+            surfaceTheme={getThemeValue()}
+            onDragOver={onDragOver}
+            onDrop={onDrop}
+          >
             <ConversationContent>
-              {messages.map(message => (
+              {messages.map((message) => (
                 <div
                   key={message.id}
                   style={{
                     display: 'flex',
                     marginBottom: '16px',
-                    justifyContent: message.role === 'user' ? 'flex-end' : 'flex-start',
+                    justifyContent:
+                      message.role === 'user' ? 'flex-end' : 'flex-start',
                     alignItems: 'flex-start',
-                    gap: '8px'
+                    gap: '8px',
                   }}
                 >
                   {message.role === 'assistant' && config.agentImage && (
                     <AgentAvatar
                       src={config.agentImage}
-                      alt={config.chatName || "Agent"}
+                      alt={config.chatName || 'Agent'}
                       $size="28px"
                     />
                   )}
@@ -224,13 +242,17 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'flex-start',
-                        maxWidth: '80%'
+                        maxWidth: '80%',
                       }}
                     >
                       <ChatMessage $isUser={false}>
                         <AssistantMessageContent message={message} />
                       </ChatMessage>
-                      {shouldShowAssistantActions(message, messages, isLoading) && (
+                      {shouldShowAssistantActions(
+                        message,
+                        messages,
+                        isLoading
+                      ) && (
                         <AssistantMessageActions
                           content={message.content}
                           disabled={isLoading}
@@ -241,9 +263,14 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
                   ) : (
                     <ChatMessage $isUser={true}>
                       <>
-                        {message.attachments && message.attachments.length > 0 && (
-                          <AttachmentChips attachments={message.attachments} readOnly />
-                        )}
+                        {message.attachments &&
+                          message.attachments.length > 0 && (
+                            <AttachmentChips
+                              attachments={message.attachments}
+                              readOnly
+                              tone="onPrimary"
+                            />
+                          )}
                         {message.content ? message.content : null}
                       </>
                     </ChatMessage>
@@ -252,15 +279,23 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
               ))}
 
               {isLoading && (
-                <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start', gap: '8px', marginBottom: '16px' }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'flex-start',
+                    alignItems: 'flex-start',
+                    gap: '8px',
+                    marginBottom: '16px',
+                  }}
+                >
                   {config.agentImage && (
                     <AgentAvatar
                       src={config.agentImage}
-                      alt={config.chatName || "Agent"}
+                      alt={config.chatName || 'Agent'}
                       $size="28px"
                     />
                   )}
-                   <ChatMessage $isUser={false}>
+                  <ChatMessage $isUser={false}>
                     <LoadingDots>
                       <div className="dot"></div>
                       <div className="dot"></div>
@@ -270,23 +305,29 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
                 </div>
               )}
 
-              {error && (
-                <ErrorMessage>
-                  {error}
-                </ErrorMessage>
-              )}
+              {error && <ErrorMessage>{error}</ErrorMessage>}
             </ConversationContent>
           </Conversation>
 
           {/* Chat input - Full width */}
-          <ChatInput style={{ flexDirection: 'column', alignItems: 'stretch', gap: 0 }}>
-            {(attachmentError || (attachmentsEnabled && stagedAttachments.length > 0)) && (
+          <ChatInput
+            style={{ flexDirection: 'column', alignItems: 'stretch', gap: 0 }}
+          >
+            {(attachmentError ||
+              (attachmentsEnabled && stagedAttachments.length > 0)) && (
               <div style={{ paddingBottom: 8 }}>
                 {attachmentError && (
-                  <div style={{ fontSize: 12, color: '#dc2626', marginBottom: 4 }}>{attachmentError}</div>
+                  <div
+                    style={{ fontSize: 12, color: '#dc2626', marginBottom: 4 }}
+                  >
+                    {attachmentError}
+                  </div>
                 )}
                 {attachmentsEnabled && stagedAttachments.length > 0 && (
-                  <AttachmentChips attachments={stagedAttachments} onRemove={removeStaged} />
+                  <AttachmentChips
+                    attachments={stagedAttachments}
+                    onRemove={removeStaged}
+                  />
                 )}
               </div>
             )}
@@ -302,7 +343,15 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
                   disabled={isLoading}
                 />
                 <ComposerToolbar>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, minWidth: 0 }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 8,
+                      flex: 1,
+                      minWidth: 0,
+                    }}
+                  >
                     {attachmentsEnabled && (
                       <AttachmentPicker
                         integrated
@@ -320,7 +369,10 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
                   <ComposerSendButton
                     type="button"
                     onClick={handleSendMessage}
-                    disabled={isLoading || (!inputValue.trim() && stagedAttachments.length === 0)}
+                    disabled={
+                      isLoading ||
+                      (!inputValue.trim() && stagedAttachments.length === 0)
+                    }
                     aria-label="Send message"
                   >
                     <SendIcon size={13} />
