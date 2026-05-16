@@ -52,6 +52,30 @@ export function InlineChat({ config, chat }: InlineChatProps) {
     allowed,
   } = useWidgetAttachmentStaging(config, uploadAttachment)
 
+  const [isDarkMode, setIsDarkMode] = React.useState(false)
+
+  const getThemeValue = () => {
+    if (config.theme === 'dark') return 'dark'
+    if (config.theme === 'light') return 'light'
+    return isDarkMode ? 'dark' : 'light'
+  }
+
+  React.useEffect(() => {
+    if (config.theme === 'auto' || !config.theme) {
+      const checkDarkMode = () => {
+        setIsDarkMode(window.matchMedia('(prefers-color-scheme: dark)').matches)
+      }
+
+      checkDarkMode()
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+      mediaQuery.addEventListener('change', checkDarkMode)
+
+      return () => mediaQuery.removeEventListener('change', checkDarkMode)
+    } else {
+      setIsDarkMode(config.theme === 'dark')
+    }
+  }, [config.theme])
+
   const handleSendMessage = async () => {
     const trimmed = inputValue.trim()
     if ((!trimmed && stagedAttachments.length === 0) || isLoading) return
@@ -92,13 +116,11 @@ export function InlineChat({ config, chat }: InlineChatProps) {
 
   return (
     <ChatWidget
-      data-theme="light"
+      data-theme={getThemeValue()}
       style={{
         height: config.height,
         display: 'flex',
         flexDirection: 'column',
-        backgroundColor: 'white',
-        border: '1px solid #e5e7eb',
         borderRadius: '8px',
       }}
     >
@@ -118,7 +140,7 @@ export function InlineChat({ config, chat }: InlineChatProps) {
         <>
           <Conversation
             style={{ flex: 1 }}
-            surfaceTheme="light"
+            surfaceTheme={getThemeValue()}
             onDragOver={onDragOver}
             onDrop={onDrop}
           >

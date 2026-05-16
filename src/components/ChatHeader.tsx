@@ -34,22 +34,6 @@ const HeaderContainer = styled.div<{ $primaryColor?: string; $showWelcomeScreen?
   border-bottom: none;
   transition: background-color 0.3s ease, color 0.3s ease;
 
-  @media (prefers-color-scheme: dark) {
-    background: ${props => {
-      if (props.$showWelcomeScreen && props.$primaryColor) {
-        return props.$primaryColor;
-      }
-      return '#1f2937';
-    }};
-    color: ${props => {
-      if (props.$showWelcomeScreen && props.$primaryColor) {
-        return 'white';
-      }
-      return '#f9fafb';
-    }};
-    border-bottom: none;
-  }
-  
   [data-theme="dark"] & {
     background: ${props => {
       if (props.$showWelcomeScreen && props.$primaryColor) {

@@ -29,13 +29,6 @@ export const ChatWidget = styled.div`
     appearance: none;
   }
   
-  /* Try both media query approaches */
-  @media (prefers-color-scheme: dark) {
-    background-color: #1f2937;
-    border-color: #374151;
-  }
-  
-  /* Alternative approach using data attribute */
   &[data-theme="dark"] {
     background-color: #1f2937;
     border-color: #374151;
@@ -70,18 +63,6 @@ export const ChatMessage = styled.div<{ $isUser: boolean }>`
     color: inherit;
   }
   
-  /* Dark mode support - Media query */
-  @media (prefers-color-scheme: dark) {
-    background-color: ${props => props.$isUser ? '#3b82f6' : 'transparent'};
-    color: ${props => props.$isUser ? '#ffffff' : '#e5e7eb'};
-    
-    strong, b {
-      color: ${props => props.$isUser ? '#ffffff' : '#ffffff'};
-      font-weight: 700;
-    }
-  }
-  
-  /* Dark mode support - Data attribute (for ChatWindow/ChatWidget parents) */
   [data-theme="dark"] & {
     background-color: ${props => props.$isUser ? '#3b82f6' : 'transparent'};
     color: ${props => props.$isUser ? '#ffffff' : '#e5e7eb'};
@@ -119,15 +100,6 @@ export const ComposerShell = styled.div`
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   }
 
-  @media (prefers-color-scheme: dark) {
-    background-color: #18181b;
-    border-color: rgba(255, 255, 255, 0.1);
-
-    &:focus-within {
-      border-color: rgba(255, 255, 255, 0.3);
-    }
-  }
-
   [data-theme='dark'] & {
     background-color: #18181b;
     border-color: rgba(255, 255, 255, 0.1);
@@ -147,11 +119,6 @@ export const ComposerToolbar = styled.div`
   padding: 8px 16px 10px;
   border-top: 1px solid #e5e7eb;
   background-color: #f9fafb;
-
-  @media (prefers-color-scheme: dark) {
-    border-top-color: #52525b;
-    background-color: #3f3f46;
-  }
 
   [data-theme='dark'] & {
     border-top-color: #52525b;
@@ -189,14 +156,6 @@ export const ComposerInnerInput = styled.textarea`
     cursor: not-allowed;
   }
 
-  @media (prefers-color-scheme: dark) {
-    color: #f9fafb;
-
-    &::placeholder {
-      color: #9ca3af;
-    }
-  }
-
   [data-theme='dark'] & {
     color: #f9fafb;
 
@@ -214,11 +173,6 @@ export const ChatInput = styled.div`
   padding: 10px 16px 12px;
   border-top: 1px solid #e5e7eb;
   background-color: #ffffff;
-  
-  @media (prefers-color-scheme: dark) {
-    background-color: #1f2937;
-    border-top-color: #374151;
-  }
   
   [data-theme="dark"] & {
     background-color: #1f2937;
@@ -256,21 +210,6 @@ export const ProfessionalInput = styled.textarea`
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
-  }
-  
-  @media (prefers-color-scheme: dark) {
-    background-color: #374151;
-    color: #f9fafb;
-    border-color: #4b5563;
-    
-    &::placeholder {
-      color: #9ca3af;
-    }
-    
-    &:focus {
-      border-color: #3b82f6;
-      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
-    }
   }
   
   [data-theme="dark"] & {
@@ -336,19 +275,6 @@ export const SendButton = styled.button`
     stroke: currentColor !important;
     fill: none !important;
     visibility: visible !important;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    border-color: #60a5fa;
-    color: #60a5fa;
-    &:hover:not(:disabled) {
-      background: #2563eb;
-      color: white;
-    }
-    &:disabled {
-      border-color: #6b7280;
-      color: #6b7280;
-    }
   }
 
   [data-theme="dark"] & {
@@ -419,26 +345,6 @@ export const ComposerSendButton = styled.button`
     stroke: currentColor !important;
     fill: none !important;
     visibility: visible !important;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    border-color: #60a5fa;
-    color: #60a5fa;
-
-    &:hover:not(:disabled) {
-      background: rgba(96, 165, 250, 0.14);
-      color: #93c5fd;
-      border-color: #93c5fd;
-    }
-
-    &:focus-visible {
-      box-shadow: 0 0 0 2px #18181b, 0 0 0 4px rgba(96, 165, 250, 0.45);
-    }
-
-    &:disabled {
-      border-color: #6b7280;
-      color: #6b7280;
-    }
   }
 
   [data-theme='dark'] & {
@@ -565,11 +471,6 @@ export const ChatWindow = styled.div<{ $position: string }>`
     }
   }}
   
-  @media (prefers-color-scheme: dark) {
-    background: #1f2937;
-    border-color: #374151;
-  }
-  
   &[data-theme="dark"] {
     background: #1f2937;
     border-color: #374151;
@@ -664,20 +565,6 @@ export const Conversation = styled.div`
     background: #94a3b8;
   }
   
-  @media (prefers-color-scheme: dark) {
-    &::-webkit-scrollbar-track {
-      background: #374151;
-    }
-    
-    &::-webkit-scrollbar-thumb {
-      background: #6b7280;
-    }
-    
-    &::-webkit-scrollbar-thumb:hover {
-      background: #9ca3af;
-    }
-  }
-  
   [data-theme="dark"] & {
     &::-webkit-scrollbar-track {
       background: #374151;
@@ -720,7 +607,7 @@ export const LoadingDots = styled.div`
     }
   }
   
-  @media (prefers-color-scheme: dark) {
+  [data-theme="dark"] & {
     .dot {
       background: #9ca3af;
     }
@@ -732,10 +619,6 @@ export const Timestamp = styled.div<{ $isUser: boolean }>`
   font-size: 12px;
   margin-top: 4px;
   color: ${props => props.$isUser ? 'rgba(255, 255, 255, 0.8)' : '#6b7280'};
-  
-  @media (prefers-color-scheme: dark) {
-    color: ${props => props.$isUser ? 'rgba(255, 255, 255, 0.8)' : '#d1d5db'};
-  }
   
   [data-theme="dark"] & {
     color: ${props => props.$isUser ? 'rgba(255, 255, 255, 0.8)' : '#d1d5db'};
@@ -750,7 +633,7 @@ export const ErrorMessage = styled.div`
   padding: 8px;
   margin: 16px 0;
   
-  @media (prefers-color-scheme: dark) {
+  [data-theme="dark"] & {
     color: #f87171;
   }
 `
@@ -773,7 +656,7 @@ export const ResizeHandle = styled.div<{ $position: string }>`
     background: linear-gradient(90deg, #3b82f6 0%, #1d4ed8 50%, #3b82f6 100%);
   }
   
-  @media (prefers-color-scheme: dark) {
+  [data-theme="dark"] & {
     background: linear-gradient(90deg, #374151 0%, #3b82f6 50%, #374151 100%);
     
     &:hover {
@@ -815,15 +698,6 @@ export const WelcomeScreenContainer = styled.div<{ $primaryColor?: string }>`
     return '#ffffff'
   }};
   
-  @media (prefers-color-scheme: dark) {
-    background: ${props => {
-      if (props.$primaryColor) {
-        return `linear-gradient(to bottom, ${props.$primaryColor} 0%, ${props.$primaryColor} 20%, rgba(31, 41, 55, 0.3) 45%, rgba(31, 41, 55, 0.7) 65%, rgba(31, 41, 55, 1) 100%)`
-      }
-      return '#1f2937'
-    }};
-  }
-  
   [data-theme="dark"] & {
     background: ${props => {
       if (props.$primaryColor) {
@@ -850,10 +724,6 @@ export const WelcomeGreeting = styled.div`
   text-align: center;
   color: #111827;
   margin-bottom: 8px;
-  
-  @media (prefers-color-scheme: dark) {
-    color: #f9fafb;
-  }
   
   [data-theme="dark"] & {
     color: #f9fafb;
@@ -917,17 +787,6 @@ export const QuestionButton = styled.button<{ $primaryColor?: string }>`
     cursor: not-allowed;
   }
   
-  @media (prefers-color-scheme: dark) {
-    background-color: #374151;
-    color: #f9fafb;
-    border-color: #4b5563;
-    
-    &:hover:not(:disabled) {
-      background-color: ${props => props.$primaryColor ? `${props.$primaryColor}25` : '#4b5563'};
-      border-color: ${props => props.$primaryColor || '#6b7280'};
-    }
-  }
-  
   [data-theme="dark"] & {
     background-color: #374151;
     color: #f9fafb;
@@ -949,10 +808,6 @@ export const WelcomeInputContainer = styled.div`
   margin-top: auto;
   padding-top: 16px;
   border-top: 1px solid #e5e7eb;
-  
-  @media (prefers-color-scheme: dark) {
-    border-top-color: #374151;
-  }
   
   [data-theme="dark"] & {
     border-top-color: #374151;
