@@ -22,7 +22,7 @@ const ResizeHandleContainer = styled.div<{ $position: 'top' | 'bottom'; $isResiz
     background: #e5e7eb;
   }
 
-  @media (prefers-color-scheme: dark) {
+  [data-theme='dark'] & {
     &:hover {
       background: #4b5563;
     }
@@ -40,7 +40,7 @@ const ResizeHandleIndicator = styled.div<{ $position: 'top' | 'bottom' }>`
   border-radius: 2px;
   ${props => props.$position === 'top' ? 'top: 0;' : 'bottom: 0;'}
 
-  @media (prefers-color-scheme: dark) {
+  [data-theme='dark'] & {
     background: #6b7280;
   }
 `

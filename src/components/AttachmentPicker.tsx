@@ -66,15 +66,6 @@ const IntegratedAttachButton = styled.button`
     cursor: not-allowed;
   }
 
-  @media (prefers-color-scheme: dark) {
-    color: #94a3b8;
-
-    &:hover:not(:disabled) {
-      background: rgba(255, 255, 255, 0.08);
-      color: #e2e8f0;
-    }
-  }
-
   [data-theme='dark'] & {
     color: #94a3b8;
 
