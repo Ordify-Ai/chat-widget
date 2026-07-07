@@ -36,3 +36,38 @@ export function throttle<T extends (...args: any[]) => any>(
     }
   }
 }
+
+export function normalizeMarkdown(content: string): string {
+  if (!content) return content
+
+  const lines = content.split('\n')
+  let inFence = false
+  let fenceChar = ''
+
+  for (let i = 0; i < lines.length; i++) {
+    let line = lines[i]
+
+    const fenceMatch = line.match(/^\s*(`{3,}|~{3,})/)
+    if (fenceMatch) {
+      const char = fenceMatch[1][0]
+      if (!inFence) {
+        inFence = true
+        fenceChar = char
+      } else if (char === fenceChar) {
+        inFence = false
+        fenceChar = ''
+      }
+      continue
+    }
+
+    if (inFence) continue
+
+    line = line.replace(/^(\s{0,3})(#{1,6})([^#\s])/, '$1$2 $3')
+    line = line.replace(/^(\s*)(\d{1,9})\.([^\s\d])/, '$1$2. $3')
+    line = line.replace(/^(\s*)([-+])([A-Za-z])/, '$1$2 $3')
+
+    lines[i] = line
+  }
+
+  return lines.join('\n')
+}

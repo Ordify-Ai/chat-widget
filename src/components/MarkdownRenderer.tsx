@@ -1,6 +1,7 @@
 import Markdown from 'markdown-to-jsx'
 import React from 'react'
 import styled from 'styled-components'
+import { normalizeMarkdown } from '../utils'
 
 const MarkdownContainer = styled.div`
   overflow-wrap: anywhere;
@@ -107,6 +108,7 @@ function MarkdownTable({
 }
 
 export function MarkdownRenderer({ content, className }: MarkdownRendererProps) {
+  const normalizedContent = React.useMemo(() => normalizeMarkdown(content), [content])
   return (
     <MarkdownContainer className={className}>
       <Markdown
@@ -308,7 +310,7 @@ export function MarkdownRenderer({ content, className }: MarkdownRendererProps) 
           }
         }}
       >
-        {content}
+        {normalizedContent}
       </Markdown>
     </MarkdownContainer>
   )
