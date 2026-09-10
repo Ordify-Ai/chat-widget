@@ -69,7 +69,8 @@ export const AssistantMessageColumn = styled.div`
 export const ChatMessage = styled.div<{ $isUser: boolean; $compact?: boolean }>`
   box-sizing: border-box;
   min-width: 0;
-  max-width: ${(props) => (props.$isUser || props.$compact ? '80%' : '100%')};
+  max-width: ${(props) =>
+    props.$isUser || props.$compact ? '80%' : 'calc(100% - 24px)'};
   ${(props) =>
     props.$isUser || props.$compact
       ? ''
