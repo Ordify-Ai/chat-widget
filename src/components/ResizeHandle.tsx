@@ -7,16 +7,20 @@ interface ResizeHandleProps {
   className?: string
 }
 
-const ResizeHandleContainer = styled.div<{ $position: 'top' | 'bottom'; $isResizing: boolean }>`
+const ResizeHandleContainer = styled.div<{
+  $position: 'top' | 'bottom'
+  $isResizing: boolean
+}>`
   position: absolute;
   left: 0;
   right: 0;
   height: 8px;
   cursor: ns-resize;
+  z-index: 2;
   background: transparent;
   transition: background-color 0.2s ease;
-  ${props => props.$position === 'top' ? 'top: 0;' : 'bottom: 0;'}
-  ${props => props.$isResizing ? 'background: #d1d5db;' : ''}
+  ${(props) => (props.$position === 'top' ? 'top: 0;' : 'bottom: 0;')}
+  ${(props) => (props.$isResizing ? 'background: #d1d5db;' : '')}
 
   &:hover {
     background: #e5e7eb;
@@ -26,7 +30,7 @@ const ResizeHandleContainer = styled.div<{ $position: 'top' | 'bottom'; $isResiz
     &:hover {
       background: #4b5563;
     }
-    ${props => props.$isResizing ? 'background: #6b7280;' : ''}
+    ${(props) => (props.$isResizing ? 'background: #6b7280;' : '')}
   }
 `
 
@@ -38,14 +42,18 @@ const ResizeHandleIndicator = styled.div<{ $position: 'top' | 'bottom' }>`
   height: 4px;
   background: #9ca3af;
   border-radius: 2px;
-  ${props => props.$position === 'top' ? 'top: 0;' : 'bottom: 0;'}
+  ${(props) => (props.$position === 'top' ? 'top: 0;' : 'bottom: 0;')}
 
   [data-theme='dark'] & {
     background: #6b7280;
   }
 `
 
-export function ResizeHandle({ onResize, position = 'bottom', className }: ResizeHandleProps) {
+export function ResizeHandle({
+  onResize,
+  position = 'bottom',
+  className,
+}: ResizeHandleProps) {
   const [isResizing, setIsResizing] = React.useState(false)
 
   const handleMouseDown = (e: React.MouseEvent) => {

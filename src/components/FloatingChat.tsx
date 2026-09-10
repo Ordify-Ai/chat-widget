@@ -1,5 +1,6 @@
 import { AssistantMessageActions } from '@/components/AssistantMessageActions'
 import { AssistantMessageContent } from '@/components/AssistantMessageContent'
+import { AssistantTypingBubble } from '@/components/AssistantTypingBubble'
 import { AttachmentChips } from '@/components/AttachmentChips'
 import { AttachmentPicker } from '@/components/AttachmentPicker'
 import { Conversation, ConversationContent } from '@/components/Conversation'
@@ -7,24 +8,33 @@ import { ProfessionalInput } from '@/components/ProfessionalInput'
 import { WelcomeScreen } from '@/components/WelcomeScreen'
 import { useWidgetAttachmentStaging } from '@/hooks/useWidgetAttachmentStaging'
 import { OrdifyConfig, UseOrdifyChatReturn } from '@/types'
-import { shouldShowAssistantActions } from '@/utils/assistantMessageActions'
+import {
+  isStreamingPlaceholder,
+  shouldShowAssistantActions,
+  shouldShowStandaloneTyping,
+} from '@/utils/assistantMessageActions'
 import { filesFromDataTransfer } from '@/utils/attachments'
+import {
+  clampFloatingHeight,
+  resolveFloatingHeight,
+} from '@/utils/widget-layout'
 import { MessageSquareIcon } from './Icons'
+import { ResizeHandle } from './ResizeHandle'
 import { SendIcon } from './SendIcon'
 import React from 'react'
 import { ChatHeader } from './ChatHeader'
 import {
   AgentAvatar,
+  AssistantMessageColumn,
   ChatInput,
   ChatMessage,
   ChatWindow,
+  MessageRow,
   ComposerShell,
   ComposerToolbar,
   ErrorMessage,
   FloatingButton,
   ComposerSendButton,
-  LoadingDots,
-  ResizeHandle as StyledResizeHandle,
 } from './styled/ChatComponents'
 
 interface FloatingChatProps {
@@ -45,11 +55,33 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
     hasSessionStarted,
   } = chat
   const [inputValue, setInputValue] = React.useState('')
-  const [chatHeight, setChatHeight] = React.useState<number | string>(
-    config.height || 600
+  const sizeBounds = React.useMemo(
+    () =>
+      resolveFloatingHeight({
+        height: config.height,
+        minHeight: config.minHeight,
+        maxHeight: config.maxHeight,
+      }),
+    [config.height, config.minHeight, config.maxHeight]
   )
+  const [chatHeight, setChatHeight] = React.useState(sizeBounds.height)
   const [isDarkMode, setIsDarkMode] = React.useState(false)
   const inputRef = React.useRef<HTMLTextAreaElement>(null)
+
+  React.useEffect(() => {
+    const syncToViewport = () => {
+      const next = resolveFloatingHeight({
+        height: config.height,
+        minHeight: config.minHeight,
+        maxHeight: config.maxHeight,
+      })
+      setChatHeight((current) =>
+        clampFloatingHeight(current, next.minHeight, next.maxHeight)
+      )
+    }
+    window.addEventListener('resize', syncToViewport)
+    return () => window.removeEventListener('resize', syncToViewport)
+  }, [config.height, config.minHeight, config.maxHeight])
 
   const {
     enabled: attachmentsEnabled,
@@ -91,15 +123,10 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
     const trimmed = inputValue.trim()
     if ((!trimmed && stagedAttachments.length === 0) || isLoading) return
 
-    await sendMessage(
-      trimmed,
-      undefined,
-      stagedAttachments.length ? stagedAttachments : undefined
-    )
+    const attachments = stagedAttachments.length ? stagedAttachments : undefined
     setInputValue('')
     clearStaged()
-
-    // Auto-focus input after sending
+    void sendMessage(trimmed, undefined, attachments)
     setTimeout(() => {
       inputRef.current?.focus()
     }, 100)
@@ -157,27 +184,16 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
     >
       {/* Resize handle at top */}
       {config.resizable !== false && (
-        <StyledResizeHandle
-          $position="top"
-          onMouseDown={(e) => {
-            e.preventDefault()
-            const startY = e.clientY
-            const startHeight =
-              typeof chatHeight === 'number' ? chatHeight : 600
-
-            const handleMouseMove = (e: MouseEvent) => {
-              const deltaY = e.clientY - startY
-              const newHeight = startHeight - deltaY
-              setChatHeight(Math.max(200, Math.min(600, newHeight)))
-            }
-
-            const handleMouseUp = () => {
-              document.removeEventListener('mousemove', handleMouseMove)
-              document.removeEventListener('mouseup', handleMouseUp)
-            }
-
-            document.addEventListener('mousemove', handleMouseMove)
-            document.addEventListener('mouseup', handleMouseUp)
+        <ResizeHandle
+          position="top"
+          onResize={(deltaY) => {
+            setChatHeight((current) =>
+              clampFloatingHeight(
+                current - deltaY,
+                sizeBounds.minHeight,
+                sizeBounds.maxHeight
+              )
+            )
           }}
         />
       )}
@@ -218,17 +234,7 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
           >
             <ConversationContent>
               {messages.map((message) => (
-                <div
-                  key={message.id}
-                  style={{
-                    display: 'flex',
-                    marginBottom: '16px',
-                    justifyContent:
-                      message.role === 'user' ? 'flex-end' : 'flex-start',
-                    alignItems: 'flex-start',
-                    gap: '8px',
-                  }}
-                >
+                <MessageRow key={message.id} $isUser={message.role === 'user'}>
                   {message.role === 'assistant' && config.agentImage && (
                     <AgentAvatar
                       src={config.agentImage}
@@ -237,17 +243,14 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
                     />
                   )}
                   {message.role === 'assistant' ? (
-                    <div
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'flex-start',
-                        maxWidth: '80%',
-                      }}
-                    >
-                      <ChatMessage $isUser={false}>
-                        <AssistantMessageContent message={message} />
-                      </ChatMessage>
+                    <AssistantMessageColumn>
+                      {isStreamingPlaceholder(message, messages, isLoading) ? (
+                        <AssistantTypingBubble />
+                      ) : (
+                        <ChatMessage $isUser={false}>
+                          <AssistantMessageContent message={message} />
+                        </ChatMessage>
+                      )}
                       {shouldShowAssistantActions(
                         message,
                         messages,
@@ -259,7 +262,7 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
                           onExportPdf={(c) => exportMessagePdf(c)}
                         />
                       )}
-                    </div>
+                    </AssistantMessageColumn>
                   ) : (
                     <ChatMessage $isUser={true}>
                       <>
@@ -275,19 +278,11 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
                       </>
                     </ChatMessage>
                   )}
-                </div>
+                </MessageRow>
               ))}
 
-              {isLoading && (
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'flex-start',
-                    alignItems: 'flex-start',
-                    gap: '8px',
-                    marginBottom: '16px',
-                  }}
-                >
+              {shouldShowStandaloneTyping(messages, isLoading) && (
+                <MessageRow $isUser={false}>
                   {config.agentImage && (
                     <AgentAvatar
                       src={config.agentImage}
@@ -295,14 +290,8 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
                       $size="28px"
                     />
                   )}
-                  <ChatMessage $isUser={false}>
-                    <LoadingDots>
-                      <div className="dot"></div>
-                      <div className="dot"></div>
-                      <div className="dot"></div>
-                    </LoadingDots>
-                  </ChatMessage>
-                </div>
+                  <AssistantTypingBubble />
+                </MessageRow>
               )}
 
               {error && <ErrorMessage>{error}</ErrorMessage>}

@@ -2,7 +2,9 @@ import styled from 'styled-components'
 
 // Base chat widget container
 export const ChatWidget = styled.div`
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
+    Arial, sans-serif;
   background-color: white;
   border: 1px solid #e5e7eb;
   min-height: 0;
@@ -28,56 +30,88 @@ export const ChatWidget = styled.div`
     -webkit-appearance: none;
     appearance: none;
   }
-  
-  &[data-theme="dark"] {
+
+  &[data-theme='dark'] {
     background-color: #1f2937;
     border-color: #374151;
   }
 
   /* Prefer explicit embed theme over OS dark mode so inline/embedded stays readable on colored pages */
-  &[data-theme="light"] {
+  &[data-theme='light'] {
     background-color: #ffffff;
     border-color: #e5e7eb;
     color: #111827;
   }
 `
 
-// Chat message base styles
-export const ChatMessage = styled.div<{ $isUser: boolean }>`
-  max-width: 80%;
+export const MessageRow = styled.div<{ $isUser: boolean }>`
+  display: flex;
+  width: 100%;
+  margin-bottom: 16px;
+  justify-content: ${(props) => (props.$isUser ? 'flex-end' : 'flex-start')};
+  align-items: flex-start;
+  gap: 8px;
+`
+
+export const AssistantMessageColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  flex: 1 1 auto;
+  min-width: 0;
+
+  &:hover [data-message-actions],
+  &:focus-within [data-message-actions] {
+    opacity: 1;
+  }
+`
+
+export const ChatMessage = styled.div<{ $isUser: boolean; $compact?: boolean }>`
+  box-sizing: border-box;
+  min-width: 0;
+  max-width: ${(props) => (props.$isUser || props.$compact ? '80%' : '100%')};
+  ${(props) =>
+    props.$isUser || props.$compact
+      ? ''
+      : `
+    flex: 1 1 auto;
+  `}
   padding: 12px;
   border-radius: 8px;
   font-size: 14px;
   word-break: break-word;
-  margin-left: ${props => props.$isUser ? 'auto' : '0'};
-  margin-right: ${props => props.$isUser ? '0' : 'auto'};
+  margin-left: ${(props) => (props.$isUser ? 'auto' : '0')};
+  margin-right: ${(props) => (props.$isUser ? '0' : 'auto')};
   line-height: 1.5;
-  
+
   /* User message styles - Light mode */
-  background-color: ${props => props.$isUser ? '#3b82f6' : '#f3f4f6'};
-  color: ${props => props.$isUser ? '#ffffff' : '#111827'};
-  
+  background-color: ${(props) => (props.$isUser ? '#3b82f6' : '#f3f4f6')};
+  color: ${(props) => (props.$isUser ? '#ffffff' : '#111827')};
+
   /* Ensure bold text has proper contrast */
-  strong, b {
+  strong,
+  b {
     font-weight: 600;
     color: inherit;
   }
-  
-  [data-theme="dark"] & {
-    background-color: ${props => props.$isUser ? '#3b82f6' : 'transparent'};
-    color: ${props => props.$isUser ? '#ffffff' : '#e5e7eb'};
-    
-    strong, b {
-      color: ${props => props.$isUser ? '#ffffff' : '#ffffff'};
+
+  [data-theme='dark'] & {
+    background-color: ${(props) => (props.$isUser ? '#3b82f6' : 'transparent')};
+    color: ${(props) => (props.$isUser ? '#ffffff' : '#e5e7eb')};
+
+    strong,
+    b {
+      color: ${(props) => (props.$isUser ? '#ffffff' : '#ffffff')};
       font-weight: 700;
     }
   }
 
-  [data-theme="light"] & {
-    background-color: ${props => props.$isUser ? '#3b82f6' : '#f3f4f6'};
-    color: ${props => props.$isUser ? '#ffffff' : '#111827'};
+  [data-theme='light'] & {
+    background-color: ${(props) => (props.$isUser ? '#3b82f6' : '#f3f4f6')};
+    color: ${(props) => (props.$isUser ? '#ffffff' : '#111827')};
 
-    strong, b {
+    strong,
+    b {
       font-weight: 600;
       color: inherit;
     }
@@ -93,7 +127,9 @@ export const ComposerShell = styled.div`
   border-radius: 14px;
   background-color: #ffffff;
   overflow: hidden;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 
   &:focus-within {
     border-color: #9ca3af;
@@ -170,11 +206,12 @@ export const ChatInput = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-shrink: 0;
   padding: 10px 16px 12px;
   border-top: 1px solid #e5e7eb;
   background-color: #ffffff;
-  
-  [data-theme="dark"] & {
+
+  [data-theme='dark'] & {
     background-color: #1f2937;
     border-top-color: #374151;
   }
@@ -197,30 +234,30 @@ export const ProfessionalInput = styled.textarea`
   resize: none;
   outline: none;
   transition: all 0.2s ease;
-  
+
   &::placeholder {
     color: #6b7280;
   }
-  
+
   &:focus {
     border-color: #3b82f6;
     box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
   }
-  
+
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
   }
-  
-  [data-theme="dark"] & {
+
+  [data-theme='dark'] & {
     background-color: #374151;
     color: #f9fafb;
     border-color: #4b5563;
-    
+
     &::placeholder {
       color: #9ca3af;
     }
-    
+
     &:focus {
       border-color: #3b82f6;
       box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
@@ -247,19 +284,19 @@ export const SendButton = styled.button`
   justify-content: center;
   transition: all 0.2s ease;
   flex-shrink: 0;
-  
+
   &:hover:not(:disabled) {
     background: #3b82f6;
     color: white;
   }
-  
+
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
     border-color: #9ca3af;
     color: #9ca3af;
   }
-  
+
   svg {
     width: 16px !important;
     height: 16px !important;
@@ -277,7 +314,7 @@ export const SendButton = styled.button`
     visibility: visible !important;
   }
 
-  [data-theme="dark"] & {
+  [data-theme='dark'] & {
     border-color: #60a5fa;
     color: #60a5fa;
     &:hover:not(:disabled) {
@@ -307,7 +344,10 @@ export const ComposerSendButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease,
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
     box-shadow 0.2s ease;
   flex-shrink: 0;
 
@@ -319,7 +359,9 @@ export const ComposerSendButton = styled.button`
 
   &:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px rgba(59, 130, 246, 0.45);
+    box-shadow:
+      0 0 0 2px #ffffff,
+      0 0 0 4px rgba(59, 130, 246, 0.45);
   }
 
   &:disabled {
@@ -358,7 +400,9 @@ export const ComposerSendButton = styled.button`
     }
 
     &:focus-visible {
-      box-shadow: 0 0 0 2px #18181b, 0 0 0 4px rgba(96, 165, 250, 0.45);
+      box-shadow:
+        0 0 0 2px #18181b,
+        0 0 0 4px rgba(96, 165, 250, 0.45);
     }
 
     &:disabled {
@@ -382,14 +426,17 @@ const darkenColor = (color: string, amount: number = 0.15): string => {
 }
 
 // Floating chat button
-export const FloatingButton = styled.button<{ $position?: string; $primaryColor?: string }>`
+export const FloatingButton = styled.button<{
+  $position?: string
+  $primaryColor?: string
+}>`
   position: fixed;
   z-index: 50;
   height: 48px;
   padding: 0 16px;
   box-sizing: border-box;
   line-height: normal;
-  background: ${props => {
+  background: ${(props) => {
     if (props.$primaryColor) {
       const darker = darkenColor(props.$primaryColor, 0.1)
       return `linear-gradient(135deg, ${props.$primaryColor} 0%, ${darker} 100%)`
@@ -399,7 +446,9 @@ export const FloatingButton = styled.button<{ $position?: string; $primaryColor?
   color: white;
   border: none;
   border-radius: 24px;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -407,9 +456,9 @@ export const FloatingButton = styled.button<{ $position?: string; $primaryColor?
   font-weight: 500;
   font-size: 14px;
   transition: all 0.2s ease;
-  
+
   /* Position based on prop */
-  ${props => {
+  ${(props) => {
     switch (props.$position) {
       case 'bottom-left':
         return 'bottom: 24px; left: 24px;'
@@ -421,19 +470,21 @@ export const FloatingButton = styled.button<{ $position?: string; $primaryColor?
         return 'bottom: 24px; right: 24px;'
     }
   }}
-  
+
   &:hover {
-    background: ${props => {
-    if (props.$primaryColor) {
-      const darker = darkenColor(props.$primaryColor, 0.2)
-      const darkest = darkenColor(props.$primaryColor, 0.3)
-      return `linear-gradient(135deg, ${darker} 0%, ${darkest} 100%)`
-    }
-    return 'linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%)'
-  }};
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    background: ${(props) => {
+      if (props.$primaryColor) {
+        const darker = darkenColor(props.$primaryColor, 0.2)
+        const darkest = darkenColor(props.$primaryColor, 0.3)
+        return `linear-gradient(135deg, ${darker} 0%, ${darkest} 100%)`
+      }
+      return 'linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%)'
+    }};
+    box-shadow:
+      0 20px 25px -5px rgba(0, 0, 0, 0.1),
+      0 10px 10px -5px rgba(0, 0, 0, 0.04);
   }
-  
+
   .icon-container {
     width: 24px;
     height: 24px;
@@ -449,16 +500,21 @@ export const FloatingButton = styled.button<{ $position?: string; $primaryColor?
 export const ChatWindow = styled.div<{ $position: string }>`
   position: fixed;
   z-index: 50;
-  width: 320px;
+  width: 360px;
+  max-height: calc(100dvh - 48px);
+  overflow: hidden;
+  min-height: 0;
   background: white;
   border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  border-radius: 16px;
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
   display: flex;
   flex-direction: column;
-  
+
   /* Position based on prop */
-  ${props => {
+  ${(props) => {
     switch (props.$position) {
       case 'bottom-left':
         return 'bottom: 24px; left: 24px;'
@@ -470,40 +526,40 @@ export const ChatWindow = styled.div<{ $position: string }>`
         return 'bottom: 24px; right: 24px;'
     }
   }}
-  
+
   &[data-theme="dark"] {
     background: #1f2937;
     border-color: #374151;
   }
 
-  &[data-theme="light"] {
+  &[data-theme='light'] {
     background: #ffffff;
     border-color: #e5e7eb;
     color: #111827;
   }
-  
+
   @media (min-width: 640px) {
-    width: 384px;
+    width: 420px;
   }
 `
 
 // Chat header
 export const ChatHeader = styled.div<{ primaryColor?: string }>`
   padding: 12px 16px;
-  background: ${props => props.primaryColor || '#3b82f6'};
+  background: ${(props) => props.primaryColor || '#3b82f6'};
   color: white;
   border-radius: 8px 8px 0 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
   font-weight: 500;
-  
+
   .header-content {
     display: flex;
     align-items: center;
     gap: 8px;
   }
-  
+
   .header-actions {
     display: flex;
     align-items: center;
@@ -527,11 +583,11 @@ export const CloseButton = styled.button`
   justify-content: center;
   border-radius: 4px;
   transition: background-color 0.2s ease;
-  
+
   &:hover {
     background: rgba(255, 255, 255, 0.1);
   }
-  
+
   svg {
     width: 16px;
     height: 16px;
@@ -546,34 +602,34 @@ export const Conversation = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
-  
+
   /* Custom scrollbar */
   &::-webkit-scrollbar {
     width: 6px;
   }
-  
+
   &::-webkit-scrollbar-track {
     background: #f1f5f9;
   }
-  
+
   &::-webkit-scrollbar-thumb {
     background: #cbd5e1;
     border-radius: 3px;
   }
-  
+
   &::-webkit-scrollbar-thumb:hover {
     background: #94a3b8;
   }
-  
-  [data-theme="dark"] & {
+
+  [data-theme='dark'] & {
     &::-webkit-scrollbar-track {
       background: #374151;
     }
-    
+
     &::-webkit-scrollbar-thumb {
       background: #6b7280;
     }
-    
+
     &::-webkit-scrollbar-thumb:hover {
       background: #9ca3af;
     }
@@ -583,31 +639,50 @@ export const Conversation = styled.div`
 // Loading dots
 export const LoadingDots = styled.div`
   display: flex;
-  gap: 4px;
+  gap: 5px;
   align-items: center;
-  
+  min-height: 8px;
+
   .dot {
-    width: 8px;
-    height: 8px;
+    width: 7px;
+    height: 7px;
     background: #6b7280;
     border-radius: 50%;
-    animation: bounce 1.4s ease-in-out infinite both;
-    
-    &:nth-child(1) { animation-delay: -0.32s; }
-    &:nth-child(2) { animation-delay: -0.16s; }
-    &:nth-child(3) { animation-delay: 0s; }
+    opacity: 0.35;
+    animation: typing 1.2s ease-in-out infinite;
+
+    &:nth-child(1) {
+      animation-delay: 0s;
+    }
+    &:nth-child(2) {
+      animation-delay: 0.16s;
+    }
+    &:nth-child(3) {
+      animation-delay: 0.32s;
+    }
   }
-  
-  @keyframes bounce {
-    0%, 80%, 100% {
-      transform: scale(0);
+
+  @keyframes typing {
+    0%,
+    80%,
+    100% {
+      opacity: 0.35;
+      transform: translateY(0);
     }
     40% {
-      transform: scale(1);
+      opacity: 1;
+      transform: translateY(-3px);
     }
   }
-  
-  [data-theme="dark"] & {
+
+  @media (prefers-reduced-motion: reduce) {
+    .dot {
+      animation: none;
+      opacity: 0.7;
+    }
+  }
+
+  [data-theme='dark'] & {
     .dot {
       background: #9ca3af;
     }
@@ -618,10 +693,11 @@ export const LoadingDots = styled.div`
 export const Timestamp = styled.div<{ $isUser: boolean }>`
   font-size: 12px;
   margin-top: 4px;
-  color: ${props => props.$isUser ? 'rgba(255, 255, 255, 0.8)' : '#6b7280'};
-  
-  [data-theme="dark"] & {
-    color: ${props => props.$isUser ? 'rgba(255, 255, 255, 0.8)' : '#d1d5db'};
+  color: ${(props) => (props.$isUser ? 'rgba(255, 255, 255, 0.8)' : '#6b7280')};
+
+  [data-theme='dark'] & {
+    color: ${(props) =>
+      props.$isUser ? 'rgba(255, 255, 255, 0.8)' : '#d1d5db'};
   }
 `
 
@@ -632,8 +708,8 @@ export const ErrorMessage = styled.div`
   text-align: center;
   padding: 8px;
   margin: 16px 0;
-  
-  [data-theme="dark"] & {
+
+  [data-theme='dark'] & {
     color: #f87171;
   }
 `
@@ -641,24 +717,25 @@ export const ErrorMessage = styled.div`
 // Resize handle
 export const ResizeHandle = styled.div<{ $position: string }>`
   position: absolute;
-  ${props => props.$position === 'top' ? 'top: 0;' : 'bottom: 0;'}
+  ${(props) => (props.$position === 'top' ? 'top: 0;' : 'bottom: 0;')}
   left: 0;
   right: 0;
   height: 6px;
   background: linear-gradient(90deg, #e5e7eb 0%, #3b82f6 50%, #e5e7eb 100%);
-  cursor: ${props => props.$position === 'top' ? 'ns-resize' : 'ns-resize'};
-  border-radius: ${props => props.$position === 'top' ? '8px 8px 0 0' : '0 0 8px 8px'};
+  cursor: ${(props) => (props.$position === 'top' ? 'ns-resize' : 'ns-resize')};
+  border-radius: ${(props) =>
+    props.$position === 'top' ? '8px 8px 0 0' : '0 0 8px 8px'};
   opacity: 0.7;
   transition: opacity 0.2s ease;
-  
+
   &:hover {
     opacity: 1;
     background: linear-gradient(90deg, #3b82f6 0%, #1d4ed8 50%, #3b82f6 100%);
   }
-  
-  [data-theme="dark"] & {
+
+  [data-theme='dark'] & {
     background: linear-gradient(90deg, #374151 0%, #3b82f6 50%, #374151 100%);
-    
+
     &:hover {
       background: linear-gradient(90deg, #3b82f6 0%, #1d4ed8 50%, #3b82f6 100%);
     }
@@ -667,8 +744,8 @@ export const ResizeHandle = styled.div<{ $position: string }>`
 
 // Agent avatar
 export const AgentAvatar = styled.img<{ $size?: string }>`
-  width: ${props => props.$size || '32px'};
-  height: ${props => props.$size || '32px'};
+  width: ${(props) => props.$size || '32px'};
+  height: ${(props) => props.$size || '32px'};
   border-radius: 50%;
   object-fit: cover;
   flex-shrink: 0;
@@ -689,17 +766,17 @@ export const WelcomeScreenContainer = styled.div<{ $primaryColor?: string }>`
   overflow-y: auto;
   gap: 20px;
   position: relative;
-  
+
   /* Gradient background - starts with full primary color at top, fades to background color */
-  background: ${props => {
+  background: ${(props) => {
     if (props.$primaryColor) {
       return `linear-gradient(to bottom, ${props.$primaryColor} 0%, ${props.$primaryColor} 20%, rgba(255, 255, 255, 0.3) 45%, rgba(255, 255, 255, 0.7) 65%, rgba(255, 255, 255, 1) 100%)`
     }
     return '#ffffff'
   }};
-  
-  [data-theme="dark"] & {
-    background: ${props => {
+
+  [data-theme='dark'] & {
+    background: ${(props) => {
       if (props.$primaryColor) {
         return `linear-gradient(to bottom, ${props.$primaryColor} 0%, ${props.$primaryColor} 20%, rgba(31, 41, 55, 0.3) 45%, rgba(31, 41, 55, 0.7) 65%, rgba(31, 41, 55, 1) 100%)`
       }
@@ -707,8 +784,8 @@ export const WelcomeScreenContainer = styled.div<{ $primaryColor?: string }>`
     }};
   }
 
-  [data-theme="light"] & {
-    background: ${props => {
+  [data-theme='light'] & {
+    background: ${(props) => {
       if (props.$primaryColor) {
         return `linear-gradient(to bottom, ${props.$primaryColor} 0%, ${props.$primaryColor} 20%, rgba(255, 255, 255, 0.3) 45%, rgba(255, 255, 255, 0.7) 65%, rgba(255, 255, 255, 1) 100%)`
       }
@@ -724,12 +801,12 @@ export const WelcomeGreeting = styled.div`
   text-align: center;
   color: #111827;
   margin-bottom: 8px;
-  
-  [data-theme="dark"] & {
+
+  [data-theme='dark'] & {
     color: #f9fafb;
   }
 
-  [data-theme="light"] & {
+  [data-theme='light'] & {
     color: #111827;
   }
 `
@@ -770,31 +847,33 @@ export const QuestionButton = styled.button<{ $primaryColor?: string }>`
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
-  
+
   &:hover:not(:disabled) {
-    background-color: ${props => props.$primaryColor ? `${props.$primaryColor}15` : '#f3f4f6'};
-    border-color: ${props => props.$primaryColor || '#d1d5db'};
+    background-color: ${(props) =>
+      props.$primaryColor ? `${props.$primaryColor}15` : '#f3f4f6'};
+    border-color: ${(props) => props.$primaryColor || '#d1d5db'};
     transform: translateY(-1px);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
-  
+
   &:active:not(:disabled) {
     transform: translateY(0);
   }
-  
+
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
   }
-  
-  [data-theme="dark"] & {
+
+  [data-theme='dark'] & {
     background-color: #374151;
     color: #f9fafb;
     border-color: #4b5563;
-    
+
     &:hover:not(:disabled) {
-      background-color: ${props => props.$primaryColor ? `${props.$primaryColor}25` : '#4b5563'};
-      border-color: ${props => props.$primaryColor || '#6b7280'};
+      background-color: ${(props) =>
+        props.$primaryColor ? `${props.$primaryColor}25` : '#4b5563'};
+      border-color: ${(props) => props.$primaryColor || '#6b7280'};
     }
   }
 `
@@ -808,8 +887,8 @@ export const WelcomeInputContainer = styled.div`
   margin-top: auto;
   padding-top: 16px;
   border-top: 1px solid #e5e7eb;
-  
-  [data-theme="dark"] & {
+
+  [data-theme='dark'] & {
     border-top-color: #374151;
   }
 `

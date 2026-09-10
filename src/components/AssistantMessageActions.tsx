@@ -9,6 +9,12 @@ const ActionRow = styled.div`
   gap: 4px;
   margin-top: 6px;
   padding-left: 2px;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+
+  @media (hover: none) {
+    opacity: 1;
+  }
 `
 
 const IconButton = styled.button`
@@ -54,7 +60,7 @@ export interface AssistantMessageActionsProps {
 export function AssistantMessageActions({
   content,
   disabled,
-  onExportPdf
+  onExportPdf,
 }: AssistantMessageActionsProps) {
   const [pdfBusy, setPdfBusy] = React.useState(false)
 
@@ -72,7 +78,7 @@ export function AssistantMessageActions({
   }
 
   return (
-    <ActionRow>
+    <ActionRow data-message-actions>
       <IconButton
         type="button"
         onClick={handleCopy}

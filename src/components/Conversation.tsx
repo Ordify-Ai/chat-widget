@@ -23,14 +23,17 @@ interface ConversationScrollButtonProps {
   className?: string
 }
 
-const StyledStickToBottom = styled(StickToBottom)<{ $surfaceTheme: 'light' | 'dark' }>`
+const StyledStickToBottom = styled(StickToBottom)<{
+  $surfaceTheme: 'light' | 'dark'
+}>`
   position: relative;
   flex: 1;
   overflow-y: auto;
   scroll-behavior: smooth;
   scrollbar-width: thin;
   scrollbar-color: rgba(148, 163, 184, 0.55) transparent;
-  background-color: ${(p) => (p.$surfaceTheme === 'dark' ? '#1f2937' : '#ffffff')};
+  background-color: ${(p) =>
+    p.$surfaceTheme === 'dark' ? '#1f2937' : '#ffffff'};
 
   &::-webkit-scrollbar {
     width: 8px;
@@ -66,6 +69,8 @@ const StyledStickToBottom = styled(StickToBottom)<{ $surfaceTheme: 'light' | 'da
 
 const StyledStickToBottomContent = styled(StickToBottom.Content)`
   padding: 16px;
+  width: 100%;
+  box-sizing: border-box;
 `
 
 const ScrollButton = styled.button`
@@ -117,7 +122,7 @@ export function Conversation({
   surfaceTheme = 'light',
   onDragOver,
   onDragLeave,
-  onDrop
+  onDrop,
 }: ConversationProps) {
   const surface: 'light' | 'dark' = surfaceTheme === 'dark' ? 'dark' : 'light'
   return (
@@ -137,7 +142,10 @@ export function Conversation({
   )
 }
 
-export function ConversationContent({ className, children }: ConversationContentProps) {
+export function ConversationContent({
+  className,
+  children,
+}: ConversationContentProps) {
   return (
     <StyledStickToBottomContent className={className}>
       {children}
@@ -145,7 +153,9 @@ export function ConversationContent({ className, children }: ConversationContent
   )
 }
 
-export function ConversationScrollButton({ className }: ConversationScrollButtonProps) {
+export function ConversationScrollButton({
+  className,
+}: ConversationScrollButtonProps) {
   const { isAtBottom, scrollToBottom } = useStickToBottomContext()
 
   const handleScrollToBottom = React.useCallback(() => {
