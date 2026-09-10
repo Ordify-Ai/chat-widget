@@ -1,26 +1,32 @@
 import { AssistantMessageActions } from '@/components/AssistantMessageActions'
 import { AssistantMessageContent } from '@/components/AssistantMessageContent'
+import { AssistantTypingBubble } from '@/components/AssistantTypingBubble'
 import { AttachmentChips } from '@/components/AttachmentChips'
 import { AttachmentPicker } from '@/components/AttachmentPicker'
 import { ProfessionalInput } from '@/components/ProfessionalInput'
 import { WelcomeScreen } from '@/components/WelcomeScreen'
 import { useWidgetAttachmentStaging } from '@/hooks/useWidgetAttachmentStaging'
 import { OrdifyConfig, UseOrdifyChatReturn } from '@/types'
-import { shouldShowAssistantActions } from '@/utils/assistantMessageActions'
+import {
+  isStreamingPlaceholder,
+  shouldShowAssistantActions,
+  shouldShowStandaloneTyping,
+} from '@/utils/assistantMessageActions'
 import { filesFromDataTransfer } from '@/utils/attachments'
 import { SendIcon } from './SendIcon'
 import React from 'react'
 import { Conversation, ConversationContent } from './Conversation'
 import {
   AgentAvatar,
+  AssistantMessageColumn,
   ChatInput,
   ChatMessage,
   ChatWidget,
+  MessageRow,
   ComposerShell,
   ComposerToolbar,
   ErrorMessage,
   ComposerSendButton,
-  LoadingDots,
 } from './styled/ChatComponents'
 
 interface EmbeddedChatProps {
@@ -82,15 +88,10 @@ export function EmbeddedChat({ config, chat }: EmbeddedChatProps) {
     const trimmed = inputValue.trim()
     if ((!trimmed && stagedAttachments.length === 0) || isLoading) return
 
-    await sendMessage(
-      trimmed,
-      undefined,
-      stagedAttachments.length ? stagedAttachments : undefined
-    )
+    const attachments = stagedAttachments.length ? stagedAttachments : undefined
     setInputValue('')
     clearStaged()
-
-    // Auto-focus input after sending
+    void sendMessage(trimmed, undefined, attachments)
     setTimeout(() => {
       inputRef.current?.focus()
     }, 100)
@@ -170,17 +171,7 @@ export function EmbeddedChat({ config, chat }: EmbeddedChatProps) {
           >
             <ConversationContent>
               {messages.map((message) => (
-                <div
-                  key={message.id}
-                  style={{
-                    display: 'flex',
-                    marginBottom: '16px',
-                    justifyContent:
-                      message.role === 'user' ? 'flex-end' : 'flex-start',
-                    alignItems: 'flex-start',
-                    gap: '8px',
-                  }}
-                >
+                <MessageRow key={message.id} $isUser={message.role === 'user'}>
                   {message.role === 'assistant' && config.agentImage && (
                     <AgentAvatar
                       src={config.agentImage}
@@ -189,17 +180,14 @@ export function EmbeddedChat({ config, chat }: EmbeddedChatProps) {
                     />
                   )}
                   {message.role === 'assistant' ? (
-                    <div
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'flex-start',
-                        maxWidth: '80%',
-                      }}
-                    >
-                      <ChatMessage $isUser={false}>
-                        <AssistantMessageContent message={message} />
-                      </ChatMessage>
+                    <AssistantMessageColumn>
+                      {isStreamingPlaceholder(message, messages, isLoading) ? (
+                        <AssistantTypingBubble />
+                      ) : (
+                        <ChatMessage $isUser={false}>
+                          <AssistantMessageContent message={message} />
+                        </ChatMessage>
+                      )}
                       {shouldShowAssistantActions(
                         message,
                         messages,
@@ -211,7 +199,7 @@ export function EmbeddedChat({ config, chat }: EmbeddedChatProps) {
                           onExportPdf={(c) => exportMessagePdf(c)}
                         />
                       )}
-                    </div>
+                    </AssistantMessageColumn>
                   ) : (
                     <ChatMessage $isUser={true}>
                       <>
@@ -227,19 +215,11 @@ export function EmbeddedChat({ config, chat }: EmbeddedChatProps) {
                       </>
                     </ChatMessage>
                   )}
-                </div>
+                </MessageRow>
               ))}
 
-              {isLoading && (
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'flex-start',
-                    alignItems: 'flex-start',
-                    gap: '8px',
-                    marginBottom: '16px',
-                  }}
-                >
+              {shouldShowStandaloneTyping(messages, isLoading) && (
+                <MessageRow $isUser={false}>
                   {config.agentImage && (
                     <AgentAvatar
                       src={config.agentImage}
@@ -247,14 +227,8 @@ export function EmbeddedChat({ config, chat }: EmbeddedChatProps) {
                       $size="28px"
                     />
                   )}
-                  <ChatMessage $isUser={false}>
-                    <LoadingDots>
-                      <div className="dot"></div>
-                      <div className="dot"></div>
-                      <div className="dot"></div>
-                    </LoadingDots>
-                  </ChatMessage>
-                </div>
+                  <AssistantTypingBubble />
+                </MessageRow>
               )}
 
               {error && <ErrorMessage>{error}</ErrorMessage>}

@@ -13,54 +13,63 @@ interface ChatHeaderProps {
   showWelcomeScreen?: boolean
 }
 
-const HeaderContainer = styled.div<{ $primaryColor?: string; $showWelcomeScreen?: boolean }>`
+const HeaderContainer = styled.div<{
+  $primaryColor?: string
+  $showWelcomeScreen?: boolean
+}>`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-shrink: 0;
   padding: 12px 16px;
-  border-radius: 8px 8px 0 0;
-  background: ${props => {
+  border-radius: 16px 16px 0 0;
+  border-bottom: ${(props) =>
+    props.$showWelcomeScreen ? 'none' : '1px solid #e5e7eb'};
+  background: ${(props) => {
     if (props.$showWelcomeScreen && props.$primaryColor) {
-      return props.$primaryColor;
+      return props.$primaryColor
     }
-    return '#ffffff';
+    return '#ffffff'
   }};
-  color: ${props => {
+  color: ${(props) => {
     if (props.$showWelcomeScreen && props.$primaryColor) {
-      return 'white';
+      return 'white'
     }
-    return '#111827';
+    return '#111827'
   }};
-  border-bottom: none;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 
-  [data-theme="dark"] & {
-    background: ${props => {
+  [data-theme='dark'] & {
+    border-bottom-color: ${(props) =>
+      props.$showWelcomeScreen ? 'transparent' : '#374151'};
+    background: ${(props) => {
       if (props.$showWelcomeScreen && props.$primaryColor) {
-        return props.$primaryColor;
+        return props.$primaryColor
       }
-      return '#1f2937';
+      return '#1f2937'
     }};
-    color: ${props => {
+    color: ${(props) => {
       if (props.$showWelcomeScreen && props.$primaryColor) {
-        return 'white';
+        return 'white'
       }
-      return '#f9fafb';
+      return '#f9fafb'
     }};
   }
-  
-  [data-theme="light"] & {
-    background: ${props => {
+
+  [data-theme='light'] & {
+    background: ${(props) => {
       if (props.$showWelcomeScreen && props.$primaryColor) {
-        return props.$primaryColor;
+        return props.$primaryColor
       }
-      return '#ffffff';
+      return '#ffffff'
     }};
-    color: ${props => {
+    color: ${(props) => {
       if (props.$showWelcomeScreen && props.$primaryColor) {
-        return 'white';
+        return 'white'
       }
-      return '#111827';
+      return '#111827'
     }};
   }
 `
@@ -85,12 +94,17 @@ const StatusDot = styled.div`
   animation: pulse 2s infinite;
 
   @keyframes pulse {
-    0%, 100% {
+    0%,
+    100% {
       opacity: 1;
     }
     50% {
       opacity: 0.5;
     }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
   }
 `
 
@@ -105,20 +119,30 @@ const HeaderActions = styled.div`
   gap: 4px;
 `
 
-const CloseButton = styled.button`
+const CloseButton = styled.button<{ $onBrand?: boolean }>`
   padding: 4px;
   background: transparent;
   border: none;
   color: inherit;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 6px;
   transition: background-color 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: ${(props) =>
+      props.$onBrand ? 'rgba(255, 255, 255, 0.16)' : 'rgba(15, 23, 42, 0.06)'};
+  }
+
+  [data-theme='dark'] & {
+    &:hover {
+      background: ${(props) =>
+        props.$onBrand
+          ? 'rgba(255, 255, 255, 0.16)'
+          : 'rgba(255, 255, 255, 0.08)'};
+    }
   }
 
   svg {
@@ -128,13 +152,13 @@ const CloseButton = styled.button`
 `
 
 export function ChatHeader({
-  chatName = "Chat Assistant",
+  chatName = 'Chat Assistant',
   showCloseButton = true,
   onClose,
   agentImage,
   className,
   primaryColor,
-  showWelcomeScreen = false
+  showWelcomeScreen = false,
 }: ChatHeaderProps) {
   return (
     <HeaderContainer
@@ -146,7 +170,7 @@ export function ChatHeader({
         {agentImage && (
           <AgentAvatar
             src={agentImage}
-            alt={chatName || "Agent"}
+            alt={chatName || 'Agent'}
             $size="32px"
           />
         )}
@@ -161,6 +185,7 @@ export function ChatHeader({
           <CloseButton
             onClick={onClose}
             aria-label="Close"
+            $onBrand={Boolean(showWelcomeScreen && primaryColor)}
           >
             <CloseIcon size={16} />
           </CloseButton>

@@ -9,7 +9,7 @@ import {
   WelcomeQuestionsContainer,
   QuestionButton,
   WelcomeInputContainer,
-  SendButton
+  SendButton,
 } from './styled/ChatComponents'
 
 interface WelcomeScreenProps {
@@ -19,14 +19,20 @@ interface WelcomeScreenProps {
   isLoading: boolean
 }
 
-export function WelcomeScreen({ config, onQuestionClick, onSendMessage, isLoading }: WelcomeScreenProps) {
+export function WelcomeScreen({
+  config,
+  onQuestionClick,
+  onSendMessage,
+  isLoading,
+}: WelcomeScreenProps) {
   const [inputValue, setInputValue] = React.useState('')
   const inputRef = React.useRef<HTMLTextAreaElement>(null)
 
   const handleSendMessage = async () => {
-    if (!inputValue.trim() || isLoading) return
-    await onSendMessage(inputValue.trim())
+    const trimmed = inputValue.trim()
+    if (!trimmed || isLoading) return
     setInputValue('')
+    void onSendMessage(trimmed)
   }
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -36,18 +42,15 @@ export function WelcomeScreen({ config, onQuestionClick, onSendMessage, isLoadin
     }
   }
 
-  const welcomeMessage = config.welcomeMessage || "Hi there 👋 How can we help?"
+  const welcomeMessage = config.welcomeMessage || 'Hi there 👋 How can we help?'
 
   return (
     <WelcomeScreenContainer $primaryColor={config.primaryColor}>
       {config.welcomeImage && (
-        <WelcomeImage
-          src={config.welcomeImage}
-          alt="Welcome"
-        />
+        <WelcomeImage src={config.welcomeImage} alt="Welcome" />
       )}
       <WelcomeGreeting>{welcomeMessage}</WelcomeGreeting>
-      
+
       {config.quickQuestions && config.quickQuestions.length > 0 && (
         <WelcomeQuestionsContainer>
           {config.quickQuestions.map((question, index) => (
@@ -69,7 +72,7 @@ export function WelcomeScreen({ config, onQuestionClick, onSendMessage, isLoadin
           value={inputValue}
           onChange={setInputValue}
           onKeyDown={handleKeyPress}
-          placeholder={config.placeholder || "Type a message..."}
+          placeholder={config.placeholder || 'Type a message...'}
           disabled={isLoading}
         />
         <SendButton
@@ -82,4 +85,3 @@ export function WelcomeScreen({ config, onQuestionClick, onSendMessage, isLoadin
     </WelcomeScreenContainer>
   )
 }
-

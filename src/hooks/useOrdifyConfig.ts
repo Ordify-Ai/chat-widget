@@ -12,13 +12,18 @@ function readOrdifyEnv(name: string): string | undefined {
 export function useOrdifyConfig(config: OrdifyConfig) {
   return useMemo(() => {
     const agentId = config.agentId || readOrdifyEnv('ORDIFY_AGENT_ID')
-    const publishableKey = config.publishableKey || readOrdifyEnv('ORDIFY_PUBLISHABLE_KEY')
+    const publishableKey =
+      config.publishableKey || readOrdifyEnv('ORDIFY_PUBLISHABLE_KEY')
     const apiKey = config.apiKey || readOrdifyEnv('ORDIFY_API_KEY')
     const apiBaseUrl =
-      config.apiBaseUrl || readOrdifyEnv('ORDIFY_API_BASE_URL') || 'https://r.ordify.ai'
+      config.apiBaseUrl ||
+      readOrdifyEnv('ORDIFY_API_BASE_URL') ||
+      'https://r.ordify.ai'
 
     if (!agentId) {
-      throw new Error('Ordify agent ID is required. Provide agentId prop or set ORDIFY_AGENT_ID environment variable.')
+      throw new Error(
+        'Ordify agent ID is required. Provide agentId prop or set ORDIFY_AGENT_ID environment variable.'
+      )
     }
 
     if (!publishableKey && !apiKey) {
@@ -37,6 +42,9 @@ export function useOrdifyConfig(config: OrdifyConfig) {
       theme: config.theme || 'auto',
       placeholder: config.placeholder || 'Type a message...',
       height: config.height || '500px',
+      minHeight: config.minHeight,
+      maxHeight: config.maxHeight,
+      resizable: config.resizable,
       backgroundColor: config.backgroundColor,
       textColor: config.textColor,
       borderRadius: config.borderRadius,
@@ -63,7 +71,7 @@ export function useOrdifyConfig(config: OrdifyConfig) {
       maxAttachments: config.maxAttachments,
       allowedAttachmentTypes: config.allowedAttachmentTypes,
       useThinking: config.useThinking === true,
-      enableImageGeneration: config.enableImageGeneration
+      enableImageGeneration: config.enableImageGeneration,
     }
   }, [config])
 }
