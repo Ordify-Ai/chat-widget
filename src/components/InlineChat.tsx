@@ -7,6 +7,7 @@ import { WelcomeScreen } from '@/components/WelcomeScreen'
 import { useWidgetAttachmentStaging } from '@/hooks/useWidgetAttachmentStaging'
 import { OrdifyConfig, UseOrdifyChatReturn } from '@/types'
 import { filesFromDataTransfer } from '@/utils/attachments'
+import { resolveWidgetTheme } from '@/utils/widget-theme'
 import {
   isStreamingPlaceholder,
   shouldShowStandaloneTyping,
@@ -42,6 +43,7 @@ export function InlineChat({ config, chat }: InlineChatProps) {
   } = chat
   const [inputValue, setInputValue] = React.useState('')
   const inputRef = React.useRef<HTMLTextAreaElement>(null)
+  const theme = resolveWidgetTheme(config.theme)
 
   const {
     enabled: attachmentsEnabled,
@@ -56,30 +58,6 @@ export function InlineChat({ config, chat }: InlineChatProps) {
     maxBytes,
     allowed,
   } = useWidgetAttachmentStaging(config, uploadAttachment)
-
-  const [isDarkMode, setIsDarkMode] = React.useState(false)
-
-  const getThemeValue = () => {
-    if (config.theme === 'dark') return 'dark'
-    if (config.theme === 'light') return 'light'
-    return isDarkMode ? 'dark' : 'light'
-  }
-
-  React.useEffect(() => {
-    if (config.theme === 'auto' || !config.theme) {
-      const checkDarkMode = () => {
-        setIsDarkMode(window.matchMedia('(prefers-color-scheme: dark)').matches)
-      }
-
-      checkDarkMode()
-      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-      mediaQuery.addEventListener('change', checkDarkMode)
-
-      return () => mediaQuery.removeEventListener('change', checkDarkMode)
-    } else {
-      setIsDarkMode(config.theme === 'dark')
-    }
-  }, [config.theme])
 
   const handleSendMessage = async () => {
     const trimmed = inputValue.trim()
@@ -116,7 +94,8 @@ export function InlineChat({ config, chat }: InlineChatProps) {
 
   return (
     <ChatWidget
-      data-theme={getThemeValue()}
+      data-ordify-chat="true"
+      data-theme={theme}
       style={{
         height: config.height,
         display: 'flex',
@@ -140,7 +119,7 @@ export function InlineChat({ config, chat }: InlineChatProps) {
         <>
           <Conversation
             style={{ flex: 1 }}
-            surfaceTheme={getThemeValue()}
+            surfaceTheme={theme}
             onDragOver={onDragOver}
             onDrop={onDrop}
           >

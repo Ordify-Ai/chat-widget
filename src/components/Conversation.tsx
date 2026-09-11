@@ -54,7 +54,7 @@ const StyledStickToBottom = styled(StickToBottom)<{
     background-color: rgba(100, 116, 139, 0.55);
   }
 
-  [data-theme='dark'] & {
+  [data-ordify-chat][data-theme='dark'] & {
     scrollbar-color: rgba(71, 85, 105, 0.75) transparent;
 
     &::-webkit-scrollbar-thumb {
@@ -102,7 +102,7 @@ const ScrollButton = styled.button`
     height: 16px;
   }
 
-  [data-theme='dark'] & {
+  [data-ordify-chat][data-theme='dark'] & {
     background: #1f2937;
     border-color: #374151;
     color: #9ca3af;

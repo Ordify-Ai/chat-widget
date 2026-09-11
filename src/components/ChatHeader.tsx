@@ -41,7 +41,7 @@ const HeaderContainer = styled.div<{
     background-color 0.3s ease,
     color 0.3s ease;
 
-  [data-theme='dark'] & {
+  [data-ordify-chat][data-theme='dark'] & {
     border-bottom-color: ${(props) =>
       props.$showWelcomeScreen ? 'transparent' : '#374151'};
     background: ${(props) => {
@@ -58,7 +58,7 @@ const HeaderContainer = styled.div<{
     }};
   }
 
-  [data-theme='light'] & {
+  [data-ordify-chat][data-theme='light'] & {
     background: ${(props) => {
       if (props.$showWelcomeScreen && props.$primaryColor) {
         return props.$primaryColor
@@ -136,7 +136,7 @@ const CloseButton = styled.button<{ $onBrand?: boolean }>`
       props.$onBrand ? 'rgba(255, 255, 255, 0.16)' : 'rgba(15, 23, 42, 0.06)'};
   }
 
-  [data-theme='dark'] & {
+  [data-ordify-chat][data-theme='dark'] & {
     &:hover {
       background: ${(props) =>
         props.$onBrand

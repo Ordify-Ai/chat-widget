@@ -7,6 +7,7 @@ export const ChatWidget = styled.div`
     Arial, sans-serif;
   background-color: white;
   border: 1px solid #e5e7eb;
+  color-scheme: light;
   min-height: 0;
 
   /* Scoped CSS reset to prevent host page style leakage.
@@ -96,7 +97,7 @@ export const ChatMessage = styled.div<{ $isUser: boolean; $compact?: boolean }>`
     color: inherit;
   }
 
-  [data-theme='dark'] & {
+  [data-ordify-chat][data-theme='dark'] & {
     background-color: ${(props) => (props.$isUser ? '#3b82f6' : 'transparent')};
     color: ${(props) => (props.$isUser ? '#ffffff' : '#e5e7eb')};
 
@@ -107,7 +108,7 @@ export const ChatMessage = styled.div<{ $isUser: boolean; $compact?: boolean }>`
     }
   }
 
-  [data-theme='light'] & {
+  [data-ordify-chat][data-theme='light'] & {
     background-color: ${(props) => (props.$isUser ? '#3b82f6' : '#f3f4f6')};
     color: ${(props) => (props.$isUser ? '#ffffff' : '#111827')};
 
@@ -137,7 +138,7 @@ export const ComposerShell = styled.div`
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   }
 
-  [data-theme='dark'] & {
+  [data-ordify-chat][data-theme='dark'] & {
     background-color: #18181b;
     border-color: rgba(255, 255, 255, 0.1);
 
@@ -157,7 +158,7 @@ export const ComposerToolbar = styled.div`
   border-top: 1px solid #e5e7eb;
   background-color: #f9fafb;
 
-  [data-theme='dark'] & {
+  [data-ordify-chat][data-theme='dark'] & {
     border-top-color: #52525b;
     background-color: #3f3f46;
   }
@@ -193,7 +194,7 @@ export const ComposerInnerInput = styled.textarea`
     cursor: not-allowed;
   }
 
-  [data-theme='dark'] & {
+  [data-ordify-chat][data-theme='dark'] & {
     color: #f9fafb;
 
     &::placeholder {
@@ -212,7 +213,7 @@ export const ChatInput = styled.div`
   border-top: 1px solid #e5e7eb;
   background-color: #ffffff;
 
-  [data-theme='dark'] & {
+  [data-ordify-chat][data-theme='dark'] & {
     background-color: #1f2937;
     border-top-color: #374151;
   }
@@ -250,7 +251,7 @@ export const ProfessionalInput = styled.textarea`
     cursor: not-allowed;
   }
 
-  [data-theme='dark'] & {
+  [data-ordify-chat][data-theme='dark'] & {
     background-color: #374151;
     color: #f9fafb;
     border-color: #4b5563;
@@ -315,7 +316,7 @@ export const SendButton = styled.button`
     visibility: visible !important;
   }
 
-  [data-theme='dark'] & {
+  [data-ordify-chat][data-theme='dark'] & {
     border-color: #60a5fa;
     color: #60a5fa;
     &:hover:not(:disabled) {
@@ -390,7 +391,7 @@ export const ComposerSendButton = styled.button`
     visibility: visible !important;
   }
 
-  [data-theme='dark'] & {
+  [data-ordify-chat][data-theme='dark'] & {
     border-color: #60a5fa;
     color: #60a5fa;
 
@@ -507,12 +508,31 @@ export const ChatWindow = styled.div<{ $position: string }>`
   min-height: 0;
   background: white;
   border: 1px solid #e5e7eb;
+  color-scheme: light;
   border-radius: 16px;
   box-shadow:
     0 20px 25px -5px rgba(0, 0, 0, 0.1),
     0 10px 10px -5px rgba(0, 0, 0, 0.04);
   display: flex;
   flex-direction: column;
+
+  & button,
+  & input,
+  & select {
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: none;
+    box-sizing: border-box;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: normal;
+    line-height: normal;
+    color: inherit;
+    text-shadow: none;
+    -webkit-appearance: none;
+    appearance: none;
+  }
 
   /* Position based on prop */
   ${(props) => {
@@ -622,7 +642,7 @@ export const Conversation = styled.div`
     background: #94a3b8;
   }
 
-  [data-theme='dark'] & {
+  [data-ordify-chat][data-theme='dark'] & {
     &::-webkit-scrollbar-track {
       background: #374151;
     }
@@ -683,7 +703,7 @@ export const LoadingDots = styled.div`
     }
   }
 
-  [data-theme='dark'] & {
+  [data-ordify-chat][data-theme='dark'] & {
     .dot {
       background: #9ca3af;
     }
@@ -696,7 +716,7 @@ export const Timestamp = styled.div<{ $isUser: boolean }>`
   margin-top: 4px;
   color: ${(props) => (props.$isUser ? 'rgba(255, 255, 255, 0.8)' : '#6b7280')};
 
-  [data-theme='dark'] & {
+  [data-ordify-chat][data-theme='dark'] & {
     color: ${(props) =>
       props.$isUser ? 'rgba(255, 255, 255, 0.8)' : '#d1d5db'};
   }
@@ -710,7 +730,7 @@ export const ErrorMessage = styled.div`
   padding: 8px;
   margin: 16px 0;
 
-  [data-theme='dark'] & {
+  [data-ordify-chat][data-theme='dark'] & {
     color: #f87171;
   }
 `
@@ -734,7 +754,7 @@ export const ResizeHandle = styled.div<{ $position: string }>`
     background: linear-gradient(90deg, #3b82f6 0%, #1d4ed8 50%, #3b82f6 100%);
   }
 
-  [data-theme='dark'] & {
+  [data-ordify-chat][data-theme='dark'] & {
     background: linear-gradient(90deg, #374151 0%, #3b82f6 50%, #374151 100%);
 
     &:hover {
@@ -776,7 +796,7 @@ export const WelcomeScreenContainer = styled.div<{ $primaryColor?: string }>`
     return '#ffffff'
   }};
 
-  [data-theme='dark'] & {
+  [data-ordify-chat][data-theme='dark'] & {
     background: ${(props) => {
       if (props.$primaryColor) {
         return `linear-gradient(to bottom, ${props.$primaryColor} 0%, ${props.$primaryColor} 20%, rgba(31, 41, 55, 0.3) 45%, rgba(31, 41, 55, 0.7) 65%, rgba(31, 41, 55, 1) 100%)`
@@ -785,7 +805,7 @@ export const WelcomeScreenContainer = styled.div<{ $primaryColor?: string }>`
     }};
   }
 
-  [data-theme='light'] & {
+  [data-ordify-chat][data-theme='light'] & {
     background: ${(props) => {
       if (props.$primaryColor) {
         return `linear-gradient(to bottom, ${props.$primaryColor} 0%, ${props.$primaryColor} 20%, rgba(255, 255, 255, 0.3) 45%, rgba(255, 255, 255, 0.7) 65%, rgba(255, 255, 255, 1) 100%)`
@@ -803,11 +823,11 @@ export const WelcomeGreeting = styled.div`
   color: #111827;
   margin-bottom: 8px;
 
-  [data-theme='dark'] & {
+  [data-ordify-chat][data-theme='dark'] & {
     color: #f9fafb;
   }
 
-  [data-theme='light'] & {
+  [data-ordify-chat][data-theme='light'] & {
     color: #111827;
   }
 `
@@ -866,7 +886,7 @@ export const QuestionButton = styled.button<{ $primaryColor?: string }>`
     cursor: not-allowed;
   }
 
-  [data-theme='dark'] & {
+  [data-ordify-chat][data-theme='dark'] & {
     background-color: #374151;
     color: #f9fafb;
     border-color: #4b5563;
@@ -889,7 +909,7 @@ export const WelcomeInputContainer = styled.div`
   padding-top: 16px;
   border-top: 1px solid #e5e7eb;
 
-  [data-theme='dark'] & {
+  [data-ordify-chat][data-theme='dark'] & {
     border-top-color: #374151;
   }
 `
