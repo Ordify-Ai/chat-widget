@@ -53,12 +53,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ordify-ai/chat-widget.git"
+    "url": "git+https://github.com/Ordify-Ai/chat-widget.git"
   },
   "bugs": {
-    "url": "https://github.com/ordify-ai/chat-widget/issues"
+    "url": "https://github.com/Ordify-Ai/chat-widget/issues"
   },
-  "homepage": "https://github.com/ordify-ai/chat-widget#readme",
+  "homepage": "https://github.com/Ordify-Ai/chat-widget#readme",
   "unpkg": "dist/ordify-chat-widget.standalone.js",
   "jsdelivr": "dist/ordify-chat-widget.standalone.js",
   "peerDependencies": {
