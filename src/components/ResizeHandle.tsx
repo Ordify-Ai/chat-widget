@@ -26,7 +26,7 @@ const ResizeHandleContainer = styled.div<{
     background: #e5e7eb;
   }
 
-  [data-theme='dark'] & {
+  [data-ordify-chat][data-theme='dark'] & {
     &:hover {
       background: #4b5563;
     }
@@ -44,7 +44,7 @@ const ResizeHandleIndicator = styled.div<{ $position: 'top' | 'bottom' }>`
   border-radius: 2px;
   ${(props) => (props.$position === 'top' ? 'top: 0;' : 'bottom: 0;')}
 
-  [data-theme='dark'] & {
+  [data-ordify-chat][data-theme='dark'] & {
     background: #6b7280;
   }
 `

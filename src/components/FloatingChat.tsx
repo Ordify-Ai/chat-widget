@@ -18,6 +18,7 @@ import {
   clampFloatingHeight,
   resolveFloatingHeight,
 } from '@/utils/widget-layout'
+import { resolveWidgetTheme } from '@/utils/widget-theme'
 import { MessageSquareIcon } from './Icons'
 import { ResizeHandle } from './ResizeHandle'
 import { SendIcon } from './SendIcon'
@@ -65,8 +66,8 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
     [config.height, config.minHeight, config.maxHeight]
   )
   const [chatHeight, setChatHeight] = React.useState(sizeBounds.height)
-  const [isDarkMode, setIsDarkMode] = React.useState(false)
   const inputRef = React.useRef<HTMLTextAreaElement>(null)
+  const theme = resolveWidgetTheme(config.theme)
 
   React.useEffect(() => {
     const syncToViewport = () => {
@@ -96,28 +97,6 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
     maxBytes,
     allowed,
   } = useWidgetAttachmentStaging(config, uploadAttachment)
-
-  const getThemeValue = () => {
-    if (config.theme === 'dark') return 'dark'
-    if (config.theme === 'light') return 'light'
-    return isDarkMode ? 'dark' : 'light'
-  }
-
-  React.useEffect(() => {
-    if (config.theme === 'auto' || !config.theme) {
-      const checkDarkMode = () => {
-        setIsDarkMode(window.matchMedia('(prefers-color-scheme: dark)').matches)
-      }
-
-      checkDarkMode()
-      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-      mediaQuery.addEventListener('change', checkDarkMode)
-
-      return () => mediaQuery.removeEventListener('change', checkDarkMode)
-    } else {
-      setIsDarkMode(config.theme === 'dark')
-    }
-  }, [config.theme])
 
   const handleSendMessage = async () => {
     const trimmed = inputValue.trim()
@@ -172,7 +151,8 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
   return (
     <ChatWindow
       $position={config.position || 'bottom-right'}
-      data-theme={getThemeValue()}
+      data-ordify-chat="true"
+      data-theme={theme}
       style={{
         height: chatHeight,
         ...(config.backgroundColor
@@ -228,7 +208,7 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
       ) : (
         <>
           <Conversation
-            surfaceTheme={getThemeValue()}
+            surfaceTheme={theme}
             onDragOver={onDragOver}
             onDrop={onDrop}
           >

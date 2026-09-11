@@ -39,7 +39,7 @@ export function useOrdifyConfig(config: OrdifyConfig) {
       apiBaseUrl,
       mode: config.mode || 'floating',
       position: config.position || 'bottom-right',
-      theme: config.theme || 'auto',
+      theme: 'light' as const,
       placeholder: config.placeholder || 'Type a message...',
       height: config.height || '500px',
       minHeight: config.minHeight,

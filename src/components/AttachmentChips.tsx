@@ -17,7 +17,7 @@ const defaultChipStyles = css<{ $isImage?: boolean }>`
   color: #374151;
   border: 1px solid #e5e7eb;
 
-  [data-theme='dark'] & {
+  [data-ordify-chat][data-theme='dark'] & {
     color: #e5e7eb;
     border-color: #4b5563;
     background: ${(p) =>

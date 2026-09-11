@@ -1,7 +1,7 @@
 import { AttachmentItem } from '@/types'
 import {
   DEFAULT_WIDGET_ALLOWED_MIMES,
-  validateWidgetAttachmentFile
+  validateWidgetAttachmentFile,
 } from '@/utils/attachments'
 import { Paperclip } from 'lucide-react'
 import React from 'react'
@@ -21,7 +21,10 @@ const IconButton = styled.button`
   color: #374151;
   cursor: pointer;
   flex-shrink: 0;
-  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
 
   &:hover:not(:disabled) {
     background: #f3f4f6;
@@ -33,7 +36,7 @@ const IconButton = styled.button`
     cursor: not-allowed;
   }
 
-  [data-theme='dark'] & {
+  [data-ordify-chat][data-theme='dark'] & {
     background: #374151;
     border-color: #4b5563;
     color: #e5e7eb;
@@ -54,7 +57,9 @@ const IntegratedAttachButton = styled.button`
   color: #64748b;
   cursor: pointer;
   flex-shrink: 0;
-  transition: background 0.2s ease, color 0.2s ease;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
 
   &:hover:not(:disabled) {
     background: rgba(15, 23, 42, 0.06);
@@ -66,7 +71,7 @@ const IntegratedAttachButton = styled.button`
     cursor: not-allowed;
   }
 
-  [data-theme='dark'] & {
+  [data-ordify-chat][data-theme='dark'] & {
     color: #94a3b8;
 
     &:hover:not(:disabled) {
@@ -97,7 +102,7 @@ export function AttachmentPicker({
   currentCount,
   uploadAttachment,
   onUploaded,
-  onError
+  onError,
 }: AttachmentPickerProps) {
   const inputRef = React.useRef<HTMLInputElement>(null)
   const [busy, setBusy] = React.useState(false)
@@ -106,7 +111,7 @@ export function AttachmentPicker({
     () =>
       [
         '.pdf,.docx,.xlsx,.xls,.csv,.txt,.md,.json',
-        'image/png,image/jpeg,image/webp,image/gif'
+        'image/png,image/jpeg,image/webp,image/gif',
       ].join(','),
     []
   )
@@ -122,7 +127,11 @@ export function AttachmentPicker({
           onError?.(`You can attach at most ${maxFiles} files per message.`)
           break
         }
-        const err = validateWidgetAttachmentFile(file, maxFileBytes, allowedMime)
+        const err = validateWidgetAttachmentFile(
+          file,
+          maxFileBytes,
+          allowedMime
+        )
         if (err) {
           onError?.(`${file.name}: ${err}`)
           continue
@@ -140,7 +149,15 @@ export function AttachmentPicker({
         }
       }
     },
-    [allowedMime, currentCount, maxFileBytes, maxFiles, onError, onUploaded, uploadAttachment]
+    [
+      allowedMime,
+      currentCount,
+      maxFileBytes,
+      maxFiles,
+      onError,
+      onUploaded,
+      uploadAttachment,
+    ]
   )
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {

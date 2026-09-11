@@ -13,6 +13,7 @@ import {
   shouldShowStandaloneTyping,
 } from '@/utils/assistantMessageActions'
 import { filesFromDataTransfer } from '@/utils/attachments'
+import { resolveWidgetTheme } from '@/utils/widget-theme'
 import { SendIcon } from './SendIcon'
 import React from 'react'
 import { Conversation, ConversationContent } from './Conversation'
@@ -45,8 +46,8 @@ export function EmbeddedChat({ config, chat }: EmbeddedChatProps) {
     hasSessionStarted,
   } = chat
   const [inputValue, setInputValue] = React.useState('')
-  const [isDarkMode, setIsDarkMode] = React.useState(false)
   const inputRef = React.useRef<HTMLTextAreaElement>(null)
+  const theme = resolveWidgetTheme(config.theme)
 
   const {
     enabled: attachmentsEnabled,
@@ -61,28 +62,6 @@ export function EmbeddedChat({ config, chat }: EmbeddedChatProps) {
     maxBytes,
     allowed,
   } = useWidgetAttachmentStaging(config, uploadAttachment)
-
-  const getThemeValue = () => {
-    if (config.theme === 'dark') return 'dark'
-    if (config.theme === 'light') return 'light'
-    return isDarkMode ? 'dark' : 'light'
-  }
-
-  React.useEffect(() => {
-    if (config.theme === 'auto' || !config.theme) {
-      const checkDarkMode = () => {
-        setIsDarkMode(window.matchMedia('(prefers-color-scheme: dark)').matches)
-      }
-
-      checkDarkMode()
-      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-      mediaQuery.addEventListener('change', checkDarkMode)
-
-      return () => mediaQuery.removeEventListener('change', checkDarkMode)
-    } else {
-      setIsDarkMode(config.theme === 'dark')
-    }
-  }, [config.theme])
 
   const handleSendMessage = async () => {
     const trimmed = inputValue.trim()
@@ -137,7 +116,8 @@ export function EmbeddedChat({ config, chat }: EmbeddedChatProps) {
 
   return (
     <ChatWidget
-      data-theme={getThemeValue()}
+      data-ordify-chat="true"
+      data-theme={theme}
       style={{
         ...heightStyle,
         ...(config.backgroundColor
@@ -165,7 +145,7 @@ export function EmbeddedChat({ config, chat }: EmbeddedChatProps) {
         <>
           <Conversation
             style={{ flex: 1 }}
-            surfaceTheme={getThemeValue()}
+            surfaceTheme={theme}
             onDragOver={onDragOver}
             onDrop={onDrop}
           >

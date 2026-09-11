@@ -41,7 +41,7 @@ const IconButton = styled.button`
     cursor: not-allowed;
   }
 
-  [data-theme='dark'] & {
+  [data-ordify-chat][data-theme='dark'] & {
     color: #9ca3af;
 
     &:hover:not(:disabled) {

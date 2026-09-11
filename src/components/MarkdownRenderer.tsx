@@ -13,28 +13,28 @@ const MarkdownContainer = styled.div`
     margin-bottom: 0 !important;
   }
 
-  [data-theme='dark'] & code {
+  [data-ordify-chat][data-theme='dark'] & code {
     background-color: #374151 !important;
     color: #e5e7eb !important;
   }
 
-  [data-theme='dark'] & pre {
+  [data-ordify-chat][data-theme='dark'] & pre {
     background-color: #374151 !important;
     color: #e5e7eb !important;
   }
 
-  [data-theme='dark'] & blockquote {
+  [data-ordify-chat][data-theme='dark'] & blockquote {
     background-color: #1e3a8a !important;
     border-left-color: #3b82f6 !important;
     color: #e5e7eb !important;
   }
 
-  [data-theme='dark'] & table th,
-  [data-theme='dark'] & table td {
+  [data-ordify-chat][data-theme='dark'] & table th,
+  [data-ordify-chat][data-theme='dark'] & table td {
     border-color: #4b5563 !important;
   }
 
-  [data-theme='dark'] & table th {
+  [data-ordify-chat][data-theme='dark'] & table th {
     background-color: #374151 !important;
     color: #f9fafb !important;
   }
@@ -51,7 +51,7 @@ const listUlStyle: React.CSSProperties = {
   paddingLeft: '20px',
   listStyleType: 'disc',
   listStylePosition: 'outside',
-  lineHeight: 1.5
+  lineHeight: 1.5,
 }
 
 const listOlStyle: React.CSSProperties = {
@@ -60,13 +60,13 @@ const listOlStyle: React.CSSProperties = {
   paddingLeft: '20px',
   listStyleType: 'decimal',
   listStylePosition: 'outside',
-  lineHeight: 1.5
+  lineHeight: 1.5,
 }
 
 const listLiStyle: React.CSSProperties = {
   marginBottom: '4px',
   lineHeight: 1.5,
-  color: 'inherit'
+  color: 'inherit',
 }
 
 const headingMargin = (fontSize: string): React.CSSProperties => ({
@@ -74,7 +74,7 @@ const headingMargin = (fontSize: string): React.CSSProperties => ({
   fontWeight: 700,
   marginTop: '16px',
   marginBottom: '8px',
-  color: 'inherit'
+  color: 'inherit',
 })
 
 function MarkdownTable({
@@ -88,7 +88,7 @@ function MarkdownTable({
         overflowX: 'auto',
         marginBottom: '12px',
         maxWidth: '100%',
-        WebkitOverflowScrolling: 'touch'
+        WebkitOverflowScrolling: 'touch',
       }}
     >
       <table
@@ -97,7 +97,7 @@ function MarkdownTable({
           borderCollapse: 'collapse',
           width: '100%',
           fontSize: 'inherit',
-          color: 'inherit'
+          color: 'inherit',
         }}
       >
         {children}
@@ -106,7 +106,10 @@ function MarkdownTable({
   )
 }
 
-export function MarkdownRenderer({ content, className }: MarkdownRendererProps) {
+export function MarkdownRenderer({
+  content,
+  className,
+}: MarkdownRendererProps) {
   return (
     <MarkdownContainer className={className}>
       <Markdown
@@ -118,25 +121,25 @@ export function MarkdownRenderer({ content, className }: MarkdownRendererProps) 
                   marginTop: 0,
                   marginBottom: '12px',
                   lineHeight: 1.5,
-                  color: 'inherit'
-                }
-              }
+                  color: 'inherit',
+                },
+              },
             },
             strong: {
               props: {
                 style: {
                   fontWeight: 700,
-                  color: 'inherit'
-                }
-              }
+                  color: 'inherit',
+                },
+              },
             },
             em: {
               props: {
                 style: {
                   fontStyle: 'italic',
-                  color: 'inherit'
-                }
-              }
+                  color: 'inherit',
+                },
+              },
             },
             code: {
               props: {
@@ -146,9 +149,9 @@ export function MarkdownRenderer({ content, className }: MarkdownRendererProps) 
                   borderRadius: '4px',
                   fontSize: '14px',
                   fontFamily: 'monospace',
-                  color: '#111827'
-                }
-              }
+                  color: '#111827',
+                },
+              },
             },
             pre: {
               props: {
@@ -161,27 +164,27 @@ export function MarkdownRenderer({ content, className }: MarkdownRendererProps) 
                   color: '#111827',
                   overflowX: 'auto',
                   marginTop: 0,
-                  marginBottom: '12px'
-                }
-              }
+                  marginBottom: '12px',
+                },
+              },
             },
             ul: {
               props: {
-                style: listUlStyle
-              }
+                style: listUlStyle,
+              },
             },
             ol: {
               props: {
-                style: listOlStyle
-              }
+                style: listOlStyle,
+              },
             },
             li: {
               props: {
-                style: listLiStyle
-              }
+                style: listLiStyle,
+              },
             },
             table: {
-              component: MarkdownTable
+              component: MarkdownTable,
             },
             th: {
               props: {
@@ -191,9 +194,9 @@ export function MarkdownRenderer({ content, className }: MarkdownRendererProps) 
                   textAlign: 'left',
                   backgroundColor: '#f9fafb',
                   fontWeight: 600,
-                  color: 'inherit'
-                }
-              }
+                  color: 'inherit',
+                },
+              },
             },
             td: {
               props: {
@@ -202,30 +205,30 @@ export function MarkdownRenderer({ content, className }: MarkdownRendererProps) 
                   padding: '6px 8px',
                   textAlign: 'left',
                   verticalAlign: 'top',
-                  color: 'inherit'
-                }
-              }
+                  color: 'inherit',
+                },
+              },
             },
             tr: {
               props: {
                 style: {
-                  backgroundColor: 'transparent'
-                }
-              }
+                  backgroundColor: 'transparent',
+                },
+              },
             },
             thead: {
               props: {
                 style: {
-                  backgroundColor: 'transparent'
-                }
-              }
+                  backgroundColor: 'transparent',
+                },
+              },
             },
             tbody: {
               props: {
                 style: {
-                  backgroundColor: 'transparent'
-                }
-              }
+                  backgroundColor: 'transparent',
+                },
+              },
             },
             blockquote: {
               props: {
@@ -238,39 +241,39 @@ export function MarkdownRenderer({ content, className }: MarkdownRendererProps) 
                   marginBottom: '12px',
                   backgroundColor: '#eff6ff',
                   borderRadius: '4px',
-                  color: 'inherit'
-                }
-              }
+                  color: 'inherit',
+                },
+              },
             },
             h1: {
               props: {
-                style: headingMargin('20px')
-              }
+                style: headingMargin('20px'),
+              },
             },
             h2: {
               props: {
-                style: headingMargin('18px')
-              }
+                style: headingMargin('18px'),
+              },
             },
             h3: {
               props: {
-                style: headingMargin('16px')
-              }
+                style: headingMargin('16px'),
+              },
             },
             h4: {
               props: {
-                style: headingMargin('14px')
-              }
+                style: headingMargin('14px'),
+              },
             },
             h5: {
               props: {
-                style: headingMargin('14px')
-              }
+                style: headingMargin('14px'),
+              },
             },
             h6: {
               props: {
-                style: headingMargin('14px')
-              }
+                style: headingMargin('14px'),
+              },
             },
             hr: {
               props: {
@@ -278,19 +281,19 @@ export function MarkdownRenderer({ content, className }: MarkdownRendererProps) 
                   margin: '16px 0',
                   borderColor: '#e5e7eb',
                   borderWidth: '1px',
-                  borderStyle: 'solid'
-                }
-              }
+                  borderStyle: 'solid',
+                },
+              },
             },
             a: {
               props: {
                 style: {
                   color: '#2563eb',
-                  textDecoration: 'underline'
+                  textDecoration: 'underline',
                 },
                 target: '_blank',
-                rel: 'noopener noreferrer'
-              }
+                rel: 'noopener noreferrer',
+              },
             },
             img: {
               props: {
@@ -299,13 +302,13 @@ export function MarkdownRenderer({ content, className }: MarkdownRendererProps) 
                   height: 'auto',
                   borderRadius: '8px',
                   display: 'block',
-                  marginBottom: '10px'
+                  marginBottom: '10px',
                 },
                 loading: 'lazy',
-                decoding: 'async'
-              }
-            }
-          }
+                decoding: 'async',
+              },
+            },
+          },
         }}
       >
         {content}
