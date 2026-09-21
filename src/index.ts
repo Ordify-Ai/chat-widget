@@ -26,6 +26,7 @@ export type {
     OrdifyConfig,
     Session,
     StreamingResponse,
+    ToolActivity,
     UseOrdifyChatReturn
 } from './types'
 

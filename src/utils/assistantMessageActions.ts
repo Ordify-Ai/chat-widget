@@ -5,7 +5,12 @@ export function isStreamingPlaceholder(
   messages: Message[],
   isLoading: boolean
 ): boolean {
-  if (!isLoading || message.role !== 'assistant' || message.content.trim()) {
+  if (
+    !isLoading ||
+    message.role !== 'assistant' ||
+    message.content.trim() ||
+    message.toolActivity
+  ) {
     return false
   }
   return messages[messages.length - 1]?.id === message.id
@@ -18,7 +23,11 @@ export function shouldShowStandaloneTyping(
   if (!isLoading) return false
   const last = messages[messages.length - 1]
   if (!last) return true
-  return !(last.role === 'assistant' && !last.content.trim())
+  return last.role !== 'assistant'
+}
+
+export function hasAssistantBody(message: Message): boolean {
+  return Boolean(message.content.trim() || message.attachments?.length)
 }
 
 export function shouldShowAssistantActions(

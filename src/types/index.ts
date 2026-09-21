@@ -11,6 +11,12 @@ export interface AttachmentItem {
   preview?: string
 }
 
+export interface ToolActivity {
+  label: string
+  status: 'running' | 'completed' | 'error'
+  toolName?: string
+}
+
 export interface Message {
   id: string
   content: string
@@ -18,6 +24,7 @@ export interface Message {
   timestamp: Date
   sessionId?: string
   attachments?: AttachmentItem[]
+  toolActivity?: ToolActivity
 }
 
 export interface Session {
@@ -135,10 +142,13 @@ export interface UseOrdifyChatReturn {
 export interface StreamingResponse {
   text: string
   sessionId: string
-  type: 'stream' | 'done'
+  type: 'stream' | 'done' | 'tool'
   agentName?: string
   /** When true, `text` is the full visible reply so far, not a delta. */
   replace?: boolean
+  toolName?: string
+  toolDisplayName?: string
+  toolStatus?: string
   duration_ms?: number
   duration_seconds?: number
   retry_attempt?: number

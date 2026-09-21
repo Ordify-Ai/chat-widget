@@ -1,6 +1,10 @@
 import { AttachmentItem, Message, OrdifyConfig, UseOrdifyChatReturn } from '@/types'
 import { generateId } from '@/utils'
-import { isAdkToolHistoryPayload, stripAdkToolStatusParagraphsFromAssistantText } from '@/utils/adkAssistantText'
+import {
+  isAdkToolHistoryPayload,
+  stripAdkToolStatusParagraphsFromAssistantText,
+  toolActivityFromStreamEvent
+} from '@/utils/adkAssistantText'
 import { drainSseBuffer, flushSseBuffer, OrdifyApiClient } from '@/utils/api'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
@@ -260,7 +264,6 @@ export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
         attachments: attachmentSnapshot
       }
 
-
       setMessages(prev => {
         const updated = [...prev, userMessage]
         return updated
@@ -313,8 +316,8 @@ export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
 
       setMessages(prev => [...prev, assistantMessage])
 
-      const paintAssistant = (content: string) => {
-        assistantMessage = { ...assistantMessage, content }
+      const paintAssistant = (patch: Partial<Message>) => {
+        assistantMessage = { ...assistantMessage, ...patch }
         setMessages(prev => {
           const found = prev.find(msg => msg.id === assistantMessage.id)
           if (!found) {
@@ -333,15 +336,24 @@ export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
           if (response.type === 'done') {
             return true
           }
+          const toolActivity = toolActivityFromStreamEvent(response)
+          if (toolActivity) {
+            paintAssistant({ toolActivity })
+            continue
+          }
           if (response.type !== 'stream' || !response.text) {
             continue
           }
-          const next = stripAdkToolStatusParagraphsFromAssistantText(
-            response.replace
-              ? response.text
-              : assistantMessage.content + response.text
-          )
-          paintAssistant(next)
+          const combined = response.replace
+            ? response.text
+            : assistantMessage.content + response.text
+          const next = stripAdkToolStatusParagraphsFromAssistantText(combined)
+          paintAssistant({
+            content: next,
+            toolActivity: assistantMessage.toolActivity
+              ? { ...assistantMessage.toolActivity, status: 'completed' }
+              : assistantMessage.toolActivity
+          })
           if (typeof requestAnimationFrame === 'function') {
             await new Promise<void>((resolve) => {
               requestAnimationFrame(() => resolve())

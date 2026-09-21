@@ -5,10 +5,12 @@ import { AttachmentChips } from '@/components/AttachmentChips'
 import { AttachmentPicker } from '@/components/AttachmentPicker'
 import { Conversation, ConversationContent } from '@/components/Conversation'
 import { ProfessionalInput } from '@/components/ProfessionalInput'
+import { ToolActivityChip } from '@/components/ToolActivityChip'
 import { WelcomeScreen } from '@/components/WelcomeScreen'
 import { useWidgetAttachmentStaging } from '@/hooks/useWidgetAttachmentStaging'
 import { OrdifyConfig, UseOrdifyChatReturn } from '@/types'
 import {
+  hasAssistantBody,
   isStreamingPlaceholder,
   shouldShowAssistantActions,
   shouldShowStandaloneTyping,
@@ -224,13 +226,16 @@ export function FloatingChat({ config, chat }: FloatingChatProps) {
                   )}
                   {message.role === 'assistant' ? (
                     <AssistantMessageColumn>
+                      {message.toolActivity && (
+                        <ToolActivityChip activity={message.toolActivity} />
+                      )}
                       {isStreamingPlaceholder(message, messages, isLoading) ? (
                         <AssistantTypingBubble />
-                      ) : (
+                      ) : hasAssistantBody(message) ? (
                         <ChatMessage $isUser={false}>
                           <AssistantMessageContent message={message} />
                         </ChatMessage>
-                      )}
+                      ) : null}
                       {shouldShowAssistantActions(
                         message,
                         messages,

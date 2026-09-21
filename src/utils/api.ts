@@ -344,12 +344,23 @@ export function parseStreamingResponse(chunk: string): StreamingResponse | null 
       if (parsed.type === 'adk_tool') {
         const content =
           typeof parsed.content === 'string' ? parsed.content.trim() : ''
-        if (content) {
+        const toolName =
+          typeof parsed.tool_name === 'string' ? parsed.tool_name : undefined
+        const toolDisplayName =
+          typeof parsed.tool_display_name === 'string'
+            ? parsed.tool_display_name
+            : undefined
+        const toolStatus =
+          typeof parsed.tool_status === 'string' ? parsed.tool_status : undefined
+        if (content || toolName || toolDisplayName) {
           return {
-            type: 'stream',
-            text: `\n\n${content}\n\n`,
+            type: 'tool',
+            text: content,
             sessionId: (parsed.sessionId as string) || '',
-            agentName: parsed.agentName as string | undefined
+            agentName: parsed.agentName as string | undefined,
+            toolName,
+            toolDisplayName,
+            toolStatus
           }
         }
         return null

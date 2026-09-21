@@ -29,4 +29,18 @@ describe('assistant typing state', () => {
     const messages = [msg({ id: 'u1', role: 'user', content: 'Hi' })]
     expect(shouldShowStandaloneTyping(messages, true)).toBe(true)
   })
+
+  it('does not add a second typing row while a tool chip is showing', () => {
+    const messages = [
+      msg({ id: 'u1', role: 'user', content: 'Hi' }),
+      msg({
+        id: 'a1',
+        role: 'assistant',
+        content: '',
+        toolActivity: { label: 'Searching knowledge', status: 'running' }
+      })
+    ]
+    expect(isStreamingPlaceholder(messages[1], messages, true)).toBe(false)
+    expect(shouldShowStandaloneTyping(messages, true)).toBe(false)
+  })
 })

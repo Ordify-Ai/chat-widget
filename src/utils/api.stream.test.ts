@@ -56,6 +56,26 @@ describe('parseStreamingResponse', () => {
     ).toBeNull()
   })
 
+  it('keeps adk_tool events structured instead of folding them into prose', () => {
+    const event = parseStreamingResponse(
+      sseLine({
+        type: 'adk_tool',
+        content: 'Using Retrieve...',
+        tool_name: 'retrieve_documents',
+        tool_display_name: 'Retrieve',
+        tool_status: 'running',
+        sessionId: 's1'
+      })
+    )
+    expect(event).toMatchObject({
+      type: 'tool',
+      text: 'Using Retrieve...',
+      toolName: 'retrieve_documents',
+      toolDisplayName: 'Retrieve',
+      toolStatus: 'running'
+    })
+  })
+
   it('returns null for a split JSON frame that is not yet complete', () => {
     expect(
       parseStreamingResponse('data: {"text":"Hel')
