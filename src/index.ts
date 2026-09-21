@@ -31,5 +31,10 @@ export type {
 
 // Utils
 export { debounce, formatTime, generateId, throttle } from './utils'
-export { OrdifyApiClient, parseStreamingResponse } from './utils/api'
+export {
+  drainSseBuffer,
+  flushSseBuffer,
+  OrdifyApiClient,
+  parseStreamingResponse
+} from './utils/api'
 

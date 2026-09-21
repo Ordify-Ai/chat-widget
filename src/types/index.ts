@@ -137,6 +137,8 @@ export interface StreamingResponse {
   sessionId: string
   type: 'stream' | 'done'
   agentName?: string
+  /** When true, `text` is the full visible reply so far, not a delta. */
+  replace?: boolean
   duration_ms?: number
   duration_seconds?: number
   retry_attempt?: number

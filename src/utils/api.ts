@@ -177,7 +177,11 @@ export class OrdifyApiClient {
 
     const response = await fetch(url, {
       method: 'POST',
-      headers: this.getAuthHeaders(true),
+      headers: {
+        ...this.getAuthHeaders(true),
+        accept: 'text/event-stream'
+      },
+      cache: 'no-store',
       body: JSON.stringify(requestBody)
     })
 
@@ -367,10 +371,45 @@ export function parseStreamingResponse(chunk: string): StreamingResponse | null 
         }
         return null
       }
-      return parsed as unknown as StreamingResponse
+      const text =
+        typeof parsed.text === 'string' && parsed.text
+          ? parsed.text
+          : parsed.type === 'stream' && typeof parsed.content === 'string'
+            ? parsed.content
+            : ''
+      return {
+        type: (parsed.type as StreamingResponse['type']) || 'stream',
+        text,
+        sessionId: (parsed.sessionId as string) || '',
+        agentName: parsed.agentName as string | undefined,
+        replace: parsed.replace === true
+      }
     }
   } catch (error) {
-    console.warn('Failed to parse streaming response:', error)
+    if (!(error instanceof SyntaxError)) {
+      console.warn('Failed to parse streaming response:', error)
+    }
   }
   return null
+}
+
+export function drainSseBuffer(buffer: string): {
+  events: StreamingResponse[]
+  leftover: string
+} {
+  const lines = buffer.split('\n')
+  const leftover = lines.pop() ?? ''
+  const events: StreamingResponse[] = []
+  for (const line of lines) {
+    if (!line.trim()) continue
+    const event = parseStreamingResponse(line)
+    if (event) events.push(event)
+  }
+  return { events, leftover }
+}
+
+export function flushSseBuffer(leftover: string): StreamingResponse[] {
+  if (!leftover.trim()) return []
+  const event = parseStreamingResponse(leftover)
+  return event ? [event] : []
 }
