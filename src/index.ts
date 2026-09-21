@@ -26,10 +26,16 @@ export type {
     OrdifyConfig,
     Session,
     StreamingResponse,
+    ToolActivity,
     UseOrdifyChatReturn
 } from './types'
 
 // Utils
 export { debounce, formatTime, generateId, throttle } from './utils'
-export { OrdifyApiClient, parseStreamingResponse } from './utils/api'
+export {
+  drainSseBuffer,
+  flushSseBuffer,
+  OrdifyApiClient,
+  parseStreamingResponse
+} from './utils/api'
 

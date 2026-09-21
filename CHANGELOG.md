@@ -10,7 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - **Generated images in the widget**: ADK `image` SSE events are no longer dropped during streaming (they appear as markdown images in the assistant bubble). Assistant messages with image **attachments** from history now render inline images plus non-image attachment chips.
-- **Empty assistant bubbles on tool-heavy turns**: SSE `adk_tool` events with a `content` string are now folded into the streamed assistant text so status lines (e.g. tool progress) still appear when the model does not emit a separate text chunk.
+- **Token streaming**: leftover SSE frames are drained as they arrive (instead of dropping a split `data:` line until the next read), `replace: true` updates the visible reply, and chat POST sends `Accept: text/event-stream`.
+- **Tool activity**: `adk_tool` events render as a chip (for example "Searching knowledge") instead of raw "Using Retrieve..." prose or a second typing row.
 
 ### Added
 

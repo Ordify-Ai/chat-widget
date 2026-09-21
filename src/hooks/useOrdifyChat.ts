@@ -1,7 +1,11 @@
 import { AttachmentItem, Message, OrdifyConfig, UseOrdifyChatReturn } from '@/types'
 import { generateId } from '@/utils'
-import { isAdkToolHistoryPayload, stripAdkToolStatusParagraphsFromAssistantText } from '@/utils/adkAssistantText'
-import { OrdifyApiClient, parseStreamingResponse } from '@/utils/api'
+import {
+  isAdkToolHistoryPayload,
+  stripAdkToolStatusParagraphsFromAssistantText,
+  toolActivityFromStreamEvent
+} from '@/utils/adkAssistantText'
+import { drainSseBuffer, flushSseBuffer, OrdifyApiClient } from '@/utils/api'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 function messageMergeKey(msg: Message): string {
@@ -260,7 +264,6 @@ export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
         attachments: attachmentSnapshot
       }
 
-
       setMessages(prev => {
         const updated = [...prev, userMessage]
         return updated
@@ -313,39 +316,67 @@ export function useOrdifyChat(config: OrdifyConfig): UseOrdifyChatReturn {
 
       setMessages(prev => [...prev, assistantMessage])
 
+      const paintAssistant = (patch: Partial<Message>) => {
+        assistantMessage = { ...assistantMessage, ...patch }
+        setMessages(prev => {
+          const found = prev.find(msg => msg.id === assistantMessage.id)
+          if (!found) {
+            return [...prev, assistantMessage]
+          }
+          return prev.map(msg =>
+            msg.id === assistantMessage.id ? assistantMessage : msg
+          )
+        })
+      }
+
+      const applyEvents = async (
+        events: ReturnType<typeof drainSseBuffer>['events']
+      ): Promise<boolean> => {
+        for (const response of events) {
+          if (response.type === 'done') {
+            return true
+          }
+          const toolActivity = toolActivityFromStreamEvent(response)
+          if (toolActivity) {
+            paintAssistant({ toolActivity })
+            continue
+          }
+          if (response.type !== 'stream' || !response.text) {
+            continue
+          }
+          const combined = response.replace
+            ? response.text
+            : assistantMessage.content + response.text
+          const next = stripAdkToolStatusParagraphsFromAssistantText(combined)
+          paintAssistant({
+            content: next,
+            toolActivity: assistantMessage.toolActivity
+              ? { ...assistantMessage.toolActivity, status: 'completed' }
+              : assistantMessage.toolActivity
+          })
+          if (typeof requestAnimationFrame === 'function') {
+            await new Promise<void>((resolve) => {
+              requestAnimationFrame(() => resolve())
+            })
+          }
+        }
+        return false
+      }
+
+      let leftover = ''
       while (true) {
         const { done, value } = await reader.read()
-        if (done) break
+        if (done) {
+          leftover += decoder.decode()
+          await applyEvents(flushSseBuffer(leftover))
+          break
+        }
 
-        const chunk = decoder.decode(value, { stream: true })
-        const lines = chunk.split('\n')
-
-        for (const line of lines) {
-          if (!line.trim()) continue
-
-          const response = parseStreamingResponse(line)
-
-          if (response) {
-            if (response.type === 'stream' && response.text) {
-              assistantMessage.content = stripAdkToolStatusParagraphsFromAssistantText(
-                assistantMessage.content + response.text
-              )
-
-              setMessages(prev => {
-                const found = prev.find(msg => msg.id === assistantMessage.id)
-                if (!found) {
-                  return [...prev, { ...assistantMessage, content: assistantMessage.content }]
-                }
-                return prev.map(msg =>
-                  msg.id === assistantMessage.id
-                    ? { ...msg, content: assistantMessage.content }
-                    : msg
-                )
-              })
-            } else if (response.type === 'done') {
-              break
-            }
-          }
+        leftover += decoder.decode(value, { stream: true })
+        const drained = drainSseBuffer(leftover)
+        leftover = drained.leftover
+        if (await applyEvents(drained.events)) {
+          break
         }
       }
 

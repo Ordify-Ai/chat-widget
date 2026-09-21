@@ -35,7 +35,9 @@ export function AssistantMessageContent({ message, className }: AssistantMessage
         />
       ))}
       {otherAtts.length > 0 && <AttachmentChips attachments={otherAtts} readOnly />}
-      <MarkdownRenderer content={message.content} className={className} />
+      {message.content.trim() ? (
+        <MarkdownRenderer content={message.content} className={className} />
+      ) : null}
     </>
   )
 }

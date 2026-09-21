@@ -3,12 +3,14 @@ import { AssistantTypingBubble } from '@/components/AssistantTypingBubble'
 import { AttachmentChips } from '@/components/AttachmentChips'
 import { AttachmentPicker } from '@/components/AttachmentPicker'
 import { ProfessionalInput } from '@/components/ProfessionalInput'
+import { ToolActivityChip } from '@/components/ToolActivityChip'
 import { WelcomeScreen } from '@/components/WelcomeScreen'
 import { useWidgetAttachmentStaging } from '@/hooks/useWidgetAttachmentStaging'
 import { OrdifyConfig, UseOrdifyChatReturn } from '@/types'
 import { filesFromDataTransfer } from '@/utils/attachments'
 import { resolveWidgetTheme } from '@/utils/widget-theme'
 import {
+  hasAssistantBody,
   isStreamingPlaceholder,
   shouldShowStandaloneTyping,
 } from '@/utils/assistantMessageActions'
@@ -17,6 +19,7 @@ import React from 'react'
 import { Conversation, ConversationContent } from './Conversation'
 import {
   AgentAvatar,
+  AssistantMessageColumn,
   ChatInput,
   ChatMessage,
   ChatWidget,
@@ -138,13 +141,18 @@ export function InlineChat({ config, chat }: InlineChatProps) {
                     />
                   )}
                   {message.role === 'assistant' ? (
-                    isStreamingPlaceholder(message, messages, isLoading) ? (
-                      <AssistantTypingBubble />
-                    ) : (
-                      <ChatMessage $isUser={false}>
-                        <AssistantMessageContent message={message} />
-                      </ChatMessage>
-                    )
+                    <AssistantMessageColumn>
+                      {message.toolActivity && (
+                        <ToolActivityChip activity={message.toolActivity} />
+                      )}
+                      {isStreamingPlaceholder(message, messages, isLoading) ? (
+                        <AssistantTypingBubble />
+                      ) : hasAssistantBody(message) ? (
+                        <ChatMessage $isUser={false}>
+                          <AssistantMessageContent message={message} />
+                        </ChatMessage>
+                      ) : null}
+                    </AssistantMessageColumn>
                   ) : (
                     <ChatMessage $isUser={true}>
                       <>
